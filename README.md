@@ -1,7 +1,6 @@
-# Image Web App
+# Code Guard
 
-A Simple Web App for Uploading Images.  
-> ***The design is very human***
+A platform to learn secure coding.  
 
 ## Dependencies
 
@@ -12,8 +11,8 @@ Other dependencies are listed in requirements.txt
 
 1. Clone this repository and switch directory to the cloned repo
 ```console
-git clone https://github.com/Xovert/image-web-app.git
-cd image-web-app
+git clone https://github.com/Xovert/CodeGuard.git
+cd CodeGuard
 ```
 
 2. In your terminal, enter the following commands
