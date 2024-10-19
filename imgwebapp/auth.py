@@ -14,6 +14,9 @@ def index():
     else:
         return redirect(url_for('gallery'))
 
+@bp.route('/loginnew')
+def loginnew():
+    return render_template('login.html')
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
