@@ -17,7 +17,10 @@ def index():
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
-    if request.method == 'POST':
+    if request.method == 'GET':
+        return render_template('register.html')
+    
+    elif request.method == 'POST':
         username = request.form['reg-username']
         password = request.form['reg-password']
         rpt_password = request.form['rpt-password']

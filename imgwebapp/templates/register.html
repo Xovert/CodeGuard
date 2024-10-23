@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/register.css') }}">
+
+<!-- FONTS -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+<!-- <script src="{{ url_for('static', filename='js/register.js') }}" defer></script> -->
+{% endblock %}
+
+{% block content %}
+
+<body>
+    <div class="wrapper container-fluid p-0 d-flex">
+        <div class="left-wrapper">
+            <div class="left">
+                <div class="title poppins-thin">
+                    <h1>Welcome to CodeGuard</h1>
+                    <p>Already have an account? Log in <a href="">here</a></p>
+                </div>
+                <form action="" class="d-flex flex-column">
+                    <div>
+                        <label for="email" class="form-label">Email</label>
+                        <input id="email" type="email" class="form-control" placeholder="Please enter your email">
+                    </div>
+                    <div>
+                        <label for="fullname" class="form-label">Full Name</label>
+                        <input id="fullname" type="text" class="form-control" placeholder="Please enter your full name">
+                    </div>
+                    <div>
+                        <label for="username" class="form-label">Username</label>
+                        <input id="username" type="text" class="form-control" placeholder="Please enter your username">
+                    </div>
+                    <div>
+                        <label for="password" class="form-label">Password</label>
+                        <input id="password" type="password" class="form-control" placeholder="Please enter your password">
+                    </div>
+                    <div class="checkbox">
+                        <input id="checkbox" type="checkbox" class="form-check-input">
+                        <label for="checkbox" class="form-check-label">By creating an account, you agree to the <a href="">Terms of Condition</a> and <a href="">Privacy Policy</a>.</label>
+                    </div>
+                    <button id="button" class="btn rounded-pill">Create an account</button>
+                </form>
+            </div>
+        </div>
+        <div class="right-wrapper d-flex justify-content-center align-items-center">
+            <div class="logo-wrapper">
+                <img src="{{ url_for('static',filename='assets/LogoCodeGuard.png') }}" alt="Logo">
+            </div>
+        </div>
+
+    </div>
+</body>
+{% endblock %}

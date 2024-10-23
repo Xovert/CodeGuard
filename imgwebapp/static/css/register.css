@@ -1,0 +1,95 @@
+:root{
+    --dark-magenta: #501F3A;
+    --hot-pink: #CB2D6F;
+    --gray: #CCC;
+    --green: #14A098;
+    --dark-blue: #0F292F;
+    --black: #000000;
+    --white: #FFFFFF;
+}
+
+.wrapper{
+    height: 100vh;
+}
+
+.left-wrapper{
+    width: 55%;
+}
+
+.left{
+    padding: 55px 80px 0px 80px;
+}
+
+p, h1{
+    margin: 0px;
+    padding: 0px;
+    font-family: poppins;
+}
+
+.title{
+    margin-bottom: 32px;
+}
+
+.title h1{
+    font-weight: 500;
+    font-size: 32px;
+}
+
+.title p{
+    font-weight: 400;
+    font-size: 16px;
+}
+
+a{
+    color: var(--black);
+}
+
+form {
+    row-gap: 32px;
+}
+
+label, input{
+    font-family: poppins;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.checkbox{
+    display: flex;
+}
+
+.checkbox input{
+    margin-right: 8px;
+    border: 1px solid var(--gray)
+}
+
+#button{
+    width: 256px;
+    height: 64px;
+    padding: 8px 16px;
+    font-family: Poppins;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 500;
+    background-color: var(--gray);
+    color: var(--white);
+}
+
+#button:hover{
+    background-color: var(--black);
+    transition: 0.4s;
+}
+
+.right-wrapper{
+    background-color: var(--black);
+    width: 45%;
+}
+
+.logo-wrapper{
+    width: 520px;
+    padding-left: 70px;
+}
+
+.logo-wrapper img{
+    width: 100%;
+}
