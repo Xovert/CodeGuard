@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Admin Login{% endblock %}
 
 {% block header %}
     <link rel="stylesheet" href="{{ url_for('static',filename='css/loginstyle.css') }}">
@@ -14,10 +14,8 @@
         <div style="padding: 40px 133px 112px 134px; background: white; border-radius: 24px; overflow: hidden; flex-direction: column; justify-content: flex-start; align-items: center; display: flex;">
             <div style="flex-direction: column; justify-content: center; align-items: center; gap: 40px; display: inline-flex">
                 <div style="flex-direction: column; justify-content: center; align-items: center; gap: 24px; display: flex">
-                    <div style="text-align: center; color: #333333; font-size: 32px; font-family: Poppins; font-weight: 500; word-wrap: break-word">Log in</div>
+                    <div style="text-align: center; color: #333333; font-size: 32px; font-family: Poppins; font-weight: 500; word-wrap: break-word">Log in Admin Page</div>
                     <div style="justify-content: flex-start; align-items: flex-start; gap: 10px; display: inline-flex">
-                        <span style="color: #333333; font-size: 16px; font-family: Poppins; font-weight: 400; word-wrap: break-word">Don’t have an account?</span>
-                        <span style="color: #111111; font-size: 16px; font-family: Poppins; font-weight: 400; text-decoration: underline; word-wrap: break-word">Sign up</span>
                     </div>
                 </div>
 
@@ -34,13 +32,9 @@
                             <label for="password" style="color: #666666; font-size: 16px; font-family: Poppins; font-weight: 400; word-wrap: break-word">Your Password</label>
                             <input type="password" id="password" name="password" required style="width: 528px; height: 56px; padding: 12px; border-radius: 12px; border: 1px solid rgba(102, 102, 102, 0.35); font-size: 16px; font-family: Poppins;">
                         </div>
-                        <!--Forgot Password-->
-                        <div style="width: 100%; text-align: right;">
-                            <a href="{{ url_for('auth.forgotPass') }}" style="color: #111111; font-size: 16px; font-family: Poppins; font-weight: 400; text-decoration: underline;">Forgot password?</a>
-                        </div>
                     </div>
                     <!--Login Button-->
-                    <div style="width: 528px; height: 64px; padding-top: 15px; padding-bottom: 16px; background: black; border-radius: 40px; overflow: hidden; justify-content: center; align-items: center; display: flex">
+                    <div style="width: 528px; height: 64px; padding-top: 20px; padding-bottom: 16px; margin-top: 25px; background: black; border-radius: 40px; overflow: hidden; justify-content: center; align-items: center; display: flex">
                         <button type="submit" class="login-button" style="width: 100%; color: white; font-size: 18px; font-family: Poppins;">
                             Log in
                         </button>
