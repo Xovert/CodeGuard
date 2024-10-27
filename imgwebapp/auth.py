@@ -18,6 +18,18 @@ def index():
 def loginnew():
     return render_template('login.html')
 
+@bp.route('/admin')
+def loginadmin():
+    return render_template('admin.html')
+
+@bp.route('/forgotPass')
+def forgotPass():
+    return render_template('ForgotPass.html')
+
+@bp.route('/fpass')
+def fpass():
+    return render_template('Success.html')
+
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
     if request.method == 'POST':

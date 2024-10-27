@@ -1,5 +1,24 @@
-body{
-    width: 1440px;
-    height: 1024px;
-    background-color: white;
+.basic-button {
+    opacity: 0.8;
+    text-align: center;
+    color: white;
+    font-size: 22px;
+    font-family: Poppins;
+    font-weight: 500;
+    word-wrap: break-word;
+    background-color: #14A098;
+    border-radius: 12px;
+    padding: 20px 40px; 
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    width: 100%;
+    max-width: 574px;
+    transition: background-color 0.3s ease, opacity 0.3s ease;  
+}
+
+.basic-button:hover {
+    opacity: 1;
+    background-color: #12A389;
 }

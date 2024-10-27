@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Forgot Password{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+<script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+<form action="{{ url_for('auth.fpass') }}" method="POST" style="height: 100vh; display: flex; justify-content: center; align-items: center; background: white;">
+    <div style="text-align: center;">
+        
+        <div style="color: #1E1E1E; font-size: 64px; font-family: Poppins; font-weight: 600; margin-bottom: 20px;">
+            Forgot password
+        </div>
+        
+        <div style="color: #989898; font-size: 40px; font-family: Inter; font-weight: 600; margin-bottom: 40px;">
+            Please enter your email to reset the password
+        </div>    
+        
+        <div style="margin-bottom: 40px;">
+            <label for="email" style="display: block; color: #2A2A2A; font-size: 48px; font-family: Inter; font-weight: 600; margin-bottom: 10px;">
+                Your Email
+            </label>
+            <input type="email" id="email" name="email" style="width: 100%; max-width: 747px; height: 60px; padding: 10px; border-radius: 12px; border: 2px black solid;">
+        </div>
+        
+        <!-- Submit button -->
+        <button type="submit" class="basic-button">
+            Reset Password
+        </button>
+    </div>
+</form>
+{% endblock %}
