@@ -1,56 +1,38 @@
 {% extends 'base.html' %}
 
-{% block title %}Admin Login{% endblock %}
+{% block title %}Admin Dashboard{% endblock %}
 
 {% block header %}
-    <link rel="stylesheet" href="{{ url_for('static',filename='css/loginstyle.css') }}">
-    <script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
+<link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+<script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
 {% endblock %}
 
 {% block content %}
-<body style="background-color: black;">
-    <div class="login-Content">
-        <!--Header-->
-        <div style="padding: 40px 133px 112px 134px; background: white; border-radius: 24px; overflow: hidden; flex-direction: column; justify-content: flex-start; align-items: center; display: flex;">
-            <div style="flex-direction: column; justify-content: center; align-items: center; gap: 40px; display: inline-flex">
-                <div style="flex-direction: column; justify-content: center; align-items: center; gap: 24px; display: flex">
-                    <div style="text-align: center; color: #333333; font-size: 32px; font-family: Poppins; font-weight: 500; word-wrap: break-word">Log in Admin Page</div>
-                    <div style="justify-content: flex-start; align-items: flex-start; gap: 10px; display: inline-flex">
-                    </div>
-                </div>
 
-                <!--Inputs-->
-                <form action="{{ url_for('auth.login') }}" method="POST">
-                    <div style="flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 24px; display: flex">
-                        <!--email-->
-                        <div style="flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 4px; display: flex">
-                            <label for="email" style="color: #666666; font-size: 16px; font-family: Poppins; font-weight: 400; word-wrap: break-word">Your E-mail</label>
-                            <input type="email" id="email" name="email" required style="width: 528px; height: 56px; padding: 12px; border-radius: 12px; border: 1px solid rgba(102, 102, 102, 0.35); font-size: 16px; font-family: Poppins;">
-                        </div>
-                        <!--password-->
-                        <div style="flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 4px; display: flex">
-                            <label for="password" style="color: #666666; font-size: 16px; font-family: Poppins; font-weight: 400; word-wrap: break-word">Your Password</label>
-                            <input type="password" id="password" name="password" required style="width: 528px; height: 56px; padding: 12px; border-radius: 12px; border: 1px solid rgba(102, 102, 102, 0.35); font-size: 16px; font-family: Poppins;">
-                        </div>
-                    </div>
-                    <!--Login Button-->
-                    <div style="width: 528px; height: 64px; padding-top: 20px; padding-bottom: 16px; margin-top: 25px; background: black; border-radius: 40px; overflow: hidden; justify-content: center; align-items: center; display: flex">
-                        <button type="submit" class="login-button" style="width: 100%; color: white; font-size: 18px; font-family: Poppins;">
-                            Log in
-                        </button>
-                    </div>
-                </form>
+    <div class="sidebar">
+        <!-- Logo  -->
+        <div style="position: absolute; top: 9px; left: 500px;">
+            <img src="{{ url_for('static', filename='NewCOdeGuard.png') }}" style="width: 66.61px; height: 82.44px" />
+            <div style="width: 461px; height: 49px;">
+                <span class="code">Code</span>
+                <span  class="guard">Guard</span>
             </div>
         </div>
+        <!-- side panel -->
+        <ul>
+            <li><a href="#dashboard">Dashboard</a></li>
+            <li><a href="#users">Manage Users</a></li>
+            <li><a href="#products">Products</a></li>
+            <li><a href="#orders">Orders</a></li>
+            <li><a href="#reports">Reports</a></li>
+            <li><a href="#settings">Settings</a></li>
+            <li><a href="#logout">Logout</a></li>
+        </ul>
     </div>
 
-    <!-- Logo -->
-    <div style="width: 543px; height: 82.44px; position: absolute; top: 24px; left: 50%; transform: translateX(-50%);">
-        <img src="{{ url_for('static', filename='NewCOdeGuard.png') }}" style="width: 66.61px; height: 82.44px" />
-        <div style="width: 461px; height: 49px; position: absolute; top: 9px; left: 82px;">
-            <span style="color: white; font-size: 64px; font-family: Black Future; font-style: italic; font-weight: 400;">Code</span>
-            <span style="color: #D3BF76; font-size: 64px; font-family: Black Future; font-style: italic; font-weight: 400;">Guard</span>
-        </div>
+    <div class="content">
+        <!-- Main content goes here -->
+        <h1>Main Content</h1>
     </div>
-</body>
+
 {% endblock %}
