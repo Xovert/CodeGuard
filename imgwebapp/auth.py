@@ -8,18 +8,14 @@ bcrypt = Bcrypt()
 bp = Blueprint('auth', __name__)
 
 @bp.route('/')
-def index():
+def loginnew():
     if g.user is None:
-        return render_template('index.html')
+        return render_template('login.html')
     else:
         return redirect(url_for('gallery'))
 
-@bp.route('/loginnew')
-def loginnew():
-    return render_template('login.html')
-
 @bp.route('/admin')
-def loginadmin():
+def admin():
     return render_template('admin.html')
 
 @bp.route('/forgotPass')
@@ -28,7 +24,7 @@ def forgotPass():
 
 @bp.route('/fpass')
 def fpass():
-    return render_template('Success.html')
+    return render_template('fpass.html')
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():

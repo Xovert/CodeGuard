@@ -5,10 +5,11 @@
     align-items: center;
     height: 100vh;
     position: relative;
+    text-align: center;
 }
 
 .login-button {
-    opacity: 0.25;
+    opacity: 0.8;
     text-align: center;
     color:white;
     font-size: 22px;
@@ -48,4 +49,12 @@ input[type="password"] {
 input[type="email"]:focus,
 input[type="password"]:focus {
     border-color: #111111;
+}
+
+.input-box{
+    flex-direction: column; 
+    justify-content: flex-start;
+    align-items: flex-start; 
+    gap: 4px; 
+    display: flex
 }
