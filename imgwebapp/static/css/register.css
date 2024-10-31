@@ -54,19 +54,11 @@ label, input{
     font-weight: 400;
 }
 
-.checkbox{
-    display: flex;
-}
-
-.checkbox input{
-    margin-right: 8px;
-    border: 1px solid var(--gray)
-}
-
 #button{
     width: 256px;
     height: 64px;
     padding: 8px 16px;
+    margin-bottom: 32px;
     font-family: Poppins;
     text-align: center;
     font-size: 22px;
@@ -92,4 +84,10 @@ label, input{
 
 .logo-wrapper img{
     width: 100%;
+}
+
+@media screen and (max-width: 1400px){
+    .wrapper{
+        height: 100%;
+    }
 }
