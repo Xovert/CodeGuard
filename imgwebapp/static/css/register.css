@@ -9,7 +9,7 @@
 }
 
 .wrapper{
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .left-wrapper{
@@ -86,8 +86,13 @@ label, input{
     width: 100%;
 }
 
-@media screen and (max-width: 1400px){
+.error-message {
+    color: red;
+    display: none;
+}
+
+/* @media screen and (max-width: 1400px){
     .wrapper{
         height: 100%;
     }
-}
+} */
