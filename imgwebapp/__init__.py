@@ -38,6 +38,7 @@ def create_app(test_config=None, instance_path=None):
     auth.bcrypt.init_app(app)
     app.register_blueprint(auth.bp)
     app.add_url_rule('/', endpoint='index')
+    app.add_url_rule('/register', endpoint='register')
 
     from . import image
     image.init_uploads(app)
