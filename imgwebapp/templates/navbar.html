@@ -1,1 +1,18 @@
-<h1>TESTING BRO</h1>
+<nav>
+    <div class="logo-wrapper">
+        <img src="{{ url_for('static',filename='assets/LogoCodeGuard.png') }}" alt="">
+    </div>
+    <div class="nav-wrapper-left">
+        <ul>
+            <li class="nav-list"><a href="">Home</a></li>
+            <li class="nav-list"><a href="">Features</a></li>
+            <li class="nav-list"><a href="">Courses</a></li>
+            <li class="nav-list"><a href="">Contact Us</a></li>
+        </ul>
+    </div>
+    <div class="nav-wrapper-right">
+            <li class="navlist"><a href="{{url_for('auth.login')}}">Login</a></li>
+            <li class="navlist"><a href="{{url_for('auth.register')}}">Sign Up</a></li>
+    </div>
+</nav>
+<!-- ini nanti untuk ketika sudah login -->
