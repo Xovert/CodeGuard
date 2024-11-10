@@ -4,11 +4,13 @@
 
 {% block header %}
 <link rel="stylesheet" href="{{ url_for('static',filename='css/index.css') }}">
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
 <script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
 {% endblock %}
 
 {% block content %}
-<nav class="navbar navbar-expand-lg">
+<!-- NAVBAR -->
+<nav id="navbar" class="navbar navbar-expand-lg">
     <div class="container-fluid navbar-wrapper">
         <a class="navbar-brand" href="{{ url_for('auth.index') }}">
             <img src="{{ url_for('static',filename='assets/LogoCodeGuard.png') }}" alt="">
@@ -19,29 +21,102 @@
                     <a class="nav-link" href="#home">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Features</a>
+                    <a class="nav-link" href="#features">Features</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Courses</a>
+                    <a class="nav-link" href="#courses">Courses</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Contact Us</a>
+                    <a class="nav-link" href="#contact-us">Contact Us</a>
                 </li>
             </ul>
         </div>
-        <!-- PROBLEM, MS AUTO NOT WORKIING, PLS FIX THIS -->
         <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <div class="navbar-nav d-flex flex-row">
-                <li class="nav-item">
-                    <a class="nav-link login" href="#home">Log In</a>
+            <div class="navbar-nav d-flex flex-row ms-auto">
+                <li class="nav-item login">
+                    <a class="nav-link" href="{{ url_for('auth.login') }}">Log In</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Sign Up</a>
+                <li class="sign-up nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.register') }}">Sign Up</a>
                 </li>
             </div>
         </div>
     </div>
 </nav>
 
-<h1>ini dari index</h1>
+<!-- HOME -->
+<section id="home">
+    <div class="home-wrapper d-flex container-fluid">
+        <div class="left col-md-8 my-auto">
+            <h1 class="home-title">Learn Secure Coding <span>the Right Way</span> with <img
+                    src="{{ url_for('static',filename='assets/CodeGuard.svg') }}" alt=""></h1>
+            <p>Learn to code securely and protect your work from threats. CodeGuard teaches you the skills to prevent
+                attacks, secure your applications, and advance your career with confidence.</p>
+            <a href="{{ url_for('auth.register') }}">Try Now</a>
+        </div>
+        <div class="right home-img ms-auto mt-auto">
+            <img src="{{ url_for('static',filename='assets/home-img.svg') }}" alt="">
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+    <div class="features-wrapper container-fluid">
+        <h1>Invest in your secure coding carreer</h1>
+        <div class="d-flex justify-content-center flex-wrap features-content-wrapper">
+            <div class="features-content d-flex flex-column">
+                <img src="{{ url_for('static',filename='assets/Learning.svg') }}" alt="">
+                <h3>Learn by Practicing</h3>
+                <p>Dive into hands-on coding exercises that reinforce secure coding principles</p>
+            </div>
+            <div class="features-content d-flex flex-column">
+                <img src="{{ url_for('static',filename='assets/Courses.svg') }}" alt="">
+                <h3>Free Courses</h3>
+                <p>Access a wide range of secure coding courses at no cost</p>
+            </div>
+            <div class="features-content d-flex flex-column">
+                <img src="{{ url_for('static',filename='assets/Scenarios.svg') }}" alt="">
+                <h3>Real-World Scenarios</h3>
+                <p>Learn how to protect your code in realistic situations for a successful career</p>
+            </div>
+            <div class="features-content d-flex flex-column">
+                <img src="{{ url_for('static',filename='assets/Challenges.svg') }}" alt="">
+                <h3>Interactive Challenges</h3>
+                <p>Put your skills to the test with quizzes and challenges designed to solidify your knowledge</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- COURSES -->
+<section id="courses">
+    <div class="courses-wrapper container-fluid">
+        <h1>Popular Courses</h1>
+        <div class="d-flex justify-content-center flex-wrap courses-content-wrapper">
+            <div class="course-content">
+                <img src="{{ url_for('static',filename='assets/php-logo.svg') }}" alt="">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT US -->
+<section id="contact-us">
+    <div class="contact-us-wrapper container-fluid d-flex flex-row">
+        <div class="contact-us-left col-md-6 my-auto">
+            <h1>Contact Us!</h1>
+            <p>We’d love to hear from you! Whether you have a question about our courses, need assistance, or want to
+                provide feedback, our team is here to help. Your thoughts and questions are important to us as we strive
+                to make your experience with us even better.</p>
+            <div class="email-logo d-flex">
+                <img src="{{ url_for('static',filename='assets/Email.svg') }}" alt="">
+                <span class="my-auto">codeguard@gmail.com</span>
+            </div>
+        </div>
+        <div class="contact-us-right col-md-6 d-flex">
+            <img src="{{ url_for('static',filename='assets/contactUs.svg') }}" alt="">
+        </div>
+    </div>
+</section>
 {% endblock %}
