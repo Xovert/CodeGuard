@@ -20,11 +20,11 @@
 
 .basic-button:hover {
     opacity: 1;
-    background-color: #14A098;
+    background-color: #17B2A7;
 }
 
 .sidebar {
-    width: 250px;
+    width: 280px;
     background-color: #333;
     color: white;
     height: 100vh;
@@ -59,15 +59,14 @@
     padding-left: 10px;
 }
 
-.content {
-    margin-left: 250px;
+.content{
+    margin-left: 270px;
     padding: 20px;
     width: 100%;
 }
 
 .code{
     color: white; 
-    font-size: 64px; 
     font-family: Black Future; 
     font-style: italic; 
     font-weight: 400;
@@ -75,7 +74,6 @@
 
 .guard{
     color: #D3BF76; 
-    font-size: 64px; 
     font-family: Black Future; 
     font-style: italic; 
     font-weight: 400;

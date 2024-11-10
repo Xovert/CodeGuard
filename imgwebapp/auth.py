@@ -18,13 +18,29 @@ def loginnew():
 def admin():
     return render_template('admin.html')
 
+@bp.route('/profile')
+def profile():
+    return render_template('profile.html')
+
+# @bp.route('/editprofile')
+# def editprofile():
+#     return render_template('editprofile.html')
+
+@bp.route('/courseSetting')
+def courseSetting():
+    return render_template('courseSetting.html')
+
+@bp.route('/settings')
+def settings():
+    return render_template('settings.html')
+
 @bp.route('/forgotPass')
 def forgotPass():
     return render_template('ForgotPass.html')
 
-@bp.route('/fpass')
-def fpass():
-    return render_template('fpass.html')
+# @bp.route('/changePass')
+# def changePass():
+#     return render_template('changePass.html')
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
