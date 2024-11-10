@@ -34,12 +34,22 @@
     background-color: #14A098;
 }
 
+.allFont{
+    font-size: 16px; 
+    font-family: Poppins; 
+    font-weight: 400;
+    word-wrap: break-word
+}
+
 input[type="email"],
 input[type="password"] {
-    width: 100%;
-    padding: 12px;
+    width: 528px; 
+    height: 56px; 
+    padding: 12px; 
+    border-radius: 12px; 
+    border: 1px solid rgba(102, 102, 102, 0.35); 
     font-size: 16px;
-    font-family: Poppins, sans-serif;
+    font-family: Poppins;
     border: 1px solid rgba(102, 102, 102, 0.35);
     border-radius: 12px;
     box-sizing: border-box;
