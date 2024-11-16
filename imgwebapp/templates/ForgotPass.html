@@ -8,14 +8,14 @@
 {% endblock %}
 
 {% block content %}
-<form action="{{ url_for('auth.index') }}" method="GET" style="height: 100vh; display: flex; justify-content: center; align-items: center; background: white;">
+<form action="{{ url_for('auth.changePass') }}" method="GET" style="height: 100vh; display: flex; justify-content: center; align-items: center; background: white;">
     <div style="text-align: center;">
         
-        <div style="color: #1E1E1E; font-size: 64px; font-family: Poppins; font-weight: 600; margin-bottom: 20px;">
+        <div class="forgotYourPass">
             Forgot password
         </div>
         
-        <div style="color: #989898; font-size: 40px; font-family: Inter; font-weight: 600; margin-bottom: 40px;">
+        <div class="enterEmail">
             Please enter your email to reset the password
         </div>    
         

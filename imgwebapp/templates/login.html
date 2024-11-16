@@ -21,10 +21,9 @@
         </div>
 
         <!-- Login Form Container -->
-        <div style="padding: 40px 133px 112px 134px; background: white; border-radius: 24px; overflow: hidden; flex-direction: column; justify-content: flex-start; align-items: center; display: flex;">
-            <div style="flex-direction: column; justify-content: center; align-items: center; gap: 40px; display: inline-flex">
+        <div class="formContainer">
                 <div style="flex-direction: column; justify-content: center; align-items: center; gap: 24px; display: flex">
-                    <div class="allFont" style="text-align: center; color: #333333; font-size: 32px;"">Log in</div>
+                    <span class="allFont" style="text-align: center; color: #333333; font-size: 32px;">Log in</span>
                     <div style="justify-content: flex-start; align-items: flex-start; gap: 10px; display: inline-flex">
                         <span class="allFont" style="color:#333333">Don’t have an account?</span>
                         <span class="allFont" style="color: #111111; text-decoration: underline;">Sign up</span>
@@ -48,7 +47,7 @@
                         </div>
 
                         <!-- Forgot Password -->
-                        <div style="width: 100%; text-align: right;">
+                        <div style="width: 100%; text-align: right; padding-bottom: 15px;">
                             <a href="{{ url_for('auth.forgotPass') }}" class="allFont" style="color: #111111; text-decoration: underline;">Forgot password?</a>
                         </div>
                     </div>
@@ -58,7 +57,6 @@
                         Log in
                     </button>
                 </form>
-            </div>
         </div>
     </div>
     

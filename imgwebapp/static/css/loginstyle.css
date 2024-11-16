@@ -40,31 +40,3 @@
     font-weight: 400;
     word-wrap: break-word
 }
-
-input[type="email"],
-input[type="password"] {
-    width: 528px; 
-    height: 56px; 
-    padding: 12px; 
-    border-radius: 12px; 
-    border: 1px solid rgba(102, 102, 102, 0.35); 
-    font-size: 16px;
-    font-family: Poppins;
-    border: 1px solid rgba(102, 102, 102, 0.35);
-    border-radius: 12px;
-    box-sizing: border-box;
-    outline: none;
-}
-
-input[type="email"]:focus,
-input[type="password"]:focus {
-    border-color: #111111;
-}
-
-.input-box{
-    flex-direction: column; 
-    justify-content: flex-start;
-    align-items: flex-start; 
-    gap: 4px; 
-    display: flex
-}

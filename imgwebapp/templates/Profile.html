@@ -4,11 +4,12 @@
 
 {% block header %}
 <link rel="stylesheet" href="{{ url_for('static',filename='css/profile.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
 <script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
 {% endblock %}
 
 {% block content %}
-<body>
+<body style="background-color: aquamarine;">
     <div class="profile-container">
         <img src="https://via.placeholder.com/100" alt="Profile Picture" class="profile-picture">
         
@@ -21,8 +22,8 @@
         </div>
 
         <div class="buttons">
-            <a href="{{ url_for('auth.index') }}" class="edit-btn">Edit Profile</a>
-            <a href="{{ url_for('auth.index') }}"class="password-btn">Change Password</a>
+            <a href="{{ url_for('auth.editprofile') }}" class="edit-btn">Edit Profile</a>
+            <a href="{{ url_for('auth.changePass') }}"class="password-btn">Change Password</a>
         </div>
     </div>
 
