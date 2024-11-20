@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Learning Page{% endblock %}
+<!-- kalo bisa title block nya itu nama Chapter Coursenya, kayak nama OWASP Top 10 nya -->
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/learning.css') }}">
+<!-- <script src="{{ url_for('static', filename='js/index.js') }}" defer></script> -->
+{% endblock %}
+
+{% block content %}
+{% include "navbar.html" ignore missing %}
+
+<h1>ini learning page</h1>
+{% endblock %}
