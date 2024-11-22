@@ -1,20 +1,27 @@
-<link rel="stylesheet" href="{{ url_for('static',filename='css/learning.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/navbar.css') }}">
 
-<nav>
-    <div class="logo-wrapper">
-        <img src="{{ url_for('static',filename='assets/LogoCodeGuard.png') }}" alt="">
-    </div>
-    <div class="nav-wrapper-left">
-        <ul>
-            <li class="nav-list"><a href="">Home</a></li>
-            <li class="nav-list"><a href="">Features</a></li>
-            <li class="nav-list"><a href="">Courses</a></li>
-            <li class="nav-list"><a href="">Contact Us</a></li>
-        </ul>
-    </div>
-    <div class="nav-wrapper-right">
-            <li class="navlist"><a href="{{url_for('auth.login')}}">Login</a></li>
-            <li class="navlist"><a href="{{url_for('auth.register')}}">Sign Up</a></li>
+<!-- NAVBAR -->
+<nav id="navbar" class="navbar navbar-expand-lg">
+    <div class="container-fluid navbar-wrapper">
+        <a class="navbar-brand" href="{{ url_for('course.learning') }}">
+            <img src="{{ url_for('static',filename='assets/LogoCodeGuard.png') }}" alt="">
+        </a>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav d-flex flex-row">
+                <li class="nav-item">
+                    <a class="nav-link" href="">Catalogue</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="">Profile</a>
+                </li>
+            </ul>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <div class="navbar-nav d-flex flex-row ms-auto">
+                <li class="sign-up nav-item">
+                    <a class="nav-link" href="">Log Out</a>
+                </li>
+            </div>
+        </div>
     </div>
 </nav>
-<!-- ini nanti untuk ketika sudah login -->
