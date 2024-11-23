@@ -42,6 +42,10 @@ def settings():
 def forgotPass():
     return render_template('ForgotPass.html')
 
+@bp.route('/testcodeMirror')
+def testcodeMirror():
+    return render_template('testcodeMirror.html')
+
 @bp.route('/changePass', methods=('GET', 'POST'))
 def changePass():
     if request.method == "GET":
