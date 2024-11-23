@@ -8,9 +8,9 @@ bcrypt = Bcrypt()
 bp = Blueprint('auth', __name__)
 
 @bp.route('/')
-def loginnew():
+def index():
     if g.user is None:
-        return render_template('login.html')
+        return render_template('index.html')
     else:
         return redirect(url_for('gallery'))
 
@@ -135,7 +135,7 @@ def login():
 
         flash(error)
 
-    return redirect(url_for('index'))
+    return render_template('login.html')
 
 @bp.before_app_request
 def load_logged_in_user():
