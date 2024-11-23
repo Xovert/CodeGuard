@@ -29,6 +29,7 @@ body {
     margin: 15px 0;
     text-align: left;
 }
+
 .profile-details p {
     margin: 5px 0;
     color: #333;
@@ -75,4 +76,35 @@ body {
 
 .buttons button:hover {
     opacity: 0.9;
+}
+
+.input-picture{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-picture {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid #ccc; /* Optional: styling for the image */
+    border-color: black;
+    transition: border-color 0.3s;
+}
+
+.profile-picture:hover {
+    border-color: #007BFF;
+}
+
+.change-password-section{
+    padding-top: 20px;
+    text-align: left;
+    margin-left: 0;
+    border-top: 2px solid black;
+}
+
+form{
+    padding-bottom: 20px;
 }
