@@ -1,0 +1,16 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+
+
+<footer>
+    <div class="nav-footer">
+        <ul class="d-flex flex-row justify-content-center">
+            <li><a href="">Home</a></li>
+            <li><a href="">Terms and Condition</a></li>
+            <li><a href="">Privacy Policy</a></li>
+            <li><a href="{{ url_for('auth.index') }}#contact-us">Contact Us</a></li>
+        </ul>
+    </div>
+    <div class="rights d-flex">
+        <span class="mx-auto">&copy; 2024 All Rights Reserved</span>
+    </div>
+</footer>
