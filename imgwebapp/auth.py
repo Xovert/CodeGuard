@@ -8,12 +8,68 @@ bcrypt = Bcrypt()
 bp = Blueprint('auth', __name__)
 
 @bp.route('/')
-def index():
+def loginnew():
     if g.user is None:
-        return render_template('index.html')
+        return render_template('login.html')
     else:
         return redirect(url_for('gallery'))
 
+@bp.route('/admin')
+def admin():
+    return render_template('admin.html')
+
+@bp.route('/profile')
+def profile():
+    return render_template('profile.html')
+
+@bp.route('/editprofile')
+def editprofile():
+    return render_template('editprofile.html')
+
+@bp.route('/saveProfile')
+def saveProfile():
+    return redirect(url_for('profile'))
+
+@bp.route('/courseSetting')
+def courseSetting():
+    return render_template('courseSetting.html')
+
+@bp.route('/settings')
+def settings():
+    return render_template('settings.html')
+
+@bp.route('/forgotPass')
+def forgotPass():
+    return render_template('ForgotPass.html')
+
+@bp.route('/testcodeMirror')
+def testcodeMirror():
+    return render_template('testcodeMirror.html')
+
+@bp.route('/changePass', methods=('GET', 'POST'))
+def changePass():
+    if request.method == "GET":
+        return render_template('changePass.html')
+
+    # else:
+    #     oldpassword = request.form[]
+    #     password = request.form[]
+    #     rpt_password = request.form[]
+        
+    #     if oldpassword
+        
+    #     elif password != rpt_password:
+    #         error = 'Password is not the same'
+        
+
+@bp.route('/cancelPass')
+def cancelPass():
+    # if cancel tapi changepass dari forgot password
+    if g.user is None:
+        return render_template('login.html')
+    # elif cancel tapi changepass dari edit profile
+    else:
+        return render_template('profile.html')
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
@@ -100,7 +156,7 @@ def after_request(response):
 @bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 def login_required(view):
     @functools.wraps(view)
