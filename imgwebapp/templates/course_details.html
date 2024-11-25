@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Course Details{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/course_details.css') }}">
+{% endblock %}
+
+{% block content %}
+{% include "navbar.html" ignore missing %}
+
+<!-- CONTENT -->
+<div id="content">
+    <div class="background"></div>
+    <div class="wrapper-outside">
+        <div class="wrapper-inside d-flex flex-row">
+            <div class="course-img">
+                <img src="{{ url_for('static', filename='assets/php-logo.svg') }}" alt="">
+                <!-- course image does not look quite right yet, please fix this -->
+            </div>
+            <div class="course-details">
+                <h1 class="course-title">PHP Secure Coding</h1>
+                <p class="course-desc">PHP is a powerful and widely-used server-side scripting language, but its popularity makes it a common target for security threats. This course, based on the OWASP Top 10 2021, focuses on secure coding practices in PHP, teaching you how to prevent vulnerabilities like SQL injection, XSS, and CSRF, and many others.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include "footer.html" ignore missing %}
+{% endblock %}

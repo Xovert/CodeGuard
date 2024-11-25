@@ -14,3 +14,8 @@ def catalogue():
 def learning():
     #login required
     return render_template('learning.html')
+
+@bp.route('/course_details')
+def course_details():
+    #login required
+    return render_template('course_details.html')
