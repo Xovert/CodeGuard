@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Course Catalogue{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/user_catalogue.css') }}">
+<!-- <script src="{{ url_for('static', filename='js/index.js') }}" defer></script> -->
+{% endblock %}
+
+{% block content %}
+
+<!-- NAVBAR -->
+{% include "navbar.html" ignore missing %}
+
+<!-- CONTENT -->
+<div id="content">
+    <div class="background"></div>
+</div>
+
+{% include "footer.html" ignore missing %}
+{% endblock %}

@@ -49,5 +49,6 @@ def create_app(test_config=None, instance_path=None):
     from . import course
     app.register_blueprint(course.bp)
     app.add_url_rule('/learning', endpoint='learning')
+    app.add_url_rule('/catalogue', endpoint='catalogue')
     
     return app

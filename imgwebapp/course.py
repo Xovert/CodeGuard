@@ -9,3 +9,8 @@ bp = Blueprint('course', __name__)
 def learning():
     #login required
     return render_template('learning.html')
+
+@bp.route('/catalogue')
+def catalogue():
+    #login required
+    return render_template('user_catalogue.html')
