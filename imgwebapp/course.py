@@ -5,12 +5,12 @@ from imgwebapp.db import get_db
 
 bp = Blueprint('course', __name__)
 
-@bp.route('/learning') # temporary only, nnti diganti
-def learning():
-    #login required
-    return render_template('learning.html')
-
 @bp.route('/catalogue')
 def catalogue():
     #login required
     return render_template('user_catalogue.html')
+
+@bp.route('/learning') # temporary only, nnti diganti
+def learning():
+    #login required
+    return render_template('learning.html')

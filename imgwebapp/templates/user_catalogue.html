@@ -14,7 +14,66 @@
 
 <!-- CONTENT -->
 <div id="content">
+
+    <!-- TITLE -->
     <div class="background"></div>
+    <div class="title-decor">
+        <h1>Welcome, <span>USER</span> !</h1>
+    </div>
+
+    <!-- COURSES -->
+    <div class="wrapper-outside">
+        <div class="wrapper-inside">
+            <div class="recent-courses">
+                <div class="title">
+                    <h1>Recent Courses</h1>
+                </div>
+                <div class="course-wrapper d-flex justify-content-center flex-wrap">
+                    <a class="course" href="#">
+                        <div class="course-img d-flex justify-content-center align-items-center">
+                            <img src="{{ url_for('static', filename='assets/php-logo.svg') }}" alt="">
+                        </div>
+                        <div class="course-name">
+                            <p>PHP</p>
+                        </div>
+                    </a>
+                    <a class="course" href="#">
+                        <div class="course-img d-flex justify-content-center align-items-center">
+                            <img src="{{ url_for('static', filename='assets/php-logo.svg') }}" alt="">
+                        </div>
+                        <div class="course-name">
+                            <p>PHP</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="course-catalogue">
+                <div class="title catalogue-title">
+                    <h1>Course Catalogue</h1>
+                </div>
+                <div class="course-wrapper d-flex justify-content-center flex-wrap">
+                    <a class="course" href="#">
+                        <div class="course-img d-flex justify-content-center align-items-center">
+                            <img src="{{ url_for('static', filename='assets/php-logo.svg') }}" alt="">
+                        </div>
+                        <div class="course-name">
+                            <p>PHP</p>
+                        </div>
+                    </a>
+                    <a class="course" href="#">
+                        <div class="course-img d-flex justify-content-center align-items-center">
+                            <img src="{{ url_for('static', filename='assets/php-logo.svg') }}" alt="">
+                        </div>
+                        <div class="course-name">
+                            <p>PHP</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
 </div>
 
 {% include "footer.html" ignore missing %}
