@@ -73,7 +73,10 @@ def cancelPass():
 
 @bp.route('/register', methods=('GET', 'POST'))
 def register():
-    if request.method == 'POST':
+    if request.method == 'GET':
+        return render_template('register.html')
+    
+    elif request.method == 'POST':
         username = request.form['reg-username']
         password = request.form['reg-password']
         rpt_password = request.form['rpt-password']
@@ -132,7 +135,7 @@ def login():
 
         flash(error)
 
-    return redirect(url_for('index'))
+    return render_template('login.html')
 
 @bp.before_app_request
 def load_logged_in_user():

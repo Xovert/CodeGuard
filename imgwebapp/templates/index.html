@@ -3,84 +3,136 @@
 {% block title %}Main Page{% endblock %}
 
 {% block header %}
-    <link rel="stylesheet" href="{{ url_for('static',filename='css/login.css') }}">
-    <script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
+<link rel="stylesheet" href="{{ url_for('static',filename='css/index.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/navbar.css') }}">
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+<script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
 {% endblock %}
 
 {% block content %}
-<div class="background-overlay">
-    <div class="c-login rounded bg-body-secondary p-4" f>
-         <ul class="nav nav-pills nav-tabs nav-justified mb-3" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="tab-login" data-bs-toggle="tab" data-bs-target="#pills-login" role="tab" aria-controls="pills-login" aria-selected="true">Login</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="tab-register" data-bs-toggle="tab" data-bs-target="#pills-register" type="button" role="tab" aria-controls="pills-register" aria-selected="false">Register</button>
-            </li>
-        </ul>
-        <div class="tab-content" id="tabsLmao">
-            <div class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="tab-login" tabindex="0">
-                <form action="{{ url_for('auth.login') }}" method="POST">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <!-- Username input -->
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="loginName">Username</label>
-                        <input type="text" id="loginName" class="form-control" name="username" placeholder="Your username here..." required/>
-                    </div>
-
-                    <!-- Password input -->
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="loginPassword">Password</label>
-                        <input type="password" id="loginPassword" class="form-control" name="password" placeholder="Your password here..." required/>
-                    </div>
-
-                    <!-- Submit button -->
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
-                    </div>
-
-                    <div class="text-center">
-                        <p>
-                            <a href="{{ url_for('auth.loginnew') }}">Go to login</a>
-                        </p>
-                    </div>
-
-                    <!-- Register buttons -->
-                    <div class="text-center">
-                        <p>
-                            Not a member? <a href="#" id="change-tab" data-target="#pills-register" tab-target="#tab-register" >Register</a>
-                        </p>
-                    </div>
-                </form>
-            </div>
-            <div class="tab-pane fade" id="pills-register" role="tabpanel" aria-labelledby="tab-register" tabindex="0">
-                <form action="{{ url_for('auth.register') }}" method="POST">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                    <!-- Username input -->
-                    <div class="form-outline mb-4 mt-3">
-                        <label class="form-label" for="registerUsername">Username</label>
-                        <input type="text" id="registerUsername" class="form-control" name="reg-username" placeholder="Your username here..." required/>
-                    </div>
-
-                    <!-- Password input -->
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="registerPassword">Password</label>
-                        <input type="password" id="registerPassword" class="form-control" name="reg-password" placeholder="Your password here..." required/>
-                    </div>
-
-                    <!-- Repeat Password input -->
-                    <div class="form-outline mb-4">
-                        <label class="form-label" for="registerRepeatPassword">Repeat password</label>
-                        <input type="password" id="registerRepeatPassword" class="form-control" name="rpt-password" placeholder="Match the password" required/>
-                    </div>
-
-                    <!-- Submit button -->
-                    <div class="text-center">
-                        <button type="submit" class="btn btn-primary btn-block mb-3">Register</button>
-                    </div>
-                </form>
+<!-- NAVBAR -->
+<nav id="navbar" class="navbar navbar-expand-lg">
+    <div class="container-fluid navbar-wrapper">
+        <a class="navbar-brand" href="{{ url_for('auth.index') }}">
+            <img src="{{ url_for('static',filename='assets/LogoCodeGuard.png') }}" alt="">
+        </a>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <ul class="navbar-nav d-flex flex-row">
+                <li class="nav-item">
+                    <a class="nav-link" href="#home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#features">Features</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#courses">Courses</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#contact-us">Contact Us</a>
+                </li>
+            </ul>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+            <div class="navbar-nav d-flex flex-row ms-auto">
+                <li class="nav-item login">
+                    <a class="nav-link" href="{{ url_for('auth.login') }}">Log In</a>
+                </li>
+                <li class="sign-up nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.register') }}">Sign Up</a>
+                </li>
             </div>
         </div>
     </div>
-</div>
+</nav>
+
+<!-- HOME -->
+<section id="home">
+    <div class="home-wrapper d-flex container-fluid">
+        <div class="left col-md-8 my-auto">
+            <h1 class="home-title">Learn Secure Coding <span>the Right Way</span> with <img
+                    src="{{ url_for('static',filename='assets/CodeGuard.svg') }}" alt=""></h1>
+            <p>Learn to code securely and protect your work from threats. CodeGuard teaches you the skills to prevent
+                attacks, secure your applications, and advance your career with confidence.</p>
+            <a href="{{ url_for('auth.register') }}">Try Now</a>
+        </div>
+        <div class="right home-img ms-auto mt-auto">
+            <img src="{{ url_for('static',filename='assets/home-img.svg') }}" alt="">
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+    <div class="features-wrapper container-fluid">
+        <h1>Invest in your secure coding carreer</h1>
+        <div class="d-flex justify-content-center flex-wrap features-content-wrapper">
+            <div class="features-content d-flex flex-column">
+                <img src="{{ url_for('static',filename='assets/Learning.svg') }}" alt="">
+                <h3>Learn by Practicing</h3>
+                <p>Dive into hands-on coding exercises that reinforce secure coding principles</p>
+            </div>
+            <div class="features-content d-flex flex-column">
+                <img src="{{ url_for('static',filename='assets/Courses.svg') }}" alt="">
+                <h3>Free Courses</h3>
+                <p>Access a wide range of secure coding courses at no cost</p>
+            </div>
+            <div class="features-content d-flex flex-column">
+                <img src="{{ url_for('static',filename='assets/Scenarios.svg') }}" alt="">
+                <h3>Real-World Scenarios</h3>
+                <p>Learn how to protect your code in realistic situations for a successful career</p>
+            </div>
+            <div class="features-content d-flex flex-column">
+                <img src="{{ url_for('static',filename='assets/Challenges.svg') }}" alt="">
+                <h3>Interactive Challenges</h3>
+                <p>Put your skills to the test with quizzes and challenges designed to solidify your knowledge</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- COURSES -->
+<section id="courses">
+    <div class="courses-wrapper container-fluid">
+        <h1>Popular Courses</h1>
+        <div class="d-flex justify-content-center flex-wrap courses-content-wrapper">
+            <div class="course-content">
+                <img src="{{ url_for('static',filename='assets/php-logo.svg') }}" alt="">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CONTACT US -->
+<section id="contact-us">
+    <div class="contact-us-wrapper container-fluid d-flex flex-row">
+        <div class="contact-us-left col-md-6 my-auto">
+            <h1>Contact Us!</h1>
+            <p>We’d love to hear from you! Whether you have a question about our courses, need assistance, or want to
+                provide feedback, our team is here to help. Your thoughts and questions are important to us as we strive
+                to make your experience with us even better.</p>
+            <div class="email-logo d-flex">
+                <img src="{{ url_for('static',filename='assets/Email.svg') }}" alt="">
+                <span class="my-auto">codeguard@gmail.com</span>
+            </div>
+        </div>
+        <div class="contact-us-right col-md-6 d-flex">
+            <img src="{{ url_for('static',filename='assets/contactUs.svg') }}" alt="">
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <div class="nav-footer">
+        <ul class="d-flex flex-row justify-content-center">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#courses">Courses</a></li>
+            <li><a href="#contact-us">Contact Us</a></li>
+        </ul>
+    </div>
+    <div class="rights d-flex">
+        <span class="mx-auto">&copy; 2024 All Rights Reserved</span>
+    </div>
+</footer>
 {% endblock %}
