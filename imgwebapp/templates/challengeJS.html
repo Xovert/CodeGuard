@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Challenge{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/content.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/learning.css') }}">
+<script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/codeMirror6.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+<!-- NAVBAR -->
+{% include "navbar.html" ignore missing %}
+
+<!-- CONTENT -->
+
+<div id="wrapper">
+
+    <section class="top">
+        <a href="#" class="back d-flex align-items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M7.825 13L13.425 18.6L12 20L4 12L12 4L13.425 5.4L7.825 11H20V13H7.825Z" fill="#AEAEAE" />
+            </svg>
+            <span>Back</span>
+        </a>
+        <div class="progress-wrapper d-flex justify-content-center align-items-center">
+            <span>Progress</span>
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTENT -->
+<div class="content-wrapper d-flex align-items-center flex-column">
+    <h1>Question 1</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi cursus orci quis interdum cursus.</p>
+    <!-- codeMirror -->
+    <div id="editor">
+        <span id="php">PHP</span>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/codeMirror6.js') }}"></script>
+    <script>
+        // Create an initial state for the view
+        const initialState = cm6.createEditorState("function myMessage() {\n\n} myMessage();");
+        const view = cm6.createEditorView(initialState, document.getElementById("editor"));
+
+        // Programmatically change editor contents
+        console.log("Before:\n", view.state.doc.toString())
+        view.dispatch({ changes: { from: 0, insert: "// Try out your first program !\n" } })
+        console.log("After:\n", view.state.doc.toString())
+    </script>
+
+<!-- buttons -->
+    <div class="buttons">
+        <button>Previous</button>
+        <button>Next</button>
+    </div>
+</div>
+</div>
+
+<!-- FOOTER -->
+{% include "footer.html" ignore missing %}
+{% endblock %}

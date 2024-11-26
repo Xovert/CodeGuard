@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Challenge{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/content.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/learning.css') }}">
+<script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
+  <!-- CodeMirror Core CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/codemirror.min.css">
+  <!-- Material Theme CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/theme/material.min.css">
+  <!-- CodeMirror Core JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/codemirror.min.js"></script>
+  <!-- PHP Mode -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/mode/php/php.min.js"></script>
+  <!-- Additional Modes : htmlmixed, xml, js, and css-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/mode/htmlmixed/htmlmixed.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/mode/clike/clike.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- NAVBAR -->
+{% include "navbar.html" ignore missing %}
+
+<!-- CONTENT -->
+
+<div id="wrapper">
+
+    <section class="top">
+        <a href="#" class="back d-flex align-items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M7.825 13L13.425 18.6L12 20L4 12L12 4L13.425 5.4L7.825 11H20V13H7.825Z" fill="#AEAEAE" />
+            </svg>
+            <span>Back</span>
+        </a>
+        <div class="progress-wrapper d-flex justify-content-center align-items-center">
+            <span>Progress</span>
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTENT -->
+<div class="content-wrapper d-flex align-items-center flex-column">
+    <h1>Question 1</h1>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi cursus orci quis interdum cursus.</p>
+    <!-- codeMirror -->
+
+    <div class="editor-container">
+        <span id="php">PHP</span>
+        <textarea id="editor" class="editor-container">
+        </textarea>
+    </div>
+    <input id="run" type="image" src="{{ url_for('static', filename='assets/run-logo.png')}}" alt="Submit">
+
+
+    <script>
+          CodeMirror.fromTextArea(document.getElementById("editor"), {
+              lineNumbers: true,            // Display line numbers
+              mode: "application/x-httpd-php", // PHP Mode
+              theme: "material",            // Material Theme
+            });
+      </script>
+
+<!-- buttons -->
+    <div class="buttons">
+        <button>Previous</button>
+        <button>Next</button>
+    </div>
+</div>
+</div>
+
+<!-- FOOTER -->
+{% include "footer.html" ignore missing %}
+{% endblock %}

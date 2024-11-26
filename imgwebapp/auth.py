@@ -18,9 +18,25 @@ def loginnew():
 def admin():
     return render_template('admin.html')
 
+@bp.route('/challengePHP')
+def challengePHP():
+    return render_template('challengePHP.html')
+
+@bp.route('/challengeJS')
+def challengeJS():
+    return render_template('challengeJS.html')
+
+@bp.route('/index')
+def index():
+    return render_template('index.html')
+
 @bp.route('/profile')
 def profile():
     return render_template('profile.html')
+
+@bp.route('/testphp')
+def testphp():
+    return render_template('testphp.html')
 
 @bp.route('/editprofile')
 def editprofile():
