@@ -30,8 +30,8 @@
 .course-img{
     width: 277px;
     height: 150px;
-    float: left;
     margin-right: 32px;
+    flex-shrink: 0;
 }
 
 .course-img img{

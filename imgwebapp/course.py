@@ -10,12 +10,16 @@ def catalogue():
     #login required
     return render_template('user_catalogue.html')
 
+@bp.route('/course_details')
+def course_details():
+    #login required
+    return render_template('course_details.html')
+
 @bp.route('/learning') # temporary only, nnti diganti
 def learning():
     #login required
     return render_template('learning.html')
 
-@bp.route('/course_details')
-def course_details():
-    #login required
-    return render_template('course_details.html')
+@bp.route('/challenge_option')
+def challenge_option():
+    return render_template('challenge_option.html')
