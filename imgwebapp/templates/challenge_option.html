@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
-{% block title %}Learning Page{% endblock %}
+{% block title %}Challenge Option{% endblock %}
 <!-- kalo bisa title block nya itu nama Chapter Coursenya, kayak nama OWASP Top 10 nya -->
 
 {% block header %}
-<link rel="stylesheet" href="{{ url_for('static',filename='css/learning.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/challenge_option.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -31,13 +31,30 @@
     </section>
 
     <!-- CONTENT -->
-    <section class="content-wrapper d-flex align-items-center flex-column">
-        <img src="{{ url_for('static', filename='assets/web-security.svg') }}" alt="">
-        <p>Broken Access Control occurs when users can access data or perform actions beyond their permissions due to
-            weak access controls. It’s a critical OWASP Top 10 vulnerability that can expose sensitive data or allow
-            unauthorized actions. Implementing strong policies and secure coding practices is essential to prevent it.
+    <section class="content-wrapper d-flex flex-column">
+        <p>Question 1
+            <br><br>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi cursus orci quis interdum cursus.
         </p>
-        <button>Next</button>
+        <div class="code-playground">
+            <p>
+                $var = “PHP_is_kewl”<br>
+                echo $var
+            </p>
+            <span class="language-span">PHP</span>
+            <button class="reset-code d-flex align-items-center">
+                <img src="{{ url_for('static', filename='assets/reload.svg') }}" alt="">
+                <span>Reset Code</span>
+            </button>
+            <button class="run-code d-flex align-items-center">
+                <span>RUN</span>
+                <img src="{{ url_for('static', filename='assets/run.svg') }}" alt="">
+            </button>
+        </div>
+        <div class="btn-wrapper">
+            <button class="button btn-previous">Previous</button>
+            <button class="button btn-next active">Next</button>
+        </div>
     </section>
 </div>
 {% include "footer.html" ignore missing %}
