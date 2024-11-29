@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}Exam Page{% endblock %}
+<!-- kalo bisa title block nya itu nama Chapter Coursenya, kayak nama OWASP Top 10 nya -->
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/challenge_exam.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<!-- NAVBAR -->
+{% include "navbar.html" ignore missing %}
+
+<div id="wrapper">
+    <!-- top content -->
+    <section class="top">
+        <a href="#" class="back d-flex align-items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M7.825 13L13.425 18.6L12 20L4 12L12 4L13.425 5.4L7.825 11H20V13H7.825Z" fill="#AEAEAE" />
+            </svg>
+            <span>Back</span>
+        </a>
+
+        <div class="progress-wrapper d-flex justify-content-center align-items-center">
+            <span>Progress</span>
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+
+        <div class="timer d-flex align-items-center">
+            <img src="{{ url_for('static', filename='assets/timer.svg') }}" alt="">
+            <span>01:03:20</span>
+        </div>
+    </section>
+
+    <!-- CONTENT -->
+    <section class="content-wrapper d-flex flex-column">
+        <p>Examine the code below and improve it by applying best practices to strengthen its security and mitigate
+            potential vulnerabilities.
+        </p>
+        <div class="code-playground">
+            <p>
+                &lt;?php
+                
+                $conn = mysqli_connect('localhost', 'root', '', 'insecure_database');
+                if (!$conn) {
+                die("Database connection failed: " . mysqli_connect_error());
+                }
+
+                session_start();
+
+                function displayForm($action, $buttonLabel, $extraFields = '')
+                {
+                echo "
+                &lt;form method='POST' action='$action'&gt;
+                &lt;label&gt;Username:&lt;/label&gt;&lt;br&gt;
+                &lt;input type='text' name='username'&gt;&lt;br&gt;
+                &lt;label&gt;Password:&lt;/label&gt;&lt;br&gt;
+                &lt;input type='password' name='password'&gt;&lt;br&gt;
+                $extraFields
+                &lt;button type='submit'&gt;$buttonLabel&lt;/button&gt;
+                &lt;/form&gt;
+                ";
+                }
+
+                if (isset($_POST['register'])) {
+                $username = $_POST['username'];
+                $password = $_POST['password'];
+                $sql = "INSERT INTO users (username, password) VALUES ('$username', '$password')";
+                if (mysqli_query($conn, $sql)) {
+                echo "Registration successful! &lt;a href='?login'&gt;Login here&lt;/a&gt;";
+                } else {
+                echo "Error: " . mysqli_error($conn);
+                }
+                }
+
+                if (isset($_POST['login'])) {
+                $username = $_POST['username'];
+                $password = $_POST['password'];
+                $sql = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
+                $result = mysqli_query($conn, $sql);
+                if (mysqli_num_rows($result) > 0) {
+                $_SESSION['user'] = $username;
+                echo "Welcome, $username! &lt;a href='?dashboard'&gt;Go to Dashboard&lt;/a&gt;";
+                } else {
+                echo "Invalid username or password.";
+                }
+                }
+
+                if (isset($_GET['dashboard']) && isset($_SESSION['user'])) {
+                echo "&lt;h1&gt;Welcome to your Dashboard, " . $_SESSION['user'] . "!&lt;/h1&gt;";
+                echo "&lt;a href='?logout'&gt;Logout&lt;/a&gt;";
+                } elseif (isset($_GET['dashboard'])) {
+                echo "Please log in first. &lt;a href='?login'&gt;Login&lt;/a&gt;";
+                }
+
+                if (isset($_GET['logout'])) {
+                session_unset();
+                session_destroy();
+                echo "Logged out successfully. &lt;a href='?login'&gt;Login again&lt;/a&gt;";
+                }
+
+                if (!isset($_SESSION['user'])) {
+                if (isset($_GET['register'])) {
+                echo "&lt;h1&gt;Register&lt;/h1&gt;";
+                displayForm("?register", "Register");
+                } elseif (isset($_GET['login'])) {
+                echo "&lt;h1&gt;Login&lt;/h1&gt;";
+                displayForm("?login", "Login");
+                } else {
+                echo "&lt;h1&gt;Welcome&lt;/h1&gt;";
+                echo "&lt;a href='?register'&gt;Register&lt;/a&gt; | &lt;a href='?login'&gt;Login&lt;/a&gt;";
+                }
+                }
+                ?&gt;
+            </p>
+            <span class="language-span">PHP</span>
+            <button class="reset-code d-flex align-items-center">
+                <img src="{{ url_for('static', filename='assets/reload.svg') }}" alt="">
+                <span>Reset Code</span>
+            </button>
+            <button class="run-code d-flex align-items-center">
+                <span>RUN</span>
+                <img src="{{ url_for('static', filename='assets/run.svg') }}" alt="">
+            </button>
+        </div>
+        <div class="btn-wrapper">
+            <button class="button btn-next active">Next</button>
+        </div>
+    </section>
+</div>
+{% include "footer.html" ignore missing %}
+{% endblock %}

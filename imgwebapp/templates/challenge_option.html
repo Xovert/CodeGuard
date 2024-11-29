@@ -4,7 +4,7 @@
 <!-- kalo bisa title block nya itu nama Chapter Coursenya, kayak nama OWASP Top 10 nya -->
 
 {% block header %}
-<link rel="stylesheet" href="{{ url_for('static',filename='css/challenge_option.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/challenge_exam.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -51,9 +51,20 @@
                 <img src="{{ url_for('static', filename='assets/run.svg') }}" alt="">
             </button>
         </div>
+        <div class="radio-button">
+            <input type="radio" name="answer" id="opt1" value="Option 1">
+            <label for="">Option 1</label><br>
+
+            <input type="radio" name="answer" id="opt2" value="Option 2">
+            <label for="">Option 2</label><br>
+
+            <input type="radio" name="answer" id="opt3" value="Option 3">
+            <label for="">Option 3</label><br>
+        </div>
         <div class="btn-wrapper">
             <button class="button btn-previous">Previous</button>
-            <button class="button btn-next active">Next</button>
+            <button class="button btn-next">Next</button>
+            <!-- kalo udah pilih jawabannya, baru jadi active (green) warnanya. add the active class pls -->
         </div>
     </section>
 </div>

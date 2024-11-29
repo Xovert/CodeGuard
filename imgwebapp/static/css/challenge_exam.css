@@ -29,7 +29,7 @@
 }
 
 .progress-wrapper{
-    z-index: 1;
+    z-index: 2;
     position: relative;
 }
 
@@ -42,7 +42,7 @@
 }
 
 .progress-bar-container{
-    width: 70%;
+    width: 65%;
     height: 8px;
     border-radius: 5px;
     background-color: var(--gray);
@@ -53,6 +53,21 @@
     height: 8px;
     border-radius: 5px;
     background-color: var(--green);
+}
+
+.timer{
+    position: absolute;
+    z-index: 1;
+    right: 48px;
+    top: 20px;
+    column-gap: 4px;
+}
+
+.timer span{
+    color: var(--red);
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 400;
 }
 
 /* CONTENT */
@@ -71,7 +86,7 @@
 /* CODE PLAYGROUND */
 .code-playground{
     background-color: var(--dark-blue);
-    padding: 12px 12px 64px 12px;
+    padding: 40px 12px 64px 12px;
     border-radius: 5px;
     margin-top: 32px;
     position: relative;
@@ -119,6 +134,22 @@
 
 .run-code img{
     margin-left: 8px;
+}
+
+/* RADIO */
+.radio-button label{
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 400;
+    margin-left: 8px;
+}
+
+.radio-button input{
+    margin-top: 8px;
+}
+
+.radio-button input:first-child{
+    margin-top: 32px;
 }
 
 /* BUTTON */

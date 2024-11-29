@@ -23,3 +23,7 @@ def learning():
 @bp.route('/challenge_option')
 def challenge_option():
     return render_template('challenge_option.html')
+
+@bp.route('/exam')
+def exam():
+    return render_template('exam.html')
