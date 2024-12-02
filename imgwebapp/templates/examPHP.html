@@ -1,14 +1,11 @@
 {% extends 'base.html' %}
 
-{% block title %}Challenge{% endblock %}
+{% block title %}Exam{% endblock %}
 
 {% block header %}
 <link rel="stylesheet" href="{{ url_for('static',filename='css/content.css') }}">
 <link rel="stylesheet" href="{{ url_for('static',filename='css/learning.css') }}">
-<!-- <link rel="stylesheet" href="{{ url_for('static',filename='js/codemirror.css') }}"> -->
 <script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
-<!-- <script src="{{ url_for('static', filename='js/codemirror.js') }}" defer></script> -->
-
   <!-- CodeMirror Core CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.css">
   <!-- Material Theme CSS -->
@@ -31,9 +28,7 @@
 {% include "navbar.html" ignore missing %}
 
 <!-- CONTENT -->
-
 <div id="wrapper">
-
     <section class="top">
         <a href="#" class="back d-flex align-items-center">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -49,19 +44,51 @@
         </div>
     </section>
 
-    <!-- CONTENT -->
+<!-- CONTENT -->
 <div class="content-wrapper d-flex align-items-center flex-column">
-    <h1>Question 1</h1>
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi cursus orci quis interdum cursus.</p>
+    <h1>PHP EXAM !</h1>
+    <p>Good Luck Coder !</p>
     <!-- codeMirror -->
 
-    <div class="editor-container">
+    <div class="exam-editor-container">
 
-        <span id="javascript">JavaScript</span>
-        <textarea id="editor" class="editor-container">function greet(name) {
-return `Hello, ${name}!`;
-}</textarea>
-<input type="reset" class="reset" style="color: yellow;"></input>
+        <span id="php">PHP  </span>
+        <textarea id="editor"><?php
+// Vulnerable PHP database connection and query example
+$servername = "localhost";
+            $username = "root";
+            $password = "";
+            $dbname = "example_db";
+            
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+            
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+            
+// Vulnerable SQL query
+$user_input = $_GET['username']; // Directly using user input from GET parameter
+$sql = "SELECT * FROM users WHERE username = '$user_input'"; // Unsafe query construction
+            
+// Execute the query
+$result = $conn->query($sql);
+            
+if ($result->num_rows > 0) {
+    // Output data of each row
+    while($row = $result->fetch_assoc()) {
+        echo "id: " . $row["id"] . " - Name: " . $row["username"] . "<br>";
+    }
+} else {
+    echo "0 results";
+}
+            
+// Close connection
+$conn->close();
+?>
+</textarea>
+<input type="reset" class="reset"></input>
     </div>
 
     <input id="run" type="image" src="{{ url_for('static', filename='assets/run-logo.png')}}" alt="Submit" onclick="RunFunction()">
@@ -75,24 +102,18 @@ return `Hello, ${name}!`;
         const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
             scrollbarStyle: null,
             lineNumbers: true,
-            mode: "javascript",
+            mode: "application/x-httpd-php",
             theme: "material",
+            viewportMargin: Infinity,
         });
-    
+
         function RunFunction() {
             const code = editor.getValue(); // Get code from CodeMirror
-
-            // gw coba cek apakah value berhasil keambil disini, dan berhasil..
-            alert(code);
-
-            //ini fungsi utama yang ngirim value dari code ke backend...
             fetch('/run-code', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ code: code }),
             })
-            
-            //ini fungsi buat dari back-end ngirim hasil 
             .then(response => response.json())
             .then(data => {
                 // Display the output
@@ -101,13 +122,13 @@ return `Hello, ${name}!`;
             .catch(error => console.error('Error:', error));
         }
 
-        //Fungsi yang ngejalanin Reset Code Button
         const resetButton = document.querySelector('.reset');
         resetButton.addEventListener('click', () => {
         editor.setValue(initialContent); // Restore the initial content
     });
     </script>
     
+
 <!-- buttons -->
     <div class="buttons">
         <button>Previous</button>

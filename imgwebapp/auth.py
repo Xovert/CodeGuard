@@ -22,6 +22,10 @@ def admin():
 def challengePHP():
     return render_template('challengePHP.html')
 
+@bp.route('/examPHP')
+def examPHP():
+    return render_template('examPHP.html')
+
 @bp.route('/challengeJS')
 def challengeJS():
     return render_template('challengeJS.html')
@@ -33,10 +37,6 @@ def index():
 @bp.route('/profile')
 def profile():
     return render_template('profile.html')
-
-@bp.route('/testphp')
-def testphp():
-    return render_template('testphp.html')
 
 @bp.route('/editprofile')
 def editprofile():

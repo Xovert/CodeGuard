@@ -7,19 +7,19 @@
 <link rel="stylesheet" href="{{ url_for('static',filename='css/learning.css') }}">
 <script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
   <!-- CodeMirror Core CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.css">
   <!-- Material Theme CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/theme/material.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/theme/material.min.css">
   <!-- CodeMirror Core JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.js"></script>
   <!-- PHP Mode -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/mode/php/php.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/php/php.min.js"></script>
   <!-- Additional Modes : htmlmixed, xml, js, and css-->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/mode/htmlmixed/htmlmixed.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/mode/xml/xml.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/mode/javascript/javascript.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/mode/css/css.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.16.0/mode/clike/clike.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/htmlmixed/htmlmixed.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/clike/clike.min.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -27,7 +27,6 @@
 {% include "navbar.html" ignore missing %}
 
 <!-- CONTENT -->
-
 <div id="wrapper">
 
     <section class="top">
@@ -52,20 +51,58 @@
     <!-- codeMirror -->
 
     <div class="editor-container">
-        <span id="php">PHP</span>
-        <textarea id="editor" class="editor-container">
-        </textarea>
-    </div>
-    <input id="run" type="image" src="{{ url_for('static', filename='assets/run-logo.png')}}" alt="Submit">
 
+        <span id="php">PHP  </span>
+        <textarea id="editor" class="editor-container"><?php 
+echo("Hello World");
+?></textarea>
+<input type="reset" class="reset"></input>
+    </div>
+
+    <input id="run" type="image" src="{{ url_for('static', filename='assets/run-logo.png')}}" alt="Submit" onclick="RunFunction()">
 
     <script>
-          CodeMirror.fromTextArea(document.getElementById("editor"), {
-              lineNumbers: true,            // Display line numbers
-              mode: "application/x-httpd-php", // PHP Mode
-              theme: "material",            // Material Theme
-            });
-      </script>
+
+        const editorElement = document.getElementById("editor");
+        const initialContent = editorElement.value; // Save the initial content of the editor
+
+        // Initialize CodeMirror
+        const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+            scrollbarStyle: null,
+            lineNumbers: true,
+            mode: "application/x-httpd-php",
+            theme: "material",
+        });
+    
+        function RunFunction() {
+            const code = editor.getValue(); // Get code from CodeMirror
+
+            // gw coba cek apakah value berhasil keambil disini, dan berhasil..
+            alert(code);
+
+            //ini fungsi utama yang ngirim value dari code ke backend...
+            fetch('/run-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code }),
+            })
+
+            //ini fungsi buat dari back-end ngirim hasil output
+            .then(response => response.json())
+            .then(data => {
+                // Display the output
+                alert(data.output); // Or display in a designated output area
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        //Fungsi yang ngejalanin Reset Code Button
+        const resetButton = document.querySelector('.reset');
+        resetButton.addEventListener('click', () => {
+        editor.setValue(initialContent); // Restore the initial content
+    });
+    </script>
+    
 
 <!-- buttons -->
     <div class="buttons">
