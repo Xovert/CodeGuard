@@ -52,7 +52,25 @@
     margin-top: 10px;
 }
 
-.sidebar {
+/* ADMIN */
+.sidebar{
+    width: 280px;
+    background-color: var(--dark-blue);
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    left: 0;
+}
+.logo{
+    width: 180px;
+}
+
+.logo img{
+    width: 100%;
+}
+
+/* im not gonna use u i think */
+/* .sidebar {
     width: 280px;
     background-color: #333;
     color: white;
@@ -92,7 +110,8 @@
     margin-left: 270px;
     padding: 20px;
     width: 100%;
-}
+} */
+/* ADMIN */
 
 .code{
     color: white; 
