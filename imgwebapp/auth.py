@@ -30,14 +30,6 @@ def editprofile():
 def saveProfile():
     return redirect(url_for('profile'))
 
-@bp.route('/courseSetting')
-def courseSetting():
-    return render_template('courseSetting.html')
-
-@bp.route('/settings')
-def settings():
-    return render_template('settings.html')
-
 @bp.route('/forgotPass')
 def forgotPass():
     return render_template('ForgotPass.html')

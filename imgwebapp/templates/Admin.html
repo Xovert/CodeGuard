@@ -3,35 +3,52 @@
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block header %}
-<link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
-<script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
+<link rel="stylesheet" href="{{ url_for('static',filename='css/admin.css') }}">
 {% endblock %}
 
 {% block content %}
+<!-- SIDEBAR -->
 <section class="sidebar">
     <!-- Logo  -->
     <div class="logo">
-        <img src="{{ url_for('static', filename='assets/LogoCodeGuard.png') }}"/>
+        <a href="{{ url_for('auth.admin') }}">
+            <img src="{{ url_for('static', filename='assets/LogoCodeGuard.png') }}"/>
+        </a>
     </div>
 
     <!-- side panel -->
-
-    <div style="margin-top: 65px;">
-        <ul>
-            <li><a href="{{ url_for('auth.admin') }}">Dashboard</a></li>
-            <li><a href="{{ url_for('auth.courseSetting') }}">Course</a></li>
-            <li><a href="{{ url_for('auth.settings') }}">Settings</a></li>
-            <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
+    <div class="menu">
+        <ul class="d-flex flex-column">
+            <li>
+                <img src="{{ url_for('static', filename='assets/icon_home.svg') }}" alt="">
+                <a href="{{ url_for('auth.admin') }}">Dashboard</a>
+            </li>
+            <li>
+                <img src="{{ url_for('static', filename='assets/icon_add_circle.svg') }}" alt="">
+                <a href="#">Add New Course</a>
+            </li>
+            <li>
+                <img src="{{ url_for('static', filename='assets/icon_logout.svg') }}" alt="">
+                <a href="{{ url_for('auth.logout') }}">Log Out</a>
+            </li>
         </ul>
     </div>
 
-    <p style="position: absolute; bottom: 10px; left:10px">Welcome, {{username}}</p>
+    <p>Welcome, {{username}}</p>
 
 </section>
 
-<div class="content">
+<div class="content" style="height: fit-content;">
     <!-- Main content goes here -->
-    <h1 style="height: 500; margin-left: 280px; margin-bottom: 0px;">Dashboard</h1>
+    <div class="title" style="height: fit-content;">
+        <h1>List of Courses</h1>
+    </div>
+
 </div>
+
+<!-- FOOTER -->
+<footer>
+    <p>&copy; 2024 All Rights Reserved</p>
+</footer>
 
 {% endblock %}

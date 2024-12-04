@@ -52,67 +52,6 @@
     margin-top: 10px;
 }
 
-/* ADMIN */
-.sidebar{
-    width: 280px;
-    background-color: var(--dark-blue);
-    height: 100vh;
-    position: sticky;
-    top: 0;
-    left: 0;
-}
-.logo{
-    width: 180px;
-}
-
-.logo img{
-    width: 100%;
-}
-
-/* im not gonna use u i think */
-/* .sidebar {
-    width: 280px;
-    background-color: #333;
-    color: white;
-    height: 100vh;
-    padding-top: 20px;
-    position: fixed;
-    left: 0;
-}
-
-.sidebar h2 {
-    text-align: center;
-    font-size: 1.5em;
-    margin-bottom: 20px;
-}
-
-.sidebar ul {
-    list-style: none;
-}
-
-.sidebar ul li {
-    padding: 15px;
-}
-
-.sidebar ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 1.1em;
-    display: block;
-}
-
-.sidebar ul li a:hover {
-    background-color: #575757;
-    padding-left: 10px;
-}
-
-.content{
-    margin-left: 270px;
-    padding: 20px;
-    width: 100%;
-} */
-/* ADMIN */
-
 .code{
     color: white; 
     font-family: Black Future; 
