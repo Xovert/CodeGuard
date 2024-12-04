@@ -78,8 +78,8 @@ label, input{
 }
 
 .logo-wrapper{
-    width: 520px;
-    padding-left: 70px;
+    width: 400px;
+    padding: 0px 32px;
 }
 
 .logo-wrapper img{
