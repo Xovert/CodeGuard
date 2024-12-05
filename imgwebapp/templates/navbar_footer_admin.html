@@ -1,0 +1,37 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/navbar_footer_admin.css') }}">
+
+<!-- SIDEBAR -->
+<section class="sidebar">
+    <!-- Logo  -->
+    <div class="logo">
+        <a href="{{ url_for('auth.admin') }}">
+            <img src="{{ url_for('static', filename='assets/LogoCodeGuard.svg') }}"/>
+        </a>
+    </div>
+
+    <!-- side panel -->
+    <div class="menu">
+        <ul class="d-flex flex-column">
+            <li>
+                <img src="{{ url_for('static', filename='assets/icon_home.svg') }}" alt="" fill="red">
+                <a href="{{ url_for('auth.admin') }}">Dashboard</a>
+            </li>
+            <li>
+                <img src="{{ url_for('static', filename='assets/icon_add_circle.svg') }}" alt="">
+                <a href="{{ url_for('auth.add_course') }}">Add New Course</a>
+            </li>
+            <li>
+                <img src="{{ url_for('static', filename='assets/icon_logout.svg') }}" alt="">
+                <a href="{{ url_for('auth.logout') }}">Log Out</a>
+            </li>
+        </ul>
+    </div>
+
+    <p>Welcome, {{username}}</p>
+
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <p>&copy; 2024 All Rights Reserved</p>
+</footer>

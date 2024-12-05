@@ -18,6 +18,10 @@ def index():
 def admin():
     return render_template('admin.html')
 
+@bp.route('/add_course')
+def add_course():
+    return render_template('admin_add_course.html')
+
 @bp.route('/profile')
 def profile():
     return render_template('profile.html')

@@ -1,0 +1,40 @@
+.content{
+    height: calc(100vh - 48px);
+    padding: 32px 64px 32px 344px;
+    overflow-y: scroll;
+}
+
+.title{
+    border-bottom: 1px solid black;
+    margin-bottom: 24px;
+}
+
+.title h1{
+    font-family: Manrope;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0px;
+}
+.detail label, .detail input{
+    font-family: Poppins;
+    font-size: 16px;
+}
+
+.detail label{
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.detail input{
+    border-radius: 5px;
+    background-color: var(--medium-light-green);
+    border: none;
+    font-weight: 400;
+    padding: 4px 8px;
+    width: 100%;
+}
+
+input:focus{
+    outline: 2px solid var(--dark-blue);
+}
