@@ -4,9 +4,14 @@
     overflow-y: scroll;
 }
 
+.course-details{
+    row-gap: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--gray);
+}
+
 .title{
     border-bottom: 1px solid black;
-    margin-bottom: 24px;
 }
 
 .title h1{
@@ -15,26 +20,61 @@
     font-weight: 700;
     margin: 0px;
 }
-.detail label, .detail input{
+
+label, .detail input, textarea, #visibility{
     font-family: Poppins;
     font-size: 16px;
 }
 
-.detail label{
+label{
     display: block;
     margin-bottom: 4px;
     font-weight: 500;
 }
 
-.detail input{
+input, .input-file, textarea, #visibility{
     border-radius: 5px;
     background-color: var(--medium-light-green);
     border: none;
     font-weight: 400;
-    padding: 4px 8px;
+    margin-bottom: 0px;
+}
+
+input, textarea{
     width: 100%;
+    padding: 8px;
+}
+
+.input-file{
+    padding: 8px 16px 8px 12px;
+    width: fit-content;
 }
 
 input:focus{
     outline: 2px solid var(--dark-blue);
+}
+
+.input-file img{
+    margin-right: 4px;
+}
+
+#course-logo {
+    opacity: 0;
+    position: absolute;
+    z-index: -1;
+    width: 1px;
+}
+
+#visibility {
+    padding: 8px 120px 8px 12px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("../assets/icon_dropdown.svg");
+    background-repeat: no-repeat;
+    background-position-x: calc(100% - 8px);
+    background-position-y: 50%;
+}
+
+option:focus{
+    border: none;
 }
