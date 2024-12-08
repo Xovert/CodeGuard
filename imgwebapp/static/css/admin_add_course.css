@@ -8,6 +8,7 @@
     row-gap: 24px;
     padding-bottom: 24px;
     border-bottom: 1px solid var(--gray);
+    margin-bottom: 24px;
 }
 
 .title{
@@ -45,6 +46,10 @@ input, textarea{
     padding: 8px;
 }
 
+textarea{
+    margin-bottom: -5px;
+}
+
 .input-file{
     padding: 8px 16px 8px 12px;
     width: fit-content;
@@ -77,4 +82,10 @@ input:focus{
 
 option:focus{
     border: none;
+}
+
+.error-message{
+    color: red;
+    margin: 0px;
+    display: none;
 }
