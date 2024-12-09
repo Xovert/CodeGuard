@@ -48,12 +48,31 @@
             </div>
         </div>
 
-        <div class="course-content">
+        <div class="course-content d-flex flex-column">
             <div class="title">
-                <h1>Course Details</h1>
+                <h1>Course Contents</h1>
             </div>
+
+            <!-- CHALLENGE CODE -->
             <div class="page">
-                <p>Page 1</p>
+                <p class="d-flex">Page 2<img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="ms-auto"></p>
+                <div class="panel d-flex flex-column">
+                    <div class="type">
+                        <label for="content-type" class="d-inline-block">Type</label>
+                        <select name="content-type" id="content-type">
+                            <option value="Learning">Learning</option>
+                            <option value="Challenge Code">Challenge Code</option>
+                            <option value="Challenge Option">Challenge Option</option>
+                        </select>
+                    </div>
+                    <div class="question">
+                        <label for="content-question">Question</label>
+                        <input type="text">
+                    </div>
+                    <div class="code-playground">
+                        asdad
+                    </div>
+                </div>
             </div>
         </div>
     </form>

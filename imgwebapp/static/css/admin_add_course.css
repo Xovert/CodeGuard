@@ -33,7 +33,7 @@ label{
     font-weight: 500;
 }
 
-input, .input-file, textarea, #visibility{
+input, .input-file, textarea, select{
     border-radius: 5px;
     background-color: var(--medium-light-green);
     border: none;
@@ -70,7 +70,7 @@ input:focus{
     width: 1px;
 }
 
-#visibility {
+select {
     padding: 8px 120px 8px 12px;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -80,12 +80,37 @@ input:focus{
     background-position-y: 50%;
 }
 
-option:focus{
-    border: none;
-}
-
 .error-message{
     color: red;
     margin: 0px;
     display: none;
+}
+
+.course-content{
+    row-gap: 24px;
+}
+
+.page{
+    padding: 16px;
+    background-color: var(--super-light-green);
+    border-radius: 5px;
+}
+
+.page > p{
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(15, 41, 47, 0.30);
+    color: var(--black);
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 16px;
+}
+
+.panel{
+    row-gap: 16px;
+}
+
+.type > label {
+    margin-right: 64px;
+    margin-bottom: 0px;
 }
