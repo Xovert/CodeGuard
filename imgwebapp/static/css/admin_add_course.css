@@ -22,7 +22,7 @@
     margin: 0px;
 }
 
-label, .detail input, textarea, #visibility{
+label, input, textarea, select{
     font-family: Poppins;
     font-size: 16px;
 }
@@ -63,11 +63,12 @@ input:focus{
     margin-right: 4px;
 }
 
-#course-logo {
+#course-logo, #learning-pic {
     opacity: 0;
     position: absolute;
     z-index: -1;
     width: 1px;
+    top: 0;
 }
 
 select {
@@ -113,4 +114,82 @@ select {
 .type > label {
     margin-right: 64px;
     margin-bottom: 0px;
+}
+
+
+/* CODE PLAYGROUND */
+.code-playground{
+    background-color: var(--dark-blue);
+    padding: 40px 12px 64px 12px;
+    border-radius: 5px;
+    position: relative;
+}
+
+.code-area{
+    padding: 0px;
+    background-color: transparent;
+    color: var(--white);
+}
+
+.code-playground span{
+    color: var(--blue);
+    font-family: Manrope;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.language-span{
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
+.run-code{
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background-color: transparent;
+    border: none;
+}
+
+.run-code img{
+    margin-left: 8px;
+}
+
+.radio-option{
+    display: flex;
+    padding: 8px;
+    border-radius: 5px;
+}
+
+.radio-option > input{
+    width: fit-content;
+    margin-right: 8px;
+}
+
+.radio-option > input:focus{
+    outline: none;
+}
+
+.radio-option:hover{
+    outline: 1px solid var(--medium-light-green);
+}
+
+.radio-option > label{
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 400;
+    margin-bottom: 0px;
+}
+
+.radio-option > img{
+    margin-left: auto;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.radio-option:hover > img{
+    visibility: visible;
+    opacity: 1;
+    cursor: pointer;
 }
