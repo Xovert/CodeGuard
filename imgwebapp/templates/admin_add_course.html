@@ -55,8 +55,8 @@
 
             <!-- LEARNING -->
             <div class="page">
-                <p class="d-flex">Page 1<img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="ms-auto"></p>
-                <div class="panel d-flex flex-column">
+                <p class="d-flex accordion">Page 1<img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="ms-auto"></p>
+                <div class="panel">
                     <div class="type">
                         <label for="content-type" class="d-inline-block">Type</label>
                         <select name="content-type" id="content-type">
@@ -82,8 +82,8 @@
 
             <!-- CHALLENGE CODE -->
             <div class="page">
-                <p class="d-flex">Page 2<img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="ms-auto"></p>
-                <div class="panel d-flex flex-column">
+                <p class="d-flex accordion">Page 2<img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="ms-auto"></p>
+                <div class="panel">
                     <div class="type">
                         <label for="content-type" class="d-inline-block">Type</label>
                         <select name="content-type" id="content-type">
@@ -112,8 +112,8 @@
 
             <!-- CHALLENGE OPTION -->
             <div class="page">
-                <p class="d-flex">Page 3<img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="ms-auto"></p>
-                <div class="panel d-flex flex-column">
+                <p class="d-flex accordion">Page 3<img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="ms-auto"></p>
+                <div class="panel">
                     <div class="type">
                         <label for="content-type" class="d-inline-block">Type</label>
                         <select name="content-type" id="content-type">
@@ -154,8 +154,14 @@
                             <label for="option-3" contenteditable="true">Option 3</label>
                             <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
                         </div>
-                    </div>
+                        <button class="add-option-btn"><img src="{{ url_for('static', filename='assets/icon_add_circle.svg') }}" alt="">Add Option</button>
+                    </div>                    
                 </div>
+            </div>
+
+            <div class="button-wrapper d-flex justify-content-center">
+                <button class="btn d-flex add-more-page-btn"><img src="{{ url_for('static', filename='assets/icon_plus.svg') }}" alt="">Add more page</button>
+                <button class="btn submit-btn" type="submit">Submit</button>
             </div>
         </div>
     </form>

@@ -97,18 +97,26 @@ select {
     border-radius: 5px;
 }
 
-.page > p{
+.accordion{
     padding-bottom: 8px;
     border-bottom: 1px solid rgba(15, 41, 47, 0.30);
     color: var(--black);
     font-family: Poppins;
     font-size: 16px;
     font-weight: 500;
-    margin-bottom: 16px;
+    margin: 0px;
 }
+
+/* .accordion > img.rotate{
+    transition: transform 0.3s ease;
+    transform: rotate(180deg);
+} */
 
 .panel{
     row-gap: 16px;
+    display: flex;
+    flex-direction: column;
+    margin-top: 16px;
 }
 
 .type > label {
@@ -192,4 +200,51 @@ select {
     visibility: visible;
     opacity: 1;
     cursor: pointer;
+}
+
+.add-option-btn{
+    margin-top: 8px;
+    padding: 8px 16px 8px 12px;
+    background-color: var(--green);
+    border: none;
+    border-radius: 10px;
+    color: var(--white);
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.add-option-btn > img{
+    margin-right: 12px;
+}
+
+.button-wrapper{
+    column-gap: 64px;
+    margin-top: 24px;
+    margin-bottom: 32px;
+}
+
+.button-wrapper > button{
+    border-radius: 10px;
+    border: 2px solid var(--black);
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.button-wrapper > button:hover{
+    border: 2px solid var(--black);
+    box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.16), 0px 3px 6px 0px rgba(0, 0, 0, 0.23);
+}
+
+.add-more-page-btn{
+    padding: 12px;
+}
+
+.add-more-page-btn > img{
+    margin-right: 8px;
+}
+
+.submit-btn{
+    padding: 12px 32px;
 }
