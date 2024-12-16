@@ -18,9 +18,9 @@ def index():
 def admin():
     return render_template('admin.html')
 
-@bp.route('/add_course')
+@bp.route('/admin_course_detail')
 def add_course():
-    return render_template('admin_add_course.html')
+    return render_template('admin_setting_course.html')
 
 @bp.route('/profile')
 def profile():

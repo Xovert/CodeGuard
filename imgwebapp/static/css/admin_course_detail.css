@@ -87,41 +87,64 @@ select {
     display: none;
 }
 
+.course-details button{
+    padding: 12px 32px;
+    width: fit-content;
+}
+
+/* COURSE CONTENT */
 .course-content{
     row-gap: 24px;
 }
 
 .page{
-    padding: 16px;
     background-color: var(--super-light-green);
     border-radius: 5px;
 }
 
 .accordion{
-    padding-bottom: 8px;
+    padding: 16px 16px 8px 16px;
     border-bottom: 1px solid rgba(15, 41, 47, 0.30);
     color: var(--black);
     font-family: Poppins;
     font-size: 16px;
     font-weight: 500;
     margin: 0px;
+    transition: padding-bottom 0.3s, border-bottom 0.2s 0.5s;
 }
 
-/* .accordion > img.rotate{
+.rotate{
     transition: transform 0.3s ease;
     transform: rotate(180deg);
-} */
+}
 
 .panel{
+    padding: 16px;
     row-gap: 16px;
     display: flex;
     flex-direction: column;
-    margin-top: 16px;
+    max-height: 1000px;
+    overflow: hidden;
+    transition: max-height 0.5s ease 0.2s, padding 0.5s ease;
+}
+
+.close{
+    max-height: 0px;
+    padding: 0px 16px;
+}
+
+.border-bottom-none{
+    border-bottom: none;
+    padding: 16px;
 }
 
 .type > label {
     margin-right: 64px;
     margin-bottom: 0px;
+}
+
+.course-details div:last-child{
+    column-gap: 64px;
 }
 
 
@@ -134,7 +157,6 @@ select {
 }
 
 .code-area{
-    padding: 0px;
     background-color: transparent;
     color: var(--white);
 }
@@ -196,13 +218,13 @@ select {
     opacity: 0;
 }
 
-.radio-option:hover > img{
+.radio-option:hover img{
     visibility: visible;
     opacity: 1;
     cursor: pointer;
 }
 
-.add-option-btn{
+#add-option-btn{
     margin-top: 8px;
     padding: 8px 16px 8px 12px;
     background-color: var(--green);
@@ -214,7 +236,7 @@ select {
     font-weight: 400;
 }
 
-.add-option-btn > img{
+#add-option-btn > img{
     margin-right: 12px;
 }
 
@@ -224,15 +246,16 @@ select {
     margin-bottom: 32px;
 }
 
-.button-wrapper > button{
+.course-details button, .button-wrapper button{
     border-radius: 10px;
     border: 2px solid var(--black);
     font-family: Poppins;
     font-size: 16px;
     font-weight: 500;
+    background-color: transparent;
 }
 
-.button-wrapper > button:hover{
+.course-details button:hover, .button-wrapper button:hover{
     border: 2px solid var(--black);
     box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.16), 0px 3px 6px 0px rgba(0, 0, 0, 0.23);
 }
