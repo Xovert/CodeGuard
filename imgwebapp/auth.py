@@ -19,8 +19,12 @@ def admin():
     return render_template('admin.html')
 
 @bp.route('/admin_course_detail')
-def add_course():
-    return render_template('admin_setting_course.html')
+def admin_course_detail():
+    return render_template('admin_course_detail.html')
+
+@bp.route('/admin_course_content')
+def admin_course_content():
+    return render_template('admin_course_content.html')
 
 @bp.route('/profile')
 def profile():

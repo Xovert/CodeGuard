@@ -7,7 +7,6 @@
 .course-details{
     row-gap: 24px;
     padding-bottom: 24px;
-    border-bottom: 1px solid var(--gray);
     margin-bottom: 24px;
 }
 
@@ -22,7 +21,7 @@
     margin: 0px;
 }
 
-label, input, textarea, select{
+label, input, textarea, select, .filename{
     font-family: Poppins;
     font-size: 16px;
 }
@@ -33,13 +32,17 @@ label{
     font-weight: 500;
 }
 
-input, .input-file, textarea, select{
+input, .input-file, textarea, select {
     border-radius: 5px;
     background-color: var(--medium-light-green);
     border: none;
     font-weight: 400;
     margin-bottom: 0px;
 }
+
+/* #course-title:-webkit-autofill {
+    background-color: var(--medium-light-green) !important;
+} */
 
 input, textarea{
     width: 100%;
@@ -51,24 +54,36 @@ textarea{
 }
 
 .input-file{
-    padding: 8px 16px 8px 12px;
+    padding: 6px 16px 6px 12px;
     width: fit-content;
+    display: inline-block;
 }
 
 input:focus{
     outline: 2px solid var(--dark-blue);
+    box-shadow: none;
 }
 
 .input-file img{
     margin-right: 4px;
 }
 
-#course-logo, #learning-pic {
+#course-logo, .input-file-invi {
     opacity: 0;
     position: absolute;
     z-index: -1;
     width: 1px;
-    top: 0;
+    bottom: 0;
+}
+
+.filename{
+    margin-left: 8px;
+    display: inline-block;
+    max-width: calc(100% - 140px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
 }
 
 select {

@@ -1,122 +1,124 @@
-// ===== ACCORDION =====
-document.addEventListener("click", function (event) {
-    // Check if the clicked element has the 'accordion' class
-    if (event.target.classList.contains("accordion")) {
-        var panel = event.target.nextElementSibling;
+// ======= RESIZE TEXTAREA =======
+function autoResize(textarea) {
+    textarea.style.height = 'auto'; // Reset the height
+    textarea.style.height = textarea.scrollHeight + 'px'; // Set the height to match the content
+}
 
-        if (panel.classList.contains("close")) {
-            panel.classList.remove("close");
-            event.target.classList.remove("border-bottom-none");
-        } else {
-            panel.classList.add("close");
-            event.target.classList.add("border-bottom-none");
-        }
-
-        // Rotate icon
-        var dropdownIcon = event.target.querySelector("img");
-        if (dropdownIcon) {
-            dropdownIcon.classList.toggle("rotate");
-        }
+document.addEventListener("input", function (event) {
+    if (event.target.tagName === "TEXTAREA") {
+        autoResize(event.target);
     }
 });
 
 
+// ======= FILENAME CHANGES ====== + filename validation
+var save = true;
 
-// ===== EDIT OPTIONS =====
-document.querySelectorAll('[contenteditable="true"]').forEach(label => {
-    label.addEventListener('click', function (e) {
-        e.preventDefault();
-        this.focus();
+const fileInput = document.getElementById('course-logo');
+const filenameSpan = document.querySelector('.filename');
+const allowedExtensions = ['jpg', 'jpeg', 'png', 'svg'];
+const maxFileSize = 5 * 1024 * 1024; // max size 5mb
+
+// error ID
+var errorCourseLogo = document.getElementById('error-course-logo');
+
+fileInput.addEventListener('change', () => {
+    let file = fileInput.files[0];
+
+    // if there is file
+    if (file) {
+        let fileExtension = file.name.split('.').pop().toLowerCase();
+
+        // if the ext is not in the list
+        if (!allowedExtensions.includes(fileExtension)) {
+            errorCourseLogo.textContent = `Invalid file type! Only ${allowedExtensions.join(', ')} are allowed.`;
+            errorCourseLogo.style.display = 'block';
+
+            fileInput.value = ''; // Reset the input
+            filenameSpan.textContent = 'No file chosen';
+            return;
+        }
+
+        // if file size is too large
+        if (file.size > maxFileSize){
+            errorCourseLogo.textContent = "Maximum file size is 5 MB!";
+            errorCourseLogo.style.display = 'block';
+
+            fileInput.value = ''; // Reset the input
+            filenameSpan.textContent = 'No file chosen';
+            return;
+        }
+
+        // Update the span with the name of the selected file
+        filenameSpan.textContent = fileInput.files[0].name;
+        errorCourseLogo.textContent = "";
+        errorCourseLogo.style.display = "none";
+    }
+
+    else{
+        filenameSpan.textContent = 'No file chosen';
+    }
+});
+
+
+// more validation + sanitation
+document.getElementById("submit-btn").addEventListener("click", function (event) {
+    event.preventDefault();
+    save = true;
+
+    // clear previous errors
+    document.querySelectorAll(".error-message").forEach(p => {
+        p.style.display = "none";
+        p.textContent = ""; // Clear any previous messages
     });
-});
 
-// add option button
-const addOptionButton = document.getElementById("add-option-btn");
+    // get values
+    const title = document.getElementById("course-title").value.trim();
+    const desc = document.getElementById("desc").value.trim();
+    const visibility = document.getElementById("visibility").value.trim();
 
-// Counter to track new option numbers
-let optionCounter = 4;
-
-// Add event listener to the button
-addOptionButton.addEventListener("click", function (e) {
-    e.preventDefault();
-    
-    // container
-    const container = addOptionButton.parentElement;
-
-    // new element
-    const newOption = document.createElement("div");
-    newOption.classList.add("radio-option");
-    newOption.innerHTML = `
-        <input type="radio" id="option-${optionCounter}" name="option" value="Option ${optionCounter}">
-        <label for="option-${optionCounter}" contenteditable="true">Option ${optionCounter}</label>
-        <img src="../static/assets/icon_exit.svg" alt="">
-    `;
-
-    // Insert the new option before the "Add Option" button
-    container.insertBefore(newOption, addOptionButton);
-
-    // Increment the option counter
-    optionCounter++;
-});
+    const errorTitle = document.getElementById("error-title");
+    const errorDesc = document.getElementById("error-desc");
+    const errorVisibility = document.getElementById("error-visibility");
 
 
+    // regex
+    // const namePattern = /^[a-zA-Z0-9 ,.!?/'"()-]+$/;
 
-// ===== DELETE OPTIONS =====
-document.addEventListener("click", function (event) {
-    // Check if the clicked element is an <img> inside a radio-option
-    if (event.target.tagName === "IMG" && event.target.closest(".radio-option")) {
-        const radioOption = event.target.closest(".radio-option"); // Get the parent .radio-option
-        radioOption.remove(); // Remove the radio-option from the DOM
+    // no empty validation
+    if (!title){
+        errorTitle.textContent = "Title cannot be empty!";
+        errorTitle.style.display = "block";
+        save = false;
     }
-});
 
+    if (fileInput.files.length === 0){
+        errorCourseLogo.textContent = "Course image cannot be empty!";
+        errorCourseLogo.style.display = "block";
+        save = false;
+    }
 
+    if (!desc){
+        errorDesc.textContent = "Description cannot be empty!";
+        errorDesc.style.display = "block";
+        save = false;
+    }
 
-// ===== ADD MORE PAGE =====
-const addPageButton = document.querySelector(".add-more-page-btn");
+    if (!visibility){
+        errorVisibility.textContent = "Please choose the course visibility!";
+        errorVisibility.style.display = "block";
+        save = false;
+    }
 
-// Add an event listener to the button
-addPageButton.addEventListener("click", function (event) {
-    event.preventDefault(); // Prevent form submission or page reload
+    // visibility sanitation
+    const allowedVisibility = ['public', 'private'];
+    if (!allowedVisibility.includes(visibility)) {
+        errorVisibility.textContent = "Invalid value";
+        save = false;
+    }
 
-    // Select the parent form to append the new page
-    const form = document.querySelector(".course-content");
-
-    // Create a new page div
-    const newPage = document.createElement("div");
-    newPage.classList.add("page");
-
-    // Populate the new page with HTML content for a Learning Page
-    newPage.innerHTML = `
-        <p class="d-flex accordion">New Page
-            <img src="../static/assets/icon_dropdown.svg" alt="" class="ms-auto">
-        </p>
-        <div class="panel">
-            <div class="type">
-                <label for="content-type" class="d-inline-block">Type</label>
-                <select name="content-type" id="content-type">
-                    <option value="Learning">Learning</option>
-                    <option value="Challenge Code">Challenge Code</option>
-                    <option value="Challenge Option">Challenge Option</option>
-                </select>
-            </div>
-            <div class="position-relative">
-                <label for="learning-pic">Picture</label>
-                <label for="learning-pic" class="input-file">
-                    <img src="../static/assets/icon_upload.svg" alt="">
-                    Add File
-                </label>
-                <input type="file" name="learning-pic" id="learning-pic">
-            </div>
-            <div>
-                <label for="content-learning">Content</label>
-                <textarea name="content-learning" id="content-learning" rows="4"
-                    placeholder="Enter learning content here..."></textarea>
-            </div>
-        </div>
-    `;
-
-    // Append the new page to the form before the button wrapper
-    const buttonWrapper = document.querySelector(".button-wrapper");
-    form.insertBefore(newPage, buttonWrapper);
+    // submit if passes the validation
+    if (save === true){
+        document.querySelector("form").submit();
+    }
 });
