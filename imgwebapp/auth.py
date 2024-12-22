@@ -8,9 +8,9 @@ bcrypt = Bcrypt()
 bp = Blueprint('auth', __name__)
 
 @bp.route('/')
-def index():
+def loginnew():
     if g.user is None:
-        return render_template('index.html')
+        return render_template('login.html')
     else:
         return redirect(url_for('gallery'))
 
@@ -21,6 +21,22 @@ def admin():
 @bp.route('/admin_course_detail')
 def add_course():
     return render_template('admin_setting_course.html')
+
+@bp.route('/challengePHP')
+def challengePHP():
+    return render_template('challengePHP.html')
+
+@bp.route('/examPHP')
+def examPHP():
+    return render_template('examPHP.html')
+
+@bp.route('/challengeJS')
+def challengeJS():
+    return render_template('challengeJS.html')
+
+@bp.route('/index')
+def index():
+    return render_template('index.html')
 
 @bp.route('/profile')
 def profile():

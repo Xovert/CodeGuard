@@ -1,0 +1,63 @@
+:root{
+    --dark-magenta: #501F3A;
+    --hot-pink: #CB2D6F;
+    --orange: #EC744A;
+    --gray: #CCC;
+    --green: #14A098;
+    --dark-blue: #0F292F;
+    --black: #000000;
+    --white: #FFFFFF;
+}
+
+/* TOP */
+.top{
+    position: relative;
+    width: 100%;
+    padding: 24px 48px 64px 48px;
+}
+
+.back{
+    position: absolute;
+    z-index: 10;
+    text-decoration: none;
+}
+
+.back svg{
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+}
+
+.back span{
+    color: #AEAEAE;
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.progress-wrapper{
+    z-index: 1;
+    position: relative;
+}
+
+.progress-wrapper span{
+    color: var(--black);
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 400;
+    margin-right: 32px;
+}
+
+.progress-bar-container{
+    width: 70%;
+    height: 8px;
+    border-radius: 5px;
+    background-color: var(--gray);
+}
+
+.progress-bar{
+    width: 30%;
+    height: 8px;
+    border-radius: 5px;
+    background-color: var(--green);
+}
