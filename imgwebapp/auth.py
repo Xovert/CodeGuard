@@ -18,6 +18,10 @@ def loginnew():
 def admin():
     return render_template('admin.html')
 
+@bp.route('/admin_course_detail')
+def add_course():
+    return render_template('admin_setting_course.html')
+
 @bp.route('/challengePHP')
 def challengePHP():
     return render_template('challengePHP.html')
@@ -45,14 +49,6 @@ def editprofile():
 @bp.route('/saveProfile')
 def saveProfile():
     return redirect(url_for('profile'))
-
-@bp.route('/courseSetting')
-def courseSetting():
-    return render_template('courseSetting.html')
-
-@bp.route('/settings')
-def settings():
-    return render_template('settings.html')
 
 @bp.route('/forgotPass')
 def forgotPass():
