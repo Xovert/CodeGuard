@@ -21006,14 +21006,15 @@ var cm6 = (function (exports) {
     const oneDarkTheme = /*@__PURE__*/EditorView.theme({
         "&": {
             color: ivory,
-            backgroundColor: background
+            backgroundColor: "#263238",
+            width: "930px" 
         },
         ".cm-content": {
             caretColor: cursor
         },
         ".cm-cursor, .cm-dropCursor": { borderLeftColor: cursor },
         "&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection": { backgroundColor: selection },
-        ".cm-panels": { backgroundColor: darkBackground, color: ivory },
+        ".cm-panels": { backgroundColor: "#263238", color: ivory },
         ".cm-panels.cm-panels-top": { borderBottom: "2px solid black" },
         ".cm-panels.cm-panels-bottom": { borderTop: "2px solid black" },
         ".cm-searchMatch": {
@@ -21030,7 +21031,7 @@ var cm6 = (function (exports) {
             outline: "1px solid #515a6b"
         },
         ".cm-gutters": {
-            backgroundColor: background,
+            backgroundColor: "#263238",
             color: stone,
             border: "none"
         },
@@ -23181,7 +23182,7 @@ var cm6 = (function (exports) {
         view.dispatch(changes, { userEvent: "input.type", scrollIntoView: true });
         return true;
     });
- 
+
     function createEditorState(initialContents, options = {}) {
         let extensions = [
             lineNumbers(),
@@ -23209,11 +23210,11 @@ var cm6 = (function (exports) {
                 ...completionKeymap,
             ]),
             javascript(),
+            oneDark,
             syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
         ];
- 
-        if (options.oneDark)
-            extensions.push(oneDark);
+        
+        // extensions.push(oneDark);
  
         return EditorState.create({
             doc: initialContents,
