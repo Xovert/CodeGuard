@@ -11,7 +11,7 @@ document.addEventListener("input", function (event) {
 });
 
 
-// ======= FILENAME CHANGES ====== + filename validation
+// ======= FILENAME CHANGES ====== + filename validation + PREVIEW
 var save = true;
 
 const fileInput = document.getElementById('course-logo');
@@ -19,15 +19,15 @@ const filenameSpan = document.querySelector('.filename');
 const allowedExtensions = ['jpg', 'jpeg', 'png', 'svg'];
 const maxFileSize = 5 * 1024 * 1024; // max size 5mb
 
-// error ID
 var errorCourseLogo = document.getElementById('error-course-logo');
 
 fileInput.addEventListener('change', () => {
     let file = fileInput.files[0];
+    const preview = document.getElementById("preview");
 
     // if there is file
     if (file) {
-        let fileExtension = file.name.split('.').pop().toLowerCase();
+        const fileExtension = file.name.split('.').pop().toLowerCase();
 
         // if the ext is not in the list
         if (!allowedExtensions.includes(fileExtension)) {
@@ -36,6 +36,10 @@ fileInput.addEventListener('change', () => {
 
             fileInput.value = ''; // Reset the input
             filenameSpan.textContent = 'No file chosen';
+
+            // no preview
+            preview.src = "";
+            preview.style.display = "none";
             return;
         }
 
@@ -46,22 +50,35 @@ fileInput.addEventListener('change', () => {
 
             fileInput.value = ''; // Reset the input
             filenameSpan.textContent = 'No file chosen';
+
+            // no preview
+            preview.src = "";
+            preview.style.display = "none";
             return;
         }
 
-        // Update the span with the name of the selected file
-        filenameSpan.textContent = fileInput.files[0].name;
+        // Update span
+        filenameSpan.textContent = file.name;
         errorCourseLogo.textContent = "";
         errorCourseLogo.style.display = "none";
+
+        // preview image
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = "block";
     }
 
+    // no file chosen
     else{
         filenameSpan.textContent = 'No file chosen';
+        errorCourseLogo.textContent = "";
+        errorCourseLogo.style.display = 'none';
+        preview.src = "";
+        preview.style.display = 'none';
     }
 });
 
 
-// more validation + sanitation
+// ====== more validation + sanitation ======
 document.getElementById("submit-btn").addEventListener("click", function (event) {
     event.preventDefault();
     save = true;

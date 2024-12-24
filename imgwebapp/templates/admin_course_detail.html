@@ -15,22 +15,21 @@
         <div class="title">
             <h1>Course Details</h1>
         </div>
-        <div class="details-wrapper d-flex">
-            <div class="detail col-md-6">
-                <label for="course-title">Title</label>
-                <input type="text" name="course-title" id="course-title" placeholder="Enter course title here..." required>
-                <p class="error-message" id="error-title"></p>
-            </div>
-            <div class="detail col-md-6 ps-5 position-relative">
-                <label for="course-logo">Course Image</label>
-                <label for="course-logo" class="input-file">
-                    <img src="{{ url_for('static', filename='assets/icon_upload.svg') }}" alt="">
-                    Add File
-                </label>
-                <span class="filename">No file chosen</span>
-                <input type="file" name="course-logo" id="course-logo" required>
-                <p class="error-message" id="error-course-logo">Error</p>
-            </div>
+        <div class="detail">
+            <label for="course-title">Title</label>
+            <input type="text" name="course-title" id="course-title" placeholder="Enter course title here..." required>
+            <p class="error-message" id="error-title"></p>
+        </div>
+        <div class="detail position-relative">
+            <label for="course-logo">Course Image</label>
+            <label for="course-logo" class="input-file">
+                <img src="{{ url_for('static', filename='assets/icon_upload.svg') }}" alt="">
+                Add File
+            </label>
+            <span class="filename">No file chosen</span>
+            <input type="file" name="course-logo" id="course-logo" accept=".jpg, .jpeg, .png, .svg" required>
+            <p class="error-message" id="error-course-logo">Error</p>
+            <img id="preview" src="#" alt="Your image" class="preview">
         </div>
         <div class="detail">
             <label for="desc">Description</label>

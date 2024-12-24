@@ -21,12 +21,8 @@
             <p class="d-flex accordion">Page 1<img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="ms-auto"></p>
             <div class="panel">
                 <div class="type">
-                    <label for="content-type-1" class="d-inline-block">Type</label>
-                    <select name="content-type-1" id="content-type-1">
-                        <option value="Learning">Learning</option>
-                        <option value="Challenge Code">Challenge Code</option>
-                        <option value="Challenge Option">Challenge Option</option>
-                    </select>
+                    <label for="" class="d-inline-block">Type</label>
+                    <span class="content-type">Learning</span>
                 </div>
                 <div class="position-relative">
                     <label for="learning-pic-1">Picture</label>
@@ -35,12 +31,14 @@
                         Add File
                     </label>
                     <span class="filename">No file chosen</span>
-                    <input type="file" name="learning-pic-1" id="learning-pic-1" class="input-file-invi">
+                    <input type="file" name="learning-pic-1" id="learning-pic-1" class="input-file-invi" accept=".jpg, .jpeg, .png, .svg" required>
+                    <p class="error-message error-course-logo">Error</p>
+                    <img id="" src="#" alt="Your image" class="preview">
                 </div>
                 <div>
                     <label for="content-learning-1">Content</label>
                     <textarea name="content-learning-1" id="content-learning-1" rows="4"
-                        placeholder="Enter learning content here..."></textarea>
+                        placeholder="Enter learning content here..." required></textarea>
                 </div>
             </div>
         </div>
@@ -50,23 +48,19 @@
             <p class="d-flex accordion">Page 2<img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="ms-auto"></p>
             <div class="panel">
                 <div class="type">
-                    <label for="content-type-2" class="d-inline-block">Type</label>
-                    <select name="content-type-2" id="content-type-2">
-                        <option value="Learning">Learning</option>
-                        <option value="Challenge Code">Challenge Code</option>
-                        <option value="Challenge Option">Challenge Option</option>
-                    </select>
+                    <label for="" class="d-inline-block">Type</label>
+                    <span class="content-type">Challenge Code</span>
                 </div>
                 <div class="question">
                     <label for="content-question-2">Question</label>
                     <input type="text" name="content-question-2" id="content-question-2"
-                        placeholder="Enter challenge question here...">
+                        placeholder="Enter challenge question here..." required>
                 </div>
                 <div>
                     <label for="code-area-2">Code</label>
                     <div class="code-playground">
                         <textarea class="code-area" name="code-area-2" id="code-area-2" rows="10"
-                            placeholder="Enter challenge code here..."></textarea>
+                            placeholder="Enter challenge code here..." required></textarea>
                         <span class="language-span">PHP</span>
                         <button class="run-code d-flex align-items-center">
                             <span>RUN</span>
@@ -82,23 +76,19 @@
             <p class="d-flex accordion">Page 3<img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="ms-auto"></p>
             <div class="panel">
                 <div class="type">
-                    <label for="content-type-3" class="d-inline-block">Type</label>
-                    <select name="content-type-3" id="content-type-3">
-                        <option value="Learning">Learning</option>
-                        <option value="Challenge Code">Challenge Code</option>
-                        <option value="Challenge Option">Challenge Option</option>
-                    </select>
+                    <label for="" class="d-inline-block">Type</label>
+                    <span class="content-type">Challenge Option</span>
                 </div>
                 <div class="question">
                     <label for="content-question-3">Question</label>
                     <input type="text" name="content-question-3" id="content-question-3"
-                        placeholder="Enter challenge question here...">
+                        placeholder="Enter challenge question here..." required>
                 </div>
                 <div>
                     <label for="code-area-3">Code</label>
                     <div class="code-playground">
                         <textarea class="code-area" name="code-area-3" id="code-area-3" rows="10"
-                            placeholder="Enter challenge code here..."></textarea>
+                            placeholder="Enter challenge code here..." required></textarea>
                         <span class="language-span">PHP</span>
                         <button class="run-code d-flex align-items-center">
                             <span>RUN</span>
@@ -109,7 +99,7 @@
                 <div>
                     <label for="">Options</label>
                     <div class="radio-option">
-                        <input type="radio" id="option-3-1" name="option-3" value="Option 1">
+                        <input type="radio" id="option-3-1" name="option-3" value="Option 1" required>
                         <label for="option-3-1" contenteditable="true">Option 1</label>
                         <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
                     </div>

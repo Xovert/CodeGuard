@@ -10,6 +10,8 @@ document.addEventListener("input", function (event) {
     }
 });
 
+
+
 // ===== ACCORDION =====
 document.addEventListener("click", function (event) {
     // Check if the clicked element has the 'accordion' class
@@ -34,6 +36,75 @@ document.addEventListener("click", function (event) {
 
 
 
+// ====== FILE IMAGE INPUT VALIDATION + PREVIEW + FILENAME CHANGES======
+var save = true;
+
+const allowedExtensions = ['jpg', 'jpeg', 'png', 'svg'];
+const maxFileSize = 5 * 1024 * 1024; // max size 5mb
+
+document.addEventListener('change', (event) => {
+    if (event.target.classList.contains('input-file-invi')) {
+        const fileInput = event.target; // The file input element
+        const filenameSpan = fileInput.nextElementSibling.querySelector('.filename');
+        const errorCourseLogo = fileInput.nextElementSibling.querySelector('.error-course-logo');
+        const preview = fileInput.nextElementSibling.querySelector('.preview');
+
+        // Validation logic
+        const file = fileInput.files[0];
+
+        if (file) {
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+
+            // Invalid file type
+            if (!allowedExtensions.includes(fileExtension)) {
+                errorCourseLogo.textContent = `Invalid file type! Only ${allowedExtensions.join(', ')} are allowed.`;
+                errorCourseLogo.style.display = 'block';
+
+                fileInput.value = ''; // Reset the input
+                filenameSpan.textContent = 'No file chosen';
+
+                // no preview
+                preview.src = '';
+                preview.style.display = 'none';
+                return;
+            }
+
+            // File size too large
+            if (file.size > maxFileSize) {
+                errorCourseLogo.textContent = 'Maximum file size is 5 MB!';
+                errorCourseLogo.style.display = 'block';
+
+                fileInput.value = ''; // Reset the input
+                filenameSpan.textContent = 'No file chosen';
+
+                // no preview
+                preview.src = '';
+                preview.style.display = 'none';
+                return;
+            }
+
+            // Valid file
+            filenameSpan.textContent = file.name;
+            errorCourseLogo.textContent = '';
+            errorCourseLogo.style.display = 'none';
+
+            // Preview the image
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+        }
+        
+        else {
+            // No file selected
+            filenameSpan.textContent = 'No file chosen';
+            errorCourseLogo.textContent = '';
+            errorCourseLogo.style.display = 'none';
+            preview.src = '';
+            preview.style.display = 'none';
+        }
+    }
+});
+
+
 // ===== EDIT OPTIONS =====
 document.addEventListener('click', function (e) {
     if (e.target.matches('[contenteditable="true"]')) {
@@ -44,7 +115,7 @@ document.addEventListener('click', function (e) {
 
 
 
-// ======= ADD OPTIONS =======
+// ======= ADD OPTIONS (soon) =======
 const addOptionButton = document.getElementById("add-option-btn");
 
 addOptionButton.addEventListener("click", function (e) {
@@ -80,7 +151,7 @@ document.addEventListener("click", function (event) {
 
 
 
-// ===== ADD MORE PAGE =====
+// ===== ADD MORE PAGE (soon) =====
 const addPageButton = document.querySelector(".add-more-page-btn");
 
 // Add an event listener to the button

@@ -21,7 +21,7 @@
     margin: 0px;
 }
 
-label, input, textarea, select, .filename{
+label, input, textarea, select, .filename, .content-type{
     font-family: Poppins;
     font-size: 16px;
 }
@@ -32,12 +32,21 @@ label{
     font-weight: 500;
 }
 
-input, .input-file, textarea, select {
+input, .input-file, textarea, select, .content-type {
     border-radius: 5px;
     background-color: var(--medium-light-green);
     border: none;
     font-weight: 400;
     margin-bottom: 0px;
+}
+
+.content-type{
+    padding: 8px 120px 8px 12px;
+    font-weight: 400;
+}
+
+.content-type:hover{
+    cursor: no-drop;
 }
 
 /* #course-title:-webkit-autofill {
@@ -74,6 +83,13 @@ input:focus{
     z-index: -1;
     width: 1px;
     bottom: 0;
+    left: 0;
+}
+
+.preview{
+    display: none;
+    max-width: 300px;
+    margin-top: 8px;
 }
 
 .filename{
