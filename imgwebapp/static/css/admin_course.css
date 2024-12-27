@@ -149,6 +149,16 @@ select {
     transform: rotate(180deg);
 }
 
+.accordion > button{
+    padding: 0px;
+    border: none;
+    background-color: transparent;
+}
+
+.accordion > button:nth-child(3){
+    rotate: 180deg;
+}
+
 .panel{
     padding: 16px;
     row-gap: 16px;

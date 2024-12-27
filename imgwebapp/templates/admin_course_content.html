@@ -18,26 +18,31 @@
     
         <!-- LEARNING -->
         <div class="page">
-            <p class="d-flex accordion">Page 1<img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="ms-auto"></p>
+            <p class="d-flex accordion">Page 1
+                <button class="ms-auto"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+                <button class="up-down"><img src="{{ url_for('static', filename='assets/icon_arrowup.svg') }}" alt=""></button>
+                <button class="up-down"><img src="{{ url_for('static', filename='assets/icon_arrowdown.svg') }}" alt=""></button>
+                <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="">
+            </p>
             <div class="panel">
                 <div class="type">
                     <label for="" class="d-inline-block">Type</label>
                     <span class="content-type">Learning</span>
                 </div>
                 <div class="position-relative">
-                    <label for="learning-pic-1">Picture</label>
-                    <label for="learning-pic-1" class="input-file">
+                    <label for="learning-pic_1">Picture</label>
+                    <label for="learning-pic_1" class="input-file">
                         <img src="{{ url_for('static', filename='assets/icon_upload.svg') }}" alt="">
                         Add File
                     </label>
                     <span class="filename">No file chosen</span>
-                    <input type="file" name="learning-pic-1" id="learning-pic-1" class="input-file-invi" accept=".jpg, .jpeg, .png, .svg" required>
+                    <input type="file" id="learning-pic_1" class="input-file-invi" accept=".jpg, .jpeg, .png, .svg" required>
                     <p class="error-message error-course-logo">Error</p>
                     <img id="" src="#" alt="Your image" class="preview">
                 </div>
                 <div>
                     <label for="content-learning-1">Content</label>
-                    <textarea name="content-learning-1" id="content-learning-1" rows="4"
+                    <textarea id="content-learning-1" rows="4"
                         placeholder="Enter learning content here..." required></textarea>
                 </div>
             </div>

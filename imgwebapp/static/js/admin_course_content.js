@@ -44,14 +44,15 @@ const maxFileSize = 5 * 1024 * 1024; // max size 5mb
 
 document.addEventListener('change', (event) => {
     if (event.target.classList.contains('input-file-invi')) {
-        const fileInput = event.target; // The file input element
-        const filenameSpan = fileInput.nextElementSibling.querySelector('.filename');
-        const errorCourseLogo = fileInput.nextElementSibling.querySelector('.error-course-logo');
-        const preview = fileInput.nextElementSibling.querySelector('.preview');
+        const fileInput = event.target;
+        const container = fileInput.parentElement;
+        const filenameSpan = container.querySelector('.filename');
+        const errorCourseLogo = container.querySelector('.error-course-logo');
+        const preview = container.querySelector('.preview');
 
-        // Validation logic
         const file = fileInput.files[0];
-
+        
+        // if there is file
         if (file) {
             const fileExtension = file.name.split('.').pop().toLowerCase();
 
@@ -63,7 +64,7 @@ document.addEventListener('change', (event) => {
                 fileInput.value = ''; // Reset the input
                 filenameSpan.textContent = 'No file chosen';
 
-                // no preview
+                // No preview
                 preview.src = '';
                 preview.style.display = 'none';
                 return;
@@ -77,7 +78,7 @@ document.addEventListener('change', (event) => {
                 fileInput.value = ''; // Reset the input
                 filenameSpan.textContent = 'No file chosen';
 
-                // no preview
+                // No preview
                 preview.src = '';
                 preview.style.display = 'none';
                 return;
@@ -93,8 +94,8 @@ document.addEventListener('change', (event) => {
             preview.style.display = 'block';
         }
         
+        // No file selected
         else {
-            // No file selected
             filenameSpan.textContent = 'No file chosen';
             errorCourseLogo.textContent = '';
             errorCourseLogo.style.display = 'none';
@@ -103,6 +104,7 @@ document.addEventListener('change', (event) => {
         }
     }
 });
+
 
 
 // ===== EDIT OPTIONS =====
