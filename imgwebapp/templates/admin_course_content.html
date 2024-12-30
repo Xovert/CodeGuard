@@ -19,10 +19,10 @@
         <!-- LEARNING -->
         <div class="page">
             <p class="d-flex accordion">Page 1
-                <button class="ms-auto"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
-                <button class="up-down"><img src="{{ url_for('static', filename='assets/icon_arrowup.svg') }}" alt=""></button>
-                <button class="up-down"><img src="{{ url_for('static', filename='assets/icon_arrowdown.svg') }}" alt=""></button>
-                <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="">
+                <button class="ms-auto icon-trash"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+                <button><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                <button><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
             </p>
             <div class="panel">
                 <div class="type">
@@ -50,7 +50,12 @@
     
         <!-- CHALLENGE CODE -->
         <div class="page">
-            <p class="d-flex accordion">Page 2<img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="ms-auto"></p>
+            <p class="d-flex accordion">Page 2
+                <button class="ms-auto icon-trash"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+                <button><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                <button><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
+            </p>
             <div class="panel">
                 <div class="type">
                     <label for="" class="d-inline-block">Type</label>
@@ -58,13 +63,12 @@
                 </div>
                 <div class="question">
                     <label for="content-question-2">Question</label>
-                    <input type="text" name="content-question-2" id="content-question-2"
-                        placeholder="Enter challenge question here..." required>
+                    <textarea id="content-question-2" rows="2" placeholder="Enter challenge question here..." required></textarea>
                 </div>
                 <div>
                     <label for="code-area-2">Code</label>
                     <div class="code-playground">
-                        <textarea class="code-area" name="code-area-2" id="code-area-2" rows="10"
+                        <textarea class="code-area" id="code-area-2" rows="10"
                             placeholder="Enter challenge code here..." required></textarea>
                         <span class="language-span">PHP</span>
                         <button class="run-code d-flex align-items-center">
@@ -78,7 +82,12 @@
     
         <!-- CHALLENGE OPTION -->
         <div class="page">
-            <p class="d-flex accordion">Page 3<img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="ms-auto"></p>
+            <p class="d-flex accordion">Page 3
+                <button class="ms-auto icon-trash"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+                <button><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                <button><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
+            </p>
             <div class="panel">
                 <div class="type">
                     <label for="" class="d-inline-block">Type</label>
@@ -86,13 +95,12 @@
                 </div>
                 <div class="question">
                     <label for="content-question-3">Question</label>
-                    <input type="text" name="content-question-3" id="content-question-3"
-                        placeholder="Enter challenge question here..." required>
+                    <textarea id="content-question-3" rows="2" placeholder="Enter challenge question here..." required></textarea>
                 </div>
                 <div>
                     <label for="code-area-3">Code</label>
                     <div class="code-playground">
-                        <textarea class="code-area" name="code-area-3" id="code-area-3" rows="10"
+                        <textarea class="code-area" id="code-area-3" rows="10"
                             placeholder="Enter challenge code here..." required></textarea>
                         <span class="language-span">PHP</span>
                         <button class="run-code d-flex align-items-center">
@@ -124,11 +132,18 @@
             </div>
         </div>
     
-        <div class="button-wrapper d-flex justify-content-center">
+        <div class="button-wrapper d-flex justify-content-center position-relative">
             <button class="btn d-flex add-more-page-btn"><img src="{{ url_for('static', filename='assets/icon_plus.svg') }}"
                     alt="">Add more page</button>
+            <div class="add-page-options">
+                <p><button>Learning</button></p>
+                <p><button>Challenge Code</button></p>
+                <p><button>Challenge Option</button></p>
+            </div>
             <button class="btn submit-btn" type="submit">Submit</button>
         </div>
+
+        
     </form>
 </div>
 

@@ -27,9 +27,21 @@ document.addEventListener("click", function (event) {
         }
 
         // Rotate icon
-        var dropdownIcon = event.target.querySelector("img");
+        var dropdownIcon = event.target.querySelector(".dropdown-icon");
         if (dropdownIcon) {
             dropdownIcon.classList.toggle("rotate");
+        }
+    }
+});
+
+
+
+// ====== DELETE THE RESPECTIVE PAGE ======
+document.addEventListener('click', function (event) {
+    if (event.target.closest('.icon-trash')) {
+        const pageElement = event.target.closest('.page');
+        if (pageElement) {
+            pageElement.remove(); // Remove the .page element
         }
     }
 });
@@ -154,50 +166,72 @@ document.addEventListener("click", function (event) {
 
 
 // ===== ADD MORE PAGE (soon) =====
-const addPageButton = document.querySelector(".add-more-page-btn");
+const addMorePageBtn = document.querySelector('.add-more-page-btn');
+const optionsContainer = document.querySelector('.add-page-options');
+
+function toggleOptionsContainer(event) {
+    // Toggle visibility
+    optionsContainer.style.display =
+        optionsContainer.style.display === 'flex' ? 'none' : 'flex';
+
+    // Prevent click from propagating to the document
+    event.stopPropagation();
+}
+
+function hideOptionsContainer() {
+    optionsContainer.style.display = 'none';
+}
+
+addMorePageBtn.addEventListener('click', toggleOptionsContainer);
+document.addEventListener('click', hideOptionsContainer);
+
+optionsContainer.addEventListener('click', function (event) {
+    event.stopPropagation();
+});
+// batas disini
 
 // Add an event listener to the button
-addPageButton.addEventListener("click", function (event) {
-    event.preventDefault(); // Prevent form submission or page reload
+// addPageButton.addEventListener("click", function (event) {
+//     event.preventDefault(); // Prevent form submission or page reload
 
-    // Select the parent form to append the new page
-    const form = document.querySelector(".course-content");
+//     // Select the parent form to append the new page
+//     const form = document.querySelector(".course-content");
 
-    // Create a new page div
-    const newPage = document.createElement("div");
-    newPage.classList.add("page");
+//     // Create a new page div
+//     const newPage = document.createElement("div");
+//     newPage.classList.add("page");
 
-    // Populate the new page with HTML content for a Learning Page
-    newPage.innerHTML = `
-        <p class="d-flex accordion">New Page
-            <img src="../static/assets/icon_dropdown.svg" alt="" class="ms-auto">
-        </p>
-        <div class="panel">
-            <div class="type">
-                <label for="content-type" class="d-inline-block">Type</label>
-                <select name="content-type" id="content-type">
-                    <option value="Learning">Learning</option>
-                    <option value="Challenge Code">Challenge Code</option>
-                    <option value="Challenge Option">Challenge Option</option>
-                </select>
-            </div>
-            <div class="position-relative">
-                <label for="learning-pic">Picture</label>
-                <label for="learning-pic" class="input-file">
-                    <img src="../static/assets/icon_upload.svg" alt="">
-                    Add File
-                </label>
-                <input type="file" name="learning-pic" id="learning-pic">
-            </div>
-            <div>
-                <label for="content-learning">Content</label>
-                <textarea name="content-learning" id="content-learning" rows="4"
-                    placeholder="Enter learning content here..."></textarea>
-            </div>
-        </div>
-    `;
+//     // Populate the new page with HTML content for a Learning Page
+//     newPage.innerHTML = `
+//         <p class="d-flex accordion">New Page
+//             <img src="../static/assets/icon_dropdown.svg" alt="" class="ms-auto">
+//         </p>
+//         <div class="panel">
+//             <div class="type">
+//                 <label for="content-type" class="d-inline-block">Type</label>
+//                 <select name="content-type" id="content-type">
+//                     <option value="Learning">Learning</option>
+//                     <option value="Challenge Code">Challenge Code</option>
+//                     <option value="Challenge Option">Challenge Option</option>
+//                 </select>
+//             </div>
+//             <div class="position-relative">
+//                 <label for="learning-pic">Picture</label>
+//                 <label for="learning-pic" class="input-file">
+//                     <img src="../static/assets/icon_upload.svg" alt="">
+//                     Add File
+//                 </label>
+//                 <input type="file" name="learning-pic" id="learning-pic">
+//             </div>
+//             <div>
+//                 <label for="content-learning">Content</label>
+//                 <textarea name="content-learning" id="content-learning" rows="4"
+//                     placeholder="Enter learning content here..."></textarea>
+//             </div>
+//         </div>
+//     `;
 
-    // Append the new page to the form before the button wrapper
-    const buttonWrapper = document.querySelector(".button-wrapper");
-    form.insertBefore(newPage, buttonWrapper);
-});
+//     // Append the new page to the form before the button wrapper
+//     const buttonWrapper = document.querySelector(".button-wrapper");
+//     form.insertBefore(newPage, buttonWrapper);
+// });
