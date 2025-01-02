@@ -1,0 +1,31 @@
+<!-- CHALLENGE CODE -->
+<div class="page">
+    <p class="d-flex accordion">New Page
+        <button class="ms-auto icon-trash"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+        <button><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+        <button><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+        <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
+    </p>
+    <div class="panel">
+        <div class="type">
+            <label for="" class="d-inline-block">Type</label>
+            <span class="content-type">Challenge Code</span>
+        </div>
+        <div class="question">
+            <label for="content-question-2">Question</label>
+            <textarea id="content-question-2" rows="2" placeholder="Enter challenge question here..." required></textarea>
+        </div>
+        <div>
+            <label for="code-area-2">Code</label>
+            <div class="code-playground">
+                <textarea class="code-area" id="code-area-2" rows="10"
+                    placeholder="Enter challenge code here..." required></textarea>
+                <span class="language-span">PHP</span>
+                <button class="run-code d-flex align-items-center">
+                    <span>RUN</span>
+                    <img src="{{ url_for('static', filename='assets/icon_run.svg') }}" alt="">
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -316,7 +316,6 @@ select {
 .add-page-options{
     background-color: var(--dark-blue);
     border-radius: 5px;
-    display: none;
     flex-direction: column;
     align-items: start;
     padding: 8px 0px;

@@ -165,73 +165,64 @@ document.addEventListener("click", function (event) {
 
 
 
-// ===== ADD MORE PAGE (soon) =====
+// ===== ADD MORE PAGE (toggle) =====
 const addMorePageBtn = document.querySelector('.add-more-page-btn');
 const optionsContainer = document.querySelector('.add-page-options');
+const buttonWrapper = document.querySelector('.button-wrapper');
 
-function toggleOptionsContainer(event) {
-    // Toggle visibility
-    optionsContainer.style.display =
-        optionsContainer.style.display === 'flex' ? 'none' : 'flex';
 
-    // Prevent click from propagating to the document
-    event.stopPropagation();
-}
-
-function hideOptionsContainer() {
-    optionsContainer.style.display = 'none';
-}
-
-addMorePageBtn.addEventListener('click', toggleOptionsContainer);
-document.addEventListener('click', hideOptionsContainer);
-
-optionsContainer.addEventListener('click', function (event) {
-    event.stopPropagation();
+// Toggle visibility of the options container
+addMorePageBtn.addEventListener('click', function (e) {
+    e.preventDefault(); // Prevent default behavior (if necessary)
+    e.stopPropagation(); // Prevent click from bubbling up
+    optionsContainer.classList.toggle('d-none'); // Show or hide the options
 });
-// batas disini
 
-// Add an event listener to the button
-// addPageButton.addEventListener("click", function (event) {
-//     event.preventDefault(); // Prevent form submission or page reload
+// Close options container when clicking outside
+document.addEventListener('click', function (e) {
+    if (!addMorePageBtn.contains(e.target) && !optionsContainer.contains(e.target)) {
+        optionsContainer.classList.add('d-none'); // Hide the options
+    }
+});
 
-//     // Select the parent form to append the new page
-//     const form = document.querySelector(".course-content");
+// add the page (soon)
+optionsContainer.addEventListener('click', async function (e) {
+    const target = e.target.closest('p');
+    if (!target) return;
 
-//     // Create a new page div
-//     const newPage = document.createElement("div");
-//     newPage.classList.add("page");
+    let url;
+    switch (target.id) {
+        case 'learning-option':
+            url = 'material_learning';
+            break;
+        case 'challenge-code-option':
+            url = 'material_challenge_code';
+            break;
+        case 'challenge-option-option':
+            url = 'material_challenge_option';
+            break;
+        default:
+            console.error('Unknown option selected!');
+            return;
+    }
 
-//     // Populate the new page with HTML content for a Learning Page
-//     newPage.innerHTML = `
-//         <p class="d-flex accordion">New Page
-//             <img src="../static/assets/icon_dropdown.svg" alt="" class="ms-auto">
-//         </p>
-//         <div class="panel">
-//             <div class="type">
-//                 <label for="content-type" class="d-inline-block">Type</label>
-//                 <select name="content-type" id="content-type">
-//                     <option value="Learning">Learning</option>
-//                     <option value="Challenge Code">Challenge Code</option>
-//                     <option value="Challenge Option">Challenge Option</option>
-//                 </select>
-//             </div>
-//             <div class="position-relative">
-//                 <label for="learning-pic">Picture</label>
-//                 <label for="learning-pic" class="input-file">
-//                     <img src="../static/assets/icon_upload.svg" alt="">
-//                     Add File
-//                 </label>
-//                 <input type="file" name="learning-pic" id="learning-pic">
-//             </div>
-//             <div>
-//                 <label for="content-learning">Content</label>
-//                 <textarea name="content-learning" id="content-learning" rows="4"
-//                     placeholder="Enter learning content here..."></textarea>
-//             </div>
-//         </div>
-//     `;
+    try {
+        const response = await fetch(url);
+        if (response.ok) {
+            const content = await response.text();
 
-//     // Append the new page to the form before the button wrapper
-//     const buttonWrapper = document.querySelector(".button-wrapper");
-//     form.insertBefore(newPage, buttonWrapper);
-// });
+            buttonWrapper.insertAdjacentHTML('beforebegin', content);
+        }
+        
+        else {
+            console.error(`Failed to load content: ${response.statusText}`);
+        }
+    }
+    
+    catch (err) {
+        console.error('Error fetching content:', err);
+    }
+
+    // Optionally hide the options container after selection
+    optionsContainer.classList.add('d-none');
+});

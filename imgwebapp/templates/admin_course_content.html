@@ -135,10 +135,10 @@
         <div class="button-wrapper d-flex justify-content-center position-relative">
             <button class="btn d-flex add-more-page-btn"><img src="{{ url_for('static', filename='assets/icon_plus.svg') }}"
                     alt="">Add more page</button>
-            <div class="add-page-options">
-                <p><button>Learning</button></p>
-                <p><button>Challenge Code</button></p>
-                <p><button>Challenge Option</button></p>
+            <div class="add-page-options d-none">
+                <p id="learning-option"><button type="button">Learning</button></p>
+                <p id="challenge-code-option"><button type="button">Challenge Code</button></p>
+                <p id="challenge-option-option"><button type="button">Challenge Option</button></p>
             </div>
             <button class="btn submit-btn" type="submit">Submit</button>
         </div>

@@ -30,6 +30,19 @@ def admin_course_content():
 def challengePHP():
     return render_template('challengePHP.html')
 
+# template materials
+@bp.route('/material_learning')
+def material_learning():
+    return render_template('material_learning.html')
+
+@bp.route('/material_challenge_code')
+def material_challenge_code():
+    return render_template('material_challenge_code.html')
+
+@bp.route('/material_challenge_option')
+def material_challenge_option():
+    return render_template('material_challenge_option.html')
+
 @bp.route('/examPHP')
 def examPHP():
     return render_template('examPHP.html')
