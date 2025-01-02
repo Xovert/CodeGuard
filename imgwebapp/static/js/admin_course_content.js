@@ -36,6 +36,7 @@ document.addEventListener("click", function (event) {
 
 
 
+
 // ====== DELETE THE RESPECTIVE PAGE ======
 document.addEventListener('click', function (event) {
     if (event.target.closest('.icon-trash')) {
@@ -45,6 +46,35 @@ document.addEventListener('click', function (event) {
         }
     }
 });
+
+
+
+
+// ======= MOVE UP + DOWN ========
+document.addEventListener('click', function (e) {
+    // up
+    if (e.target.closest('.up')) {
+        const currentPage = e.target.closest('.page');
+        const previousPage = currentPage?.previousElementSibling;
+
+        if (previousPage && previousPage.classList.contains('page')) {
+            // swap
+            currentPage.parentNode.insertBefore(currentPage, previousPage);
+        }
+    }
+
+    // down
+    if (e.target.closest('.down')) {
+        const currentPage = e.target.closest('.page');
+        const nextPage = currentPage?.nextElementSibling;
+
+        if (nextPage && nextPage.classList.contains('page')) {
+            // swap
+            currentPage.parentNode.insertBefore(nextPage, currentPage);
+        }
+    }
+});
+
 
 
 
@@ -119,7 +149,7 @@ document.addEventListener('change', (event) => {
 
 
 
-// ===== EDIT OPTIONS =====
+// ===== EDIT OPTIONS (soon) =====
 document.addEventListener('click', function (e) {
     if (e.target.matches('[contenteditable="true"]')) {
         e.preventDefault(); // Prevent default behavior if necessary
@@ -171,21 +201,20 @@ const optionsContainer = document.querySelector('.add-page-options');
 const buttonWrapper = document.querySelector('.button-wrapper');
 
 
-// Toggle visibility of the options container
+// add more page options toggle
 addMorePageBtn.addEventListener('click', function (e) {
-    e.preventDefault(); // Prevent default behavior (if necessary)
     e.stopPropagation(); // Prevent click from bubbling up
     optionsContainer.classList.toggle('d-none'); // Show or hide the options
 });
 
-// Close options container when clicking outside
+// close options container when clicking outside
 document.addEventListener('click', function (e) {
     if (!addMorePageBtn.contains(e.target) && !optionsContainer.contains(e.target)) {
         optionsContainer.classList.add('d-none'); // Hide the options
     }
 });
 
-// add the page (soon)
+// add the page
 optionsContainer.addEventListener('click', async function (e) {
     const target = e.target.closest('p');
     if (!target) return;
@@ -211,7 +240,22 @@ optionsContainer.addEventListener('click', async function (e) {
         if (response.ok) {
             const content = await response.text();
 
-            buttonWrapper.insertAdjacentHTML('beforebegin', content);
+            // Parse the content into a DOM element
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content; // Insert the fetched HTML
+
+            // Count existing .page elements to determine the page number
+            const currentPageCount = document.querySelectorAll('.page').length;
+            const newPageNumber = currentPageCount + 1;
+
+            // Update the <p> tag with the new page number
+            const newAccordion = tempDiv.querySelector('p.accordion');
+            if (newAccordion) {
+                newAccordion.childNodes[0].textContent = `Page ${newPageNumber} `;
+            }
+
+            // Insert the updated content before the .button-wrapper
+            buttonWrapper.parentNode.insertBefore(tempDiv.firstElementChild, buttonWrapper);
         }
         
         else {
@@ -223,6 +267,6 @@ optionsContainer.addEventListener('click', async function (e) {
         console.error('Error fetching content:', err);
     }
 
-    // Optionally hide the options container after selection
+    // hide the options after selection
     optionsContainer.classList.add('d-none');
 });
