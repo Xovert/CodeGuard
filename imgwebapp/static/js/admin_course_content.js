@@ -178,7 +178,7 @@ document.addEventListener('click', function (e) {
 
 
 // ======= ADD OPTIONS (soon) =======
-const addOptionButton = document.getElementById("add-option-btn");
+const addOptionButton = document.querySelector(".add-option-btn");
 
 addOptionButton.addEventListener("click", function (e) {
     e.preventDefault();
@@ -357,7 +357,7 @@ function randomizeChallengeCodeId(container){
     const questionTextarea = container.querySelector('.question > textarea');
     const questionLabel = container.querySelector('.question > label');
     if (questionTextarea && questionLabel) {
-        const randomID = `content-question-${generateRandomID()}`;
+        const randomID = `code-question-${generateRandomID()}`;
         questionTextarea.id = randomID; // Update the textarea ID
         questionLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
     }
@@ -366,7 +366,7 @@ function randomizeChallengeCodeId(container){
     const codeTextarea = container.querySelector('.code-playground > textarea');
     const codeLabel = container.querySelector('.code > label');
     if (codeTextarea && codeLabel) {
-        const randomID = `code-area-${generateRandomID()}`;
+        const randomID = `code-code-area-${generateRandomID()}`;
         codeTextarea.id = randomID; // Update the textarea ID
         codeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
     }
@@ -375,5 +375,27 @@ function randomizeChallengeCodeId(container){
 function randomizeChallengeOptionId(container){
     // type
     const typeInput = container.querySelector('.type > input');
-    
+    const typeLabel = container.querySelector('.type > label');
+    if (typeInput && typeLabel) {
+        const randomID = `challenge-option-${generateRandomID()}`;
+        typeInput.id = randomID; // Update the input ID
+        typeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
+    }
+
+    // question
+    const questionTextarea = container.querySelector('.question > textarea');
+    const questionLabel = container.querySelector('.question > label');
+    if (questionTextarea && questionLabel) {
+        const randomID = `option-question-${generateRandomID()}`;
+        questionTextarea.id = randomID; // Update the textarea ID
+        questionLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
+    }
+
+    const codeTextarea = container.querySelector('.code-playground > textarea');
+    const codeLabel = container.querySelector('.code > label');
+    if (codeTextarea && codeLabel) {
+        const randomID = `code-option-area-${generateRandomID()}`;
+        codeTextarea.id = randomID; // Update the textarea ID
+        codeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
+    }
 }
