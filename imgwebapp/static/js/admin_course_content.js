@@ -58,8 +58,8 @@ document.addEventListener('click', function (e) {
         const previousPage = currentPage?.previousElementSibling;
 
         if (previousPage && previousPage.classList.contains('page')) {
-            // swap
-            currentPage.parentNode.insertBefore(currentPage, previousPage);
+            currentPage.parentNode.insertBefore(currentPage, previousPage); // swap
+            swapPageNumbers(currentPage, previousPage);
         }
     }
 
@@ -69,12 +69,30 @@ document.addEventListener('click', function (e) {
         const nextPage = currentPage?.nextElementSibling;
 
         if (nextPage && nextPage.classList.contains('page')) {
-            // swap
-            currentPage.parentNode.insertBefore(nextPage, currentPage);
+            currentPage.parentNode.insertBefore(nextPage, currentPage); // swap
+            swapPageNumbers(currentPage, nextPage);
         }
     }
 });
 
+/**
+ * @param {HTMLElement} page1 - The first .page element
+ * @param {HTMLElement} page2 - The second .page element
+ */
+function swapPageNumbers(page1, page2) {
+    const page1NumberElement = page1.querySelector('p.accordion');
+    const page2NumberElement = page2.querySelector('p.accordion');
+
+    if (page1NumberElement && page2NumberElement) {
+        // Extract the current page numbers
+        const page1Number = page1NumberElement.childNodes[0].textContent.trim();
+        const page2Number = page2NumberElement.childNodes[0].textContent.trim();
+
+        // Swap the page numbers
+        page1NumberElement.childNodes[0].textContent = page2Number;
+        page2NumberElement.childNodes[0].textContent = page1Number;
+    }
+}
 
 
 
@@ -254,6 +272,22 @@ optionsContainer.addEventListener('click', async function (e) {
                 newAccordion.childNodes[0].textContent = `Page ${newPageNumber} `;
             }
 
+            switch (target.id) {
+                case 'learning-option':
+                    randomizeLearningId(tempDiv);
+                    break;
+                case 'challenge-code-option':
+                    randomizeChallengeCodeId(tempDiv);
+                    break;
+                case 'challenge-option-option':
+                    url = 'material_challenge_option';
+                    break;
+                default:
+                    console.error('Unknown option selected!');
+                    return;
+            }
+            
+
             // Insert the updated content before the .button-wrapper
             buttonWrapper.parentNode.insertBefore(tempDiv.firstElementChild, buttonWrapper);
         }
@@ -270,3 +304,76 @@ optionsContainer.addEventListener('click', async function (e) {
     // hide the options after selection
     optionsContainer.classList.add('d-none');
 });
+
+// generate random ID function
+function generateRandomID() {
+    return Date.now();
+}
+
+// RANDOMIZE ID
+/**
+ * @param {HTMLElement} container - The container element to randomize IDs for
+ */
+function randomizeLearningId(container) {
+    // type
+    const typeInput = container.querySelector('.type > input');
+    const typeLabel = container.querySelector('.type > label');
+    if (typeInput && typeLabel) {
+        const randomID = `learning-${generateRandomID()}`;
+        typeInput.id = randomID; // Update the input ID
+        typeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
+    }
+
+    // pic
+    const learningPicInput = container.querySelector('.learning-pic > input');
+    const learningPicLabels = container.querySelectorAll('.learning-pic > label');
+    if (learningPicInput && learningPicLabels.length > 0) {
+        const randomID = `learning-pic-${generateRandomID()}`;
+        learningPicInput.id = randomID; // Update the input ID
+        learningPicLabels.forEach(label => label.setAttribute('for', randomID));
+    }
+
+    // content learning
+    const contentTextarea = container.querySelector('.content-learning > textarea');
+    const contentLabel = container.querySelector('.content-learning > label');
+    if (contentTextarea && contentLabel) {
+        const randomID = `content-learning-${generateRandomID()}`;
+        contentTextarea.id = randomID; // Update the textarea ID
+        contentLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
+    }
+}
+
+function randomizeChallengeCodeId(container){
+    // type
+    const typeInput = container.querySelector('.type > input');
+    const typeLabel = container.querySelector('.type > label');
+    if (typeInput && typeLabel) {
+        const randomID = `challenge-code-${generateRandomID()}`;
+        typeInput.id = randomID; // Update the input ID
+        typeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
+    }
+
+    // question
+    const questionTextarea = container.querySelector('.question > textarea');
+    const questionLabel = container.querySelector('.question > label');
+    if (questionTextarea && questionLabel) {
+        const randomID = `content-question-${generateRandomID()}`;
+        questionTextarea.id = randomID; // Update the textarea ID
+        questionLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
+    }
+
+    // code area
+    const codeTextarea = container.querySelector('.code-playground > textarea');
+    const codeLabel = container.querySelector('.code > label');
+    if (codeTextarea && codeLabel) {
+        const randomID = `code-area-${generateRandomID()}`;
+        codeTextarea.id = randomID; // Update the textarea ID
+        codeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
+    }
+}
+
+function randomizeChallengeOptionId(container){
+    // type
+    const typeInput = container.querySelector('.type > input');
+    
+}

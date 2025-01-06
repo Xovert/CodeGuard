@@ -43,6 +43,11 @@ input, .input-file, textarea, select, .content-type {
 .content-type{
     padding: 8px 120px 8px 12px;
     font-weight: 400;
+    width: 40%;
+}
+
+.content-type:focus{
+    outline: none;
 }
 
 .content-type:hover{
@@ -184,7 +189,7 @@ select {
 }
 
 .type > label {
-    margin-right: 64px;
+    margin-right: 32px;
     margin-bottom: 0px;
 }
 
@@ -288,7 +293,7 @@ select {
 .button-wrapper{
     column-gap: 64px;
     margin-top: 24px;
-    margin-bottom: 32px;
+    margin-bottom: 60px;
 }
 
 .course-details button, .button-wrapper > button{
