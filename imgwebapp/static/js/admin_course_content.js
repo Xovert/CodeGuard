@@ -167,7 +167,7 @@ document.addEventListener('change', (event) => {
 
 
 
-// ===== EDIT OPTIONS (soon) =====
+// ===== EDIT OPTIONS =====
 document.addEventListener('click', function (e) {
     if (e.target.matches('[contenteditable="true"]')) {
         e.preventDefault(); // Prevent default behavior if necessary
@@ -175,30 +175,79 @@ document.addEventListener('click', function (e) {
     }
 });
 
+// update the value
+document.addEventListener("input", function (event) {
+    // Check if the target is a contenteditable label
+    if (event.target.matches('label[contenteditable="true"]')) {
+        const label = event.target; // The label being edited
+        const input = label.previousElementSibling; // The associated input element
+        
+        if (input && input.tagName === "INPUT") {
+            input.setAttribute("value", label.textContent.trim()); // Update the value attribute
+        }
+    }
+});
+
+// blur event > triggered when element loses its focus, i dont think this part of the code is necessary
+// document.addEventListener("blur", function (event) {
+//     if (event.target.matches('label[contenteditable="true"]')) {
+//         const label = event.target;
+//         const input = label.previousElementSibling;
+
+//         if (input && input.tagName === "INPUT") {
+//             input.setAttribute("value", label.textContent.trim());
+//         }
+//     }
+// }, true); // Use capture phase to ensure blur is captured
 
 
-// ======= ADD OPTIONS (soon) =======
-const addOptionButton = document.querySelector(".add-option-btn");
 
-addOptionButton.addEventListener("click", function (e) {
-    e.preventDefault();
+// ======= ADD OPTIONS =======
+document.addEventListener("click", function (event) {
+    if (event.target.closest(".add-option-btn")) {
+        const button = event.target.closest(".add-option-btn");
+        const optionContainer = button.closest(".option");
+
+        // Find the last radio option in the container
+        const radioOptions = optionContainer.querySelectorAll(".radio-option");
+        let baseID;
+        let nextCounter;
+
+        // kalo ada last .radio-option, get it
+        if (radioOptions.length > 0){
+            const lastRadioOption = radioOptions[radioOptions.length - 1]; // Get the last .radio-option
+            const lastInput = lastRadioOption.querySelector("input"); // Get the input inside the last .radio-option
     
-    // Find all existing radio options and count them
-    const container = addOptionButton.parentElement;
-    const existingOptions = container.querySelectorAll(".radio-option");
-    const nextOptionNumber = existingOptions.length + 1;
+            // Extract the base ID and counter from the last input's ID
+            const idParts = lastInput.id.split("-"); // di split by -
+            baseID = idParts.slice(0, -1).join("-"); // option-{{randomID}}
+            const lastCounter = parseInt(idParts[idParts.length - 1], 10); // Convert the last part to a number
+    
+            nextCounter = lastCounter + 1; // Calculate the next counter
+        }
 
-    // Create the new radio option element
-    const newOption = document.createElement("div");
-    newOption.classList.add("radio-option");
-    newOption.innerHTML = `
-        <input type="radio" id="option-${nextOptionNumber}" name="option" value="Option ${nextOptionNumber}">
-        <label for="option-${nextOptionNumber}" contenteditable="true">Option ${nextOptionNumber}</label>
-        <img src="../static/assets/icon_exit.svg" alt="">
-    `;
+        // no .radio-option available
+        else{
+            const panel = optionContainer.closest(".panel");
+            const typeInput = panel.querySelector('.type > input');
 
-    // Insert the new option before the "Add Option" button
-    container.insertBefore(newOption, addOptionButton);
+            const idParts = typeInput.id.split("-");
+            baseID = `${idParts[1]}-${idParts[2]}`;
+            nextCounter = 1;
+        }
+
+        // Create the new .radio-option element
+        const newRadioOption = document.createElement("div");
+        newRadioOption.classList.add("radio-option");
+        newRadioOption.innerHTML = `
+            <input type="radio" id="${baseID}-${nextCounter}" name="${baseID}" value="Option ${nextCounter}">
+            <label for="${baseID}-${nextCounter}" contenteditable="true">Option ${nextCounter}</label>
+            <img src="../static/assets/icon_exit.svg" alt="">
+        `;
+
+        // Append the new .radio-option before the .add-option-btn
+        optionContainer.insertBefore(newRadioOption, button);
+    }
 });
 
 
@@ -281,6 +330,7 @@ optionsContainer.addEventListener('click', async function (e) {
                     break;
                 case 'challenge-option-option':
                     url = 'material_challenge_option';
+                    randomizeChallengeOptionId(tempDiv);
                     break;
                 default:
                     console.error('Unknown option selected!');
@@ -391,6 +441,7 @@ function randomizeChallengeOptionId(container){
         questionLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
     }
 
+    // code area
     const codeTextarea = container.querySelector('.code-playground > textarea');
     const codeLabel = container.querySelector('.code > label');
     if (codeTextarea && codeLabel) {
@@ -398,4 +449,31 @@ function randomizeChallengeOptionId(container){
         codeTextarea.id = randomID; // Update the textarea ID
         codeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
     }
+
+    // option
+    const optionsContainer = container.querySelector('.option');
+    const optionLabel = optionsContainer.querySelector('.option > label');
+    const randomID = `option-${generateRandomID()}`;
+    optionLabel.setAttribute("for", randomID); // set label
+
+    const radioOptions = optionsContainer.querySelectorAll(".radio-option");
+    let counter = 1; // Initialize counter
+
+    radioOptions.forEach(radioOption => {
+        const input = radioOption.querySelector("input");
+        const radioLabel = radioOption.querySelector("label");
+
+        // Update name attribute
+        input.setAttribute("name", randomID);
+
+        // Update ID attribute
+        const newID = `${randomID}-${counter}`;
+        input.setAttribute("id", newID);
+
+        // Update label's for attribute
+        radioLabel.setAttribute("for", newID);
+
+        counter++; // Increment counter
+    });
+
 }

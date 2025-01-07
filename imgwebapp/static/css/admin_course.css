@@ -286,7 +286,7 @@ select {
     font-weight: 400;
 }
 
-#add-option-btn > img{
+.add-option-btn > img{
     margin-right: 12px;
 }
 
