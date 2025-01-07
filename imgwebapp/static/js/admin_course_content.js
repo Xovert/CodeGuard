@@ -477,3 +477,10 @@ function randomizeChallengeOptionId(container){
     });
 
 }
+
+function randomizeExamCodeId(container){
+}
+
+function randomizeExamOptionId(container){
+    
+}

@@ -188,9 +188,13 @@ select {
     padding: 16px;
 }
 
-.type > label {
+.type > label, .timer > label {
     margin-right: 32px;
     margin-bottom: 0px;
+}
+
+.timer > input{
+    width: fit-content;
 }
 
 .course-details div:last-child{
@@ -293,7 +297,7 @@ select {
 .button-wrapper{
     column-gap: 64px;
     margin-top: 24px;
-    margin-bottom: 60px;
+    margin-bottom: 128px;
 }
 
 .course-details button, .button-wrapper > button{
@@ -308,6 +312,14 @@ select {
 .course-details button:hover, .button-wrapper > button:hover{
     border: 2px solid var(--black);
     box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.16), 0px 3px 6px 0px rgba(0, 0, 0, 0.23);
+}
+
+.type-timer-wrapper{
+    column-gap: 64px;
+}
+
+.type-timer-wrapper > .type > input{
+    width: auto;
 }
 
 .add-more-page-btn{
