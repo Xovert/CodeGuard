@@ -17,7 +17,7 @@
         </div>
     
         <!-- LEARNING -->
-        <div class="page">
+        <div class="page study">
             <p class="d-flex accordion">Page 1
                 <button type="button" class="ms-auto icon-trash"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
                 <button type="button" class="up"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
@@ -49,7 +49,7 @@
         </div>
     
         <!-- CHALLENGE CODE -->
-        <div class="page">
+        <div class="page study">
             <p class="d-flex accordion">Page 2
                 <button type="button" class="ms-auto icon-trash"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
                 <button type="button" class="up"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
@@ -81,7 +81,7 @@
         </div>
     
         <!-- CHALLENGE OPTION -->
-        <div class="page">
+        <div class="page study">
             <p class="d-flex accordion">Page 3
                 <button type="button" class="ms-auto icon-trash"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
                 <button type="button" class="up"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
@@ -110,20 +110,20 @@
                     </div>
                 </div>
                 <div class="option">
-                    <label for="">Options</label>
+                    <label>Options</label>
                     <div class="radio-option">
                         <input type="radio" id="option-3-1" name="option-3" value="Option 1" required>
-                        <label for="option-3-1" contenteditable="true">Option 1</label>
+                        <label for="option-3-1" contenteditable="true">Enter Option 1</label>
                         <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
                     </div>
                     <div class="radio-option">
                         <input type="radio" id="option-3-2" name="option-3" value="Option 2">
-                        <label for="option-3-2" contenteditable="true">Option 2</label>
+                        <label for="option-3-2" contenteditable="true">Enter Option 2</label>
                         <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
                     </div>
                     <div class="radio-option">
                         <input type="radio" id="option-3-3" name="option-3" value="Option 3">
-                        <label for="option-3-3" contenteditable="true">Option 3</label>
+                        <label for="option-3-3" contenteditable="true">Enter Option 3</label>
                         <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
                     </div>
                     <button type="button" class="add-option-btn"><img src="{{ url_for('static', filename='assets/icon_add_circle.svg') }}"
@@ -139,10 +139,10 @@
                 <p id="learning-option"><button type="button">Learning</button></p>
                 <p id="challenge-code-option"><button type="button">Challenge Code</button></p>
                 <p id="challenge-option-option"><button type="button">Challenge Option</button></p>
-                <p id="challenge-option-option"><button type="button">Exam Code</button></p>
-                <p id="challenge-option-option"><button type="button">Exam Option</button></p>
+                <p id="exam-code-option"><button type="button">Exam Code</button></p>
+                <p id="exam-option-option"><button type="button">Exam Option</button></p>
             </div>
-            <button class="btn submit-btn" type="submit">Submit</button>
+            <button class="btn submit-btn" id="submit-btn" type="submit">Submit</button>
         </div>
 
         

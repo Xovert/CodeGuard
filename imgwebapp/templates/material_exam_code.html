@@ -1,5 +1,5 @@
 <!-- EXAM CODE -->
-<div class="page">
+<div class="page exam">
     <p class="d-flex accordion">New Exam
         <button type="button" class="ms-auto icon-trash"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
         <button type="button" class="up"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
@@ -14,7 +14,7 @@
             </div>
             <div class="timer">
                 <label class="d-inline-block" for="exam-code-timer-1">Time</label>
-                <input type="time" step="2" id="exam-code-timer-1">
+                <input type="time" step="2" id="exam-code-timer-1" required>
             </div>
         </div>
         <div class="question">

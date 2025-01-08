@@ -43,6 +43,14 @@ def material_challenge_code():
 def material_challenge_option():
     return render_template('material_challenge_option.html')
 
+@bp.route('/material_exam_code')
+def material_exam_code():
+    return render_template('material_exam_code.html')
+
+@bp.route('/material_exam_option')
+def material_exam_option():
+    return render_template('material_exam_option.html')
+
 @bp.route('/examPHP')
 def examPHP():
     return render_template('examPHP.html')

@@ -41,9 +41,9 @@ input, .input-file, textarea, select, .content-type {
 }
 
 .content-type{
-    padding: 8px 120px 8px 12px;
+    padding: 8px 12px;
     font-weight: 400;
-    width: 40%;
+    width: 50%;
 }
 
 .content-type:focus{

@@ -42,6 +42,70 @@ document.addEventListener('click', function (event) {
     if (event.target.closest('.icon-trash')) {
         const pageElement = event.target.closest('.page');
         if (pageElement) {
+            if (pageElement.classList.contains('study')) {
+                // Get all .study elements after the current pageElement
+                const studyPages = Array.from(
+                    document.querySelectorAll('.page.study')
+                );
+
+                const currentIndex = studyPages.indexOf(pageElement);
+
+                // Decrease the page number in p.accordion for all .study elements after the current one
+                studyPages.slice(currentIndex + 1).forEach((studyPage) => {
+                    const accordion = studyPage.querySelector('p.accordion');
+                    if (accordion) {
+                        // Extract the text content of the accordion (excluding buttons)
+                        const textNode = Array.from(accordion.childNodes).find(
+                            (node) => node.nodeType === Node.TEXT_NODE
+                        );
+
+                        if (textNode) {
+                            // Extract and decrement the page number
+                            const match = textNode.textContent.match(/Page (\d+)/);
+                            if (match) {
+                                const pageNumber = parseInt(match[1], 10);
+                                textNode.textContent = textNode.textContent.replace(
+                                    `Page ${pageNumber}`,
+                                    `Page ${pageNumber - 1}`
+                                );
+                            }
+                        }
+                    }
+                });
+            }
+
+            else if (pageElement.classList.contains('exam')) {
+                // Get all .study elements after the current pageElement
+                const examPages = Array.from(
+                    document.querySelectorAll('.page.exam')
+                );
+
+                const currentIndex = examPages.indexOf(pageElement);
+
+                // Decrease the page number in p.accordion for all .study elements after the current one
+                examPages.slice(currentIndex + 1).forEach((examPage) => {
+                    const accordion = examPage.querySelector('p.accordion');
+                    if (accordion) {
+                        // Extract the text content of the accordion (excluding buttons)
+                        const textNode = Array.from(accordion.childNodes).find(
+                            (node) => node.nodeType === Node.TEXT_NODE
+                        );
+
+                        if (textNode) {
+                            // Extract and decrement the page number
+                            const match = textNode.textContent.match(/Exam (\d+)/);
+                            if (match) {
+                                const pageNumber = parseInt(match[1], 10);
+                                textNode.textContent = textNode.textContent.replace(
+                                    `Exam ${pageNumber}`,
+                                    `Exam ${pageNumber - 1}`
+                                );
+                            }
+                        }
+                    }
+                });
+            }
+
             pageElement.remove(); // Remove the .page element
         }
     }
@@ -59,7 +123,9 @@ document.addEventListener('click', function (e) {
 
         if (previousPage && previousPage.classList.contains('page')) {
             currentPage.parentNode.insertBefore(currentPage, previousPage); // swap
-            swapPageNumbers(currentPage, previousPage);
+            if ((currentPage.classList.contains('study') && previousPage.classList.contains('study')) || (currentPage.classList.contains('exam') && previousPage.classList.contains('exam'))){
+                swapPageNumbers(currentPage, previousPage);
+            }
         }
     }
 
@@ -70,7 +136,9 @@ document.addEventListener('click', function (e) {
 
         if (nextPage && nextPage.classList.contains('page')) {
             currentPage.parentNode.insertBefore(nextPage, currentPage); // swap
-            swapPageNumbers(currentPage, nextPage);
+            if ((currentPage.classList.contains('study') && nextPage.classList.contains('study')) || (currentPage.classList.contains('exam') && nextPage.classList.contains('exam'))){
+                swapPageNumbers(currentPage, nextPage);
+            }
         }
     }
 });
@@ -232,7 +300,13 @@ document.addEventListener("click", function (event) {
             const typeInput = panel.querySelector('.type > input');
 
             const idParts = typeInput.id.split("-");
-            baseID = `${idParts[1]}-${idParts[2]}`;
+            if (idParts.length === 3){
+                baseID = `${idParts[1]}-${idParts[2]}`;
+            }
+            else if (idParts.length === 4){
+                baseID = `${idParts[0]}-${idParts[1]}-${idParts[3]}`;
+            }
+            
             nextCounter = 1;
         }
 
@@ -241,7 +315,7 @@ document.addEventListener("click", function (event) {
         newRadioOption.classList.add("radio-option");
         newRadioOption.innerHTML = `
             <input type="radio" id="${baseID}-${nextCounter}" name="${baseID}" value="Option ${nextCounter}">
-            <label for="${baseID}-${nextCounter}" contenteditable="true">Option ${nextCounter}</label>
+            <label for="${baseID}-${nextCounter}" contenteditable="true">Enter Option ${nextCounter}</label>
             <img src="../static/assets/icon_exit.svg" alt="">
         `;
 
@@ -297,8 +371,14 @@ optionsContainer.addEventListener('click', async function (e) {
         case 'challenge-option-option':
             url = 'material_challenge_option';
             break;
+        case 'exam-code-option':
+            url = 'material_exam_code';
+            break;
+        case 'exam-option-option':
+            url = 'material_exam_option';
+            break;
         default:
-            console.error('Unknown option selected!');
+            alert('Unknown option selected!');
             return;
     }
 
@@ -311,29 +391,47 @@ optionsContainer.addEventListener('click', async function (e) {
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = content; // Insert the fetched HTML
 
+            let currentPageCount;
+            let prefixTitle;
+            if (target.id === "learning-option" || target.id === "challenge-code-option" || target.id === "challenge-option-option"){
+                currentPageCount = document.querySelectorAll('.study').length;
+                prefixTitle = "Page";
+            }
+
+            else if(target.id === "exam-code-option" || target.id === "exam-option-option"){
+                currentPageCount = document.querySelectorAll('.exam').length;
+                prefixTitle = "Exam";
+            }
             // Count existing .page elements to determine the page number
-            const currentPageCount = document.querySelectorAll('.page').length;
+            
             const newPageNumber = currentPageCount + 1;
 
             // Update the <p> tag with the new page number
             const newAccordion = tempDiv.querySelector('p.accordion');
             if (newAccordion) {
-                newAccordion.childNodes[0].textContent = `Page ${newPageNumber} `;
+                newAccordion.childNodes[0].textContent = `${prefixTitle} ${newPageNumber} `;
             }
+
+            const randID = generateRandomID();
 
             switch (target.id) {
                 case 'learning-option':
-                    randomizeLearningId(tempDiv);
+                    randomizeLearningId(tempDiv, randID);
                     break;
                 case 'challenge-code-option':
-                    randomizeChallengeCodeId(tempDiv);
+                    randomizeChallengeCodeId(tempDiv, randID);
                     break;
                 case 'challenge-option-option':
-                    url = 'material_challenge_option';
-                    randomizeChallengeOptionId(tempDiv);
+                    randomizeChallengeOptionId(tempDiv, randID);
+                    break;
+                case 'exam-code-option':
+                    randomizeExamCodeId(tempDiv, randID);
+                    break;
+                case 'exam-option-option':
+                    randomizeExamOptionId(tempDiv, randID);
                     break;
                 default:
-                    console.error('Unknown option selected!');
+                    alert("Unknown option selected!")
                     return;
             }
             
@@ -364,12 +462,12 @@ function generateRandomID() {
 /**
  * @param {HTMLElement} container - The container element to randomize IDs for
  */
-function randomizeLearningId(container) {
+function randomizeLearningId(container, randID) {
     // type
     const typeInput = container.querySelector('.type > input');
     const typeLabel = container.querySelector('.type > label');
     if (typeInput && typeLabel) {
-        const randomID = `learning-${generateRandomID()}`;
+        const randomID = `learning-${randID}`;
         typeInput.id = randomID; // Update the input ID
         typeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
     }
@@ -378,7 +476,7 @@ function randomizeLearningId(container) {
     const learningPicInput = container.querySelector('.learning-pic > input');
     const learningPicLabels = container.querySelectorAll('.learning-pic > label');
     if (learningPicInput && learningPicLabels.length > 0) {
-        const randomID = `learning-pic-${generateRandomID()}`;
+        const randomID = `learning-pic-${randID}`;
         learningPicInput.id = randomID; // Update the input ID
         learningPicLabels.forEach(label => label.setAttribute('for', randomID));
     }
@@ -387,18 +485,18 @@ function randomizeLearningId(container) {
     const contentTextarea = container.querySelector('.content-learning > textarea');
     const contentLabel = container.querySelector('.content-learning > label');
     if (contentTextarea && contentLabel) {
-        const randomID = `content-learning-${generateRandomID()}`;
+        const randomID = `content-learning-${randID}`;
         contentTextarea.id = randomID; // Update the textarea ID
         contentLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
     }
 }
 
-function randomizeChallengeCodeId(container){
+function randomizeChallengeCodeId(container, randID){
     // type
     const typeInput = container.querySelector('.type > input');
     const typeLabel = container.querySelector('.type > label');
     if (typeInput && typeLabel) {
-        const randomID = `challenge-code-${generateRandomID()}`;
+        const randomID = `challenge-code-${randID}`;
         typeInput.id = randomID; // Update the input ID
         typeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
     }
@@ -407,7 +505,7 @@ function randomizeChallengeCodeId(container){
     const questionTextarea = container.querySelector('.question > textarea');
     const questionLabel = container.querySelector('.question > label');
     if (questionTextarea && questionLabel) {
-        const randomID = `code-question-${generateRandomID()}`;
+        const randomID = `code-question-${randID}`;
         questionTextarea.id = randomID; // Update the textarea ID
         questionLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
     }
@@ -416,18 +514,18 @@ function randomizeChallengeCodeId(container){
     const codeTextarea = container.querySelector('.code-playground > textarea');
     const codeLabel = container.querySelector('.code > label');
     if (codeTextarea && codeLabel) {
-        const randomID = `code-code-area-${generateRandomID()}`;
+        const randomID = `code-code-area-${randID}`;
         codeTextarea.id = randomID; // Update the textarea ID
         codeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
     }
 }
 
-function randomizeChallengeOptionId(container){
+function randomizeChallengeOptionId(container, randID){
     // type
     const typeInput = container.querySelector('.type > input');
     const typeLabel = container.querySelector('.type > label');
     if (typeInput && typeLabel) {
-        const randomID = `challenge-option-${generateRandomID()}`;
+        const randomID = `challenge-option-${randID}`;
         typeInput.id = randomID; // Update the input ID
         typeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
     }
@@ -436,7 +534,7 @@ function randomizeChallengeOptionId(container){
     const questionTextarea = container.querySelector('.question > textarea');
     const questionLabel = container.querySelector('.question > label');
     if (questionTextarea && questionLabel) {
-        const randomID = `option-question-${generateRandomID()}`;
+        const randomID = `option-question-${randID}`;
         questionTextarea.id = randomID; // Update the textarea ID
         questionLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
     }
@@ -445,16 +543,14 @@ function randomizeChallengeOptionId(container){
     const codeTextarea = container.querySelector('.code-playground > textarea');
     const codeLabel = container.querySelector('.code > label');
     if (codeTextarea && codeLabel) {
-        const randomID = `code-option-area-${generateRandomID()}`;
+        const randomID = `code-option-area-${randID}`;
         codeTextarea.id = randomID; // Update the textarea ID
         codeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
     }
 
     // option
     const optionsContainer = container.querySelector('.option');
-    const optionLabel = optionsContainer.querySelector('.option > label');
-    const randomID = `option-${generateRandomID()}`;
-    optionLabel.setAttribute("for", randomID); // set label
+    const randomID = `option-${randID}`;
 
     const radioOptions = optionsContainer.querySelectorAll(".radio-option");
     let counter = 1; // Initialize counter
@@ -478,9 +574,128 @@ function randomizeChallengeOptionId(container){
 
 }
 
-function randomizeExamCodeId(container){
+function randomizeExamCodeId(container, randID) {
+    const typeInput = container.querySelector(".type > input");
+    const typeLabel = container.querySelector(".type > label");
+    if (typeInput && typeLabel) {
+        const newTypeID = `exam-code-type-${randID}`;
+        typeInput.setAttribute("id", newTypeID);
+        typeLabel.setAttribute("for", newTypeID);
+    }
+
+    // Randomize .timer > input and label
+    const timerInput = container.querySelector(".timer > input");
+    const timerLabel = container.querySelector(".timer > label");
+    if (timerInput && timerLabel) {
+        const newTimerID = `exam-code-timer-${randID}`;
+        timerInput.setAttribute("id", newTimerID);
+        timerLabel.setAttribute("for", newTimerID);
+    }
+
+    // Randomize .question > textarea and label
+    const questionTextarea = container.querySelector(".question > textarea");
+    const questionLabel = container.querySelector(".question > label");
+    if (questionTextarea && questionLabel) {
+        const newQuestionID = `exam-code-question-${randID}`;
+        questionTextarea.setAttribute("id", newQuestionID);
+        questionLabel.setAttribute("for", newQuestionID);
+    }
+
+    // Randomize .code-playground > textarea and .code > label
+    const codeTextarea = container.querySelector(".code-playground > textarea");
+    const codeLabel = container.querySelector(".code > label");
+    if (codeTextarea && codeLabel) {
+        const newCodeID = `exam-code-area-${randID}`;
+        codeTextarea.setAttribute("id", newCodeID);
+        codeLabel.setAttribute("for", newCodeID);
+    }
 }
 
-function randomizeExamOptionId(container){
-    
+function randomizeExamOptionId(container, randID){
+    const typeInput = container.querySelector(".type > input");
+    const typeLabel = container.querySelector(".type > label");
+    if (typeInput && typeLabel) {
+        const newTypeID = `exam-option-type-${randID}`;
+        typeInput.setAttribute("id", newTypeID);
+        typeLabel.setAttribute("for", newTypeID);
+    }
+
+    // Randomize .timer > input and label
+    const timerInput = container.querySelector(".timer > input");
+    const timerLabel = container.querySelector(".timer > label");
+    if (timerInput && timerLabel) {
+        const newTimerID = `exam-option-timer-${randID}`;
+        timerInput.setAttribute("id", newTimerID);
+        timerLabel.setAttribute("for", newTimerID);
+    }
+
+    // Randomize .question > textarea and label
+    const questionTextarea = container.querySelector(".question > textarea");
+    const questionLabel = container.querySelector(".question > label");
+    if (questionTextarea && questionLabel) {
+        const newQuestionID = `exam-option-question-${randID}`;
+        questionTextarea.setAttribute("id", newQuestionID);
+        questionLabel.setAttribute("for", newQuestionID);
+    }
+
+    // Randomize .code-playground > textarea and .code > label
+    const codeTextarea = container.querySelector(".code-playground > textarea");
+    const codeLabel = container.querySelector(".code > label");
+    if (codeTextarea && codeLabel) {
+        const newCodeID = `exam-option-area-${randID}`;
+        codeTextarea.setAttribute("id", newCodeID);
+        codeLabel.setAttribute("for", newCodeID);
+    }
+
+    const optionsContainer = container.querySelector('.option');
+    const randomID = `exam-option-${randID}`;
+
+    const radioOptions = optionsContainer.querySelectorAll(".radio-option");
+    let counter = 1; // Initialize counter
+
+    radioOptions.forEach(radioOption => {
+        const input = radioOption.querySelector("input");
+        const radioLabel = radioOption.querySelector("label");
+
+        // Update name attribute
+        input.setAttribute("name", randomID);
+
+        // Update ID attribute
+        const newID = `${randomID}-${counter}`;
+        input.setAttribute("id", newID);
+
+        // Update label's for attribute
+        radioLabel.setAttribute("for", newID);
+
+        counter++; // Increment counter
+    });
 }
+
+
+// VALIDATION THAT EXAM IS NOT ON THE ENDS
+const submitButton = document.querySelector('.submit-btn');
+
+submitButton.addEventListener('click', function (e) {
+    // Prevent form submission for validation
+    e.preventDefault();
+
+    // Get all .page.exam elements
+    const examPages = document.querySelectorAll('.page.exam');
+
+    // Loop through each .page.exam
+    for (const examPage of examPages) {
+        // Check the next sibling element
+        const nextElement = examPage.nextElementSibling;
+
+        // If exams bukan di paling akhir
+        if (nextElement && nextElement.classList.contains('study')) {
+            alert('Exam pages must be the last course material!');
+            return; // Stop further validation
+        }
+    }
+
+    // If no validation errors, submit the form
+    alert('Validation Passed. Form will be submitted.');
+    // Replace the line below with actual form submission logic if needed
+    // e.target.closest('form').submit();
+});
