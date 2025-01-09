@@ -1,1 +1,1 @@
-FLASK_APP=imgwebapp
+FLASK_APP=CodeGuard

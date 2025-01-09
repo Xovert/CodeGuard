@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/changepict.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+<body style="background-color: aquamarine;">
+    <div class="formContainer">
+
+        <!-- Change profile details -->
+        <form action="{{ url_for('auth.saveProfile') }}" method="POST">
+            <div class="profile-details">
+
+                <div class="input-picture" onclick="document.getElementById('fileInput').click()">
+                    <img src="https://via.placeholder.com/100" alt="Profile Picture" class="profile-picture">
+                </div>
+                <input type="file" id="fileInput" style="display: none;" accept="image/*" onchange="handleFileChange(event)">
+
+                <div class="input-box">
+                    <label for="username" class="allFont">Username:</label>
+                    <input type="text" id="username" name="username" value="{{ username }}">
+                </div>
+
+                <div class="input-box">
+                    <label for="email" class="allFont">Email:</label>
+                    <input type="email" id="email" name="email" value="{{ email }}">
+                </div>
+
+                <div class="input-box">
+                    <label for="phone" class="allFont">Phone:</label>
+                    <input type="tel" id="phone" name="phone" value="{{ phone }}">
+                </div>
+
+                <div class="input-box">
+                    <label for="DoB" class="allFont">DoB:</label>
+                    <input type="date" id="DoB" name="DoB" value="{{ dob }}">
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button type="submit" class="save-btn">Save</button>
+                <a href="{{ url_for('auth.profile') }}" class="cancel-btn">Cancel</a>
+            </div>
+        </form>
+
+        <!-- Change Password -->
+        <form action="{{ url_for('auth.changePass') }}" method="POST">
+            <div class="change-password-section">
+                <h3 class="allFont">Change Password</h3>
+
+                <div class="input-box">
+                    <label for="OldPassword" class="allFont">Current Password:</label>
+                    <input type="password" id="current_password" name="current_password" required>
+                </div>
+
+                <div class="input-box">
+                    <label for="NewPassword" class="allFont">New Password:</label>
+                    <input type="password" id="new_password" name="new_password" required>
+                </div>
+
+                <div class="input-box">
+                    <label for="RetypePassword" class="allFont">Confirm New Password:</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button type="submit" class="save-btn">Update Password</button>
+            </div>
+    </div>
+</body>
+{% endblock %}
