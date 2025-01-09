@@ -1,0 +1,17 @@
+<footer>
+    {% if is_authed() and is_admin() %}
+        <p>&copy; 2024 All Rights Reserved</p>
+    {% else %}
+        <div class="nav-footer">
+            <ul class="d-flex flex-row justify-content-center">
+                <li><a href="{{ url_for('views.index') }}">Home</a></li>
+                <li><a href="">Terms and Condition</a></li>
+                <li><a href="">Privacy Policy</a></li>
+                <li><a href="#contact-us">Contact Us</a></li>
+            </ul>
+        </div>
+        <div class="rights d-flex">
+            <span class="mx-auto">&copy; 2024 All Rights Reserved</span>
+        </div>
+    {% endif %}
+</footer>

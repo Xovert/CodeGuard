@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Add New Course{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/admin_course_detail.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/navbar_footer_admin.css') }}">
+<!-- <script src="{{ url_for('static', filename='js/admin_course_detail.js') }}" defer></script> -->
+{% endblock %}
+
+{% block content %}
+
+
+
+<div class="content">
+    <form action="" class="course-details d-flex flex-column">
+        <div class="title">
+            <h1>Course Details</h1>
+        </div>
+        <div class="details-wrapper d-flex">
+            <div class="detail col-md-6">
+                <label for="course-title">Title</label>
+                <input type="text" name="course-title" id="course-title" placeholder="Enter course title here...">
+                <p class="error-message">Error</p>
+            </div>
+            <div class="detail col-md-6 ps-5 position-relative">
+                <label for="course-logo">Logo</label>
+                <label for="course-logo" class="input-file">
+                    <img src="{{ url_for('static', filename='assets/icon_upload.svg') }}" alt="">
+                    Add File
+                </label>
+                <input type="file" name="course-logo" id="course-logo">
+                <p class="error-message">Error</p>
+            </div>
+        </div>
+        <div class="detail">
+            <label for="desc">Description</label>
+            <textarea name="desc" id="desc" rows="4" placeholder="Enter course description here..."></textarea>
+            <p class="error-message">Error</p>
+        </div>
+        <div class="detail">
+            <label for="visibility">Visibility</label>
+            <select name="visibility" id="visibility">
+                <option value="">Manage Visibility</option>
+                <option value="public">Public</option>
+                <option value="private">Private</option>
+            </select>
+            <p class="error-message">Error</p>
+        </div>
+        <div class="d-flex justify-content-center">
+            <button>Edit</button>
+            <button type="submit">Submit</button>
+        </div>
+    </form>
+    {% with form = Forms.course.NewCourseForm() %}
+    <form action="{{ url_for('admin.new_course') }}" class="course-content d-flex flex-column" method="post" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        <div class="title">
+            <h1>Course Contents</h1>
+        </div>
+        <!-- LEARNING -->
+        <div class="page">
+            <p class="d-flex accordion">Page 1<img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="ms-auto"></p>
+            <div class="panel">
+                <div class="type">
+                    {{ form.type.label(class="d-inline-block") }}
+                    {{ form.type(id="content-type") }}
+                    <!-- <label for="content-type" class="d-inline-block">Type</label>
+                    <select name="content-type" id="content-type">
+                        <option value="Learning">Learning</option>
+                        <option value="Challenge Code">Challenge Code</option>
+                        <option value="Challenge Option">Challenge Option</option>
+                    </select> -->
+                </div>
+                <div class="position-relative">
+                    <label for="learning-pic">Picture</label>
+                    <label for="learning-pic" class="input-file">
+                        <img src="{{ url_for('static', filename='assets/icon_upload.svg') }}" alt="">
+                        Add File
+                    </label>
+                    {{ form.image(id="learning-pic") }}
+                    <!-- <input type="file" name="learning-pic" id="learning-pic"> -->
+                </div>
+                <div>
+                    {{ form.content_body.label }}
+                    {{ form.content_body(id="content-learning", rows="4") }}
+                    <!-- <label for="content-learning">Content</label>
+                    <textarea name="content-learning" id="content-learning" rows="4"
+                        placeholder="Enter learning content here..."></textarea> -->
+                </div>
+            </div>
+        </div>
+    
+    
+        <div class="button-wrapper d-flex justify-content-center">
+            <button class="btn d-flex add-more-page-btn"><img src="{{ url_for('static', filename='assets/icon_plus.svg') }}"
+                    alt="">Add more page</button>
+            <button class="btn submit-btn" type="submit">Submit</button>
+        </div>
+    </form>
+</div>
+
+
+{% endwith %}
+
+{% endblock %}
