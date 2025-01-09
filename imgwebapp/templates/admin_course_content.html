@@ -15,6 +15,11 @@
         <div class="title">
             <h1>Course Contents</h1>
         </div>
+
+        <div class="module d-flex align-items-center">
+            <label for="module-name" class="d-inline-block">Module Name</label>
+            <input type="text" class="d-inline-block" id="module-name" placeholder="Enter the module name here...">
+        </div>
     
         <!-- LEARNING -->
         <div class="page study">
@@ -91,7 +96,7 @@
             <div class="panel">
                 <div class="type">
                     <label for="challenge-option-3" class="d-inline-block">Type</label>
-                    <input type="text" id="challenge-option-3" class="content-type d-inline-block" value="Challenge Option" readonly>
+                    <input type="text" id="challenge-option-3" class="content-type d-inline-block" value="Challenge Options" readonly>
                 </div>
                 <div class="question">
                     <label for="option-question-3">Question</label>
@@ -142,6 +147,7 @@
                 <p id="exam-code-option"><button type="button">Exam Code</button></p>
                 <p id="exam-option-option"><button type="button">Exam Option</button></p>
             </div>
+            <button type="button" class="btn" id="add-module-btn">Add Another module</button>
             <button class="btn submit-btn" id="submit-btn" type="submit">Submit</button>
         </div>
 

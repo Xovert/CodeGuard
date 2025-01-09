@@ -675,7 +675,7 @@ function randomizeExamOptionId(container, randID){
 // VALIDATION THAT EXAM IS NOT ON THE ENDS
 const submitButton = document.querySelector('.submit-btn');
 
-submitButton.addEventListener('click', function (e) {
+submitButton.addEventListener('click', async function (e) {
     // Prevent form submission for validation
     e.preventDefault();
 
@@ -689,13 +689,78 @@ submitButton.addEventListener('click', function (e) {
 
         // If exams bukan di paling akhir
         if (nextElement && nextElement.classList.contains('study')) {
-            alert('Exam pages must be the last course material!');
+            alert('Exam pages must be the last materials!');
             return; // Stop further validation
         }
     }
 
-    // If no validation errors, submit the form
-    alert('Validation Passed. Form will be submitted.');
+    // MAU KIRIM DATA
+    // Prepare FormData to handle both JSON data and files
+    const formData = new FormData();
+
+    // Convert all .page data to JSON while also handling file uploads
+    const pages = Array.from(document.querySelectorAll('.page')).map((page, index) => {
+        /*
+        learning            : type, pic, content
+        challenge code      : type, question, code
+        challenge options   : type, question, code, options
+        exam code           : type, question, code, timer
+        exam options        : type, question, code, options, timer
+
+        jadi: module name, type, order, pic, content, question, code, options, timer
+        */
+        const type = page.querySelector('.content-type')?.value || '';
+        const question = page.querySelector('textarea')?.value || '';
+        const options = Array.from(page.querySelectorAll('.radio-option')).map(option => {
+            return {
+                id: option.querySelector('input')?.id || '',
+                value: option.querySelector('input')?.value || '',
+                text: option.querySelector('label')?.textContent || '',
+            };
+        });
+
+        const timer = page.querySelector('.timer input[type="time"]')?.value || null;
+
+        // Handle file inputs (images)
+        const fileInput = page.querySelector('.input-file-invi');
+        const files = fileInput?.files;
+        if (files && files.length > 0) {
+            // Append the file to FormData
+            formData.append(`file-page-${index + 1}`, files[0]); // Unique key for each file
+        }
+
+        return {
+            id: `page-${index + 1}`,
+            type: type,
+            question: question,
+            options: options,
+            timer: timer,
+        };
+    });
+
+    // Add JSON data to FormData
+    formData.append('data', JSON.stringify(pages));
+
+    // Submit FormData to the backend
+    try {
+        const response = await fetch('/submit-endpoint', {
+            method: 'POST',
+            body: formData,
+        });
+
+        if (response.ok) {
+            alert('Form submitted successfully!');
+        } else {
+            alert('Failed to submit form. Please try again.');
+        }
+    } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('An error occurred while submitting the form. Please try again.');
+    }
+
+
+
+    // alert('Validation Passed. Form will be submitted.');
     // Replace the line below with actual form submission logic if needed
     // e.target.closest('form').submit();
 });
