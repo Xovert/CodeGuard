@@ -1,8 +1,8 @@
-"""empty message
+"""Restart from Scratch
 
-Revision ID: 5d71091bc94f
-Revises: 65b035ac5c90
-Create Date: 2025-01-10 03:14:09.851454
+Revision ID: 31ddcf7a453f
+Revises: 
+Create Date: 2025-01-10 11:23:39.113769
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5d71091bc94f'
-down_revision = '65b035ac5c90'
+revision = '31ddcf7a453f'
+down_revision = None
 branch_labels = None
 depends_on = None
 
@@ -23,7 +23,7 @@ def upgrade():
     sa.Column('course_name', sa.String(length=255), nullable=False),
     sa.Column('duration', sa.Integer(), nullable=False),
     sa.Column('description', sa.String(length=255), nullable=False),
-    sa.Column('status', sa.String(length=255), nullable=False),
+    sa.Column('status', sa.Enum('DRAFT', 'PUBLISHED', 'ARCHIVED', name='coursestatus'), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('exams',
@@ -70,7 +70,7 @@ def upgrade():
     sa.Column('module_id', sa.Integer(), nullable=False),
     sa.Column('order', sa.Integer(), nullable=False),
     sa.Column('type', sa.String(length=60), nullable=False),
-    sa.Column('content_body', sa.Text(), nullable=False),
+    sa.Column('content_body', sa.Text(), nullable=True),
     sa.ForeignKeyConstraint(['module_id'], ['modules.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -88,7 +88,7 @@ def upgrade():
     sa.Column('type', sa.String(length=80), nullable=False),
     sa.Column('question_text', sa.String(length=255), nullable=False),
     sa.Column('code', sa.Text(), nullable=True),
-    sa.Column('exam_id', sa.Integer(), nullable=False),
+    sa.Column('exam_id', sa.Integer(), nullable=True),
     sa.Column('content_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['content_id'], ['contents.id'], ),
     sa.ForeignKeyConstraint(['exam_id'], ['exams.id'], ),

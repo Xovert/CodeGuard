@@ -1,5 +1,5 @@
 from flask import current_app as app
-
+import enum
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from typing import Optional, List
@@ -43,7 +43,7 @@ class Users(db.Model):
     def __repr__(self):
         return f'User: id={self.id} username={self.username} password={self.password} email={self.email}'
 
-class CourseStatus(Enum):
+class CourseStatus(enum.Enum):
     DRAFT = "Draft"
     PUBLISHED = "Published"
     ARCHIVED = "Archived"
@@ -55,8 +55,7 @@ class Courses(db.Model):
     course_name: Mapped[str] = mapped_column(String(255), nullable=False)
     duration: Mapped[int] = mapped_column(Integer, nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=False)
-    status: Mapped[str] = mapped_column(String(255), nullable=False, default=CourseStatus.DRAFT)
-    # status: Mapped[int] = mapped_column(Integer, nullable=False)
+    status: Mapped[CourseStatus] = mapped_column(Enum(CourseStatus),nullable=True, default=CourseStatus.DRAFT)
 
     module: Mapped[List["Modules"]] = relationship(
         back_populates="course", cascade="all, delete-orphan"
