@@ -393,23 +393,30 @@ optionsContainer.addEventListener('click', async function (e) {
 
             let currentPageCount;
             let prefixTitle;
+            let newPageNumber;
             if (target.id === "learning-option" || target.id === "challenge-code-option" || target.id === "challenge-option-option"){
                 currentPageCount = document.querySelectorAll('.study').length;
-                prefixTitle = "Page";
+                prefixTitle = "Page ";
+                newPageNumber = currentPageCount + 1;
             }
 
             else if(target.id === "exam-code-option" || target.id === "exam-option-option"){
                 currentPageCount = document.querySelectorAll('.exam').length;
-                prefixTitle = "Exam";
+                if (currentPageCount > 0){
+                    alert('There can be only 1 exam in each module!');
+                    return;
+                }
+                prefixTitle = "Exam ";
+                newPageNumber = "";
             }
             // Count existing .page elements to determine the page number
             
-            const newPageNumber = currentPageCount + 1;
+            
 
             // Update the <p> tag with the new page number
             const newAccordion = tempDiv.querySelector('p.accordion');
             if (newAccordion) {
-                newAccordion.childNodes[0].textContent = `${prefixTitle} ${newPageNumber} `;
+                newAccordion.childNodes[0].textContent = `${prefixTitle}${newPageNumber} `;
             }
 
             const randID = generateRandomID();
@@ -698,60 +705,91 @@ submitButton.addEventListener('click', async function (e) {
     // Prepare FormData to handle both JSON data and files
     const formData = new FormData();
 
+    // module name
+    const moduleNameInput = document.querySelector('#module-name');
+    const moduleName = moduleNameInput?.value.trim() || null;
+
+    if (!moduleName){
+        alert('Please specify which module these pages belong to!');
+        return;
+    }
+
+    let studyCounter = 1;
+    let order = 1;
+
     // Convert all .page data to JSON while also handling file uploads
-    const pages = Array.from(document.querySelectorAll('.page')).map((page, index) => {
-        /*
-        learning            : type, pic, content
-        challenge code      : type, question, code
-        challenge options   : type, question, code, options
-        exam code           : type, question, code, timer
-        exam options        : type, question, code, options, timer
+    const pages = Array.from(document.querySelectorAll('.page')).map((page) => {
+        // Determine the ID format based on the class
+        let id;
+        if (page.classList.contains('study')) {
+            id = `study-${studyCounter++}`;
+        } else if (page.classList.contains('exam')) {
+            id = "exam";
+        } else {
+            alert('Error: Invalid page!');
+            throw new Error('Invalid page!'); // Stop further processing
+        }
 
-        jadi: module name, type, order, pic, content, question, code, options, timer
-        */
-        const type = page.querySelector('.content-type')?.value || '';
-        const question = page.querySelector('textarea')?.value || '';
-        const options = Array.from(page.querySelectorAll('.radio-option')).map(option => {
-            return {
-                id: option.querySelector('input')?.id || '',
-                value: option.querySelector('input')?.value || '',
-                text: option.querySelector('label')?.textContent || '',
-            };
-        });
+        const type = page.querySelector('.content-type')?.value || null;
+        const content = page.querySelector('.content-learning')?.value || null;
+        const question = page.querySelector('.question > textarea')?.value || null;
+        const code = page.querySelector('.code-area')?.value || null;
 
-        const timer = page.querySelector('.timer input[type="time"]')?.value || null;
+        const optionContainer = page.querySelector('.option');
+        let options = {}
+        if (optionContainer){
+            options = Array.from(page.querySelectorAll('.radio-option')).map(option => {
+                return {
+                    id: option.querySelector('input')?.id || '',
+                    value: option.querySelector('input')?.value || '',
+                    text: option.querySelector('label')?.textContent || '',
+                };
+            });
+        }
+
+        const timer = page.querySelector('.timer > input[type="time"]')?.value || null;
 
         // Handle file inputs (images)
         const fileInput = page.querySelector('.input-file-invi');
         const files = fileInput?.files;
         if (files && files.length > 0) {
             // Append the file to FormData
-            formData.append(`file-page-${index + 1}`, files[0]); // Unique key for each file
+            formData.append(`file-page-${order}`, files[0]); // Unique key for each file
         }
 
         return {
-            id: `page-${index + 1}`,
+            id: id,
+            order: order++,
             type: type,
+            content: content,
             question: question,
+            code: code,
             options: options,
             timer: timer,
         };
     });
 
+    const moduleData = {
+        moduleName: moduleName,
+        pages: pages
+    };
+
     // Add JSON data to FormData
-    formData.append('data', JSON.stringify(pages));
+    formData.append('data', JSON.stringify(moduleData));
 
     // Submit FormData to the backend
     try {
-        const response = await fetch('/submit-endpoint', {
+        const response = await fetch('/add-new-module', {
             method: 'POST',
             body: formData,
         });
 
         if (response.ok) {
-            alert('Form submitted successfully!');
-        } else {
-            alert('Failed to submit form. Please try again.');
+            alert('New module has been succesfully added');
+        } 
+        
+        else {
+            alert('Failed to add a new module. Please try again.');
         }
     } catch (error) {
         console.error('Error submitting form:', error);
@@ -763,4 +801,59 @@ submitButton.addEventListener('click', async function (e) {
     // alert('Validation Passed. Form will be submitted.');
     // Replace the line below with actual form submission logic if needed
     // e.target.closest('form').submit();
+
+    /*
+        learning            : type, pic, content
+        challenge code      : type, question, code
+        challenge options   : type, question, code, options
+        exam code           : type, question, code, timer
+        exam options        : type, question, code, options, timer
+
+        jadi: module name, type, order, pic, content, question, code, options, timer
+
+
+[
+  {
+    "id": "page-1",
+    "type": "Learning",
+    "question": "What is this about?",
+    "options": [],
+    "timer": null,
+    "file": blob of data here
+  },
+  {
+    "id": "page-2",
+    "type": "Challenge Code",
+    "question": "What is the correct syntax?",
+    "options": [],
+    "timer": null
+  },
+  {
+    "id": "page-3",
+    "type": "Challenge Option",
+    "question": "Choose the correct answer.",
+    "options": [
+      {
+        "id": "option-3-1",
+        "value": "Option 1",
+        "text": "Answer 1"
+      },
+      {
+        "id": "option-3-2",
+        "value": "Option 2",
+        "text": "Answer 2"
+      }
+    ],
+    "timer": null
+  },
+  {
+    "id": "page-4",
+    "type": "Exam Code",
+    "question": "Write a function to calculate the sum.",
+    "options": [],
+    "timer": "00:30:00"
+  }
+]
+
+    */
 });

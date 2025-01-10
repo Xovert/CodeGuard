@@ -356,7 +356,7 @@ select {
     align-items: start;
     padding: 8px 0px;
     position: absolute;
-    left: 40%;
+    left: calc(50% - 92px);
     top: 0;
 }
 
