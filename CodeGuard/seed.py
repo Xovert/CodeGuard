@@ -232,12 +232,13 @@ def add_content(model, attributes: dict, questions=None):
 
     if filename:
         upload_image(content.id, filename)
-
     
     if questions:
         questions["attributes"]["content_id"] = content.id
         add_questions(**questions)
         return
+    
+    db.session.commit()
 
 
 def add_questions(model, attributes: dict, options=None):
@@ -268,6 +269,10 @@ def add_options(model, rows):
         except sqlerror:
             print(f'Option {new_row.option_text} for {new_row.question_id} already added')
             db.session.rollback()
+            return
+        
+    db.session.commit()
+    return
 
 
 
