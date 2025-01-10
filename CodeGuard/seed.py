@@ -65,13 +65,13 @@ def seed_courses():
             course_name='PHP',
             duration=30,  # in hours
             description='PHP Secure Coding',
-            status="draft" # Assuming 1 means active,
+            status=CourseStatus.DRAFT # Assuming 1 means active,
         ),
         Courses(
             course_name='JS',
             duration=30,
             description='JS Secure Coding',
-            status="draft"
+            status=CourseStatus.DRAFT
         ),
         # Add more courses as needed
     ]
