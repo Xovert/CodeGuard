@@ -24,6 +24,7 @@ from CodeGuard.models import (
     ChallengeOptions,
     db
 )
+from sqlalchemy.exc import IntegrityError as sqlerror
 
 
 def hash_pass(passes):
@@ -55,46 +56,62 @@ def seed_users():
         ),
         # Add more users as needed
     ]
-    db.session.bulk_save_objects(users)
-    db.session.commit()
+    try:
+        db.session.bulk_save_objects(users)
+    except sqlerror:
+        print("Users already seeded")
+        db.session.rollback()
+    else:
+        db.session.commit()
     print("Seeded Users.")
 
 def seed_courses():
     courses = [
         Courses(
             course_name='PHP',
-            duration=30,  # in hours
+            duration=timedelta(days=30).total_seconds(),  # in hours
             description='PHP Secure Coding',
             status=CourseStatus.DRAFT # Assuming 1 means active,
         ),
         Courses(
             course_name='JS',
-            duration=30,
+            duration=timedelta(days=30).total_seconds(),
             description='JS Secure Coding',
             status=CourseStatus.DRAFT
         ),
         # Add more courses as needed
     ]
-    db.session.bulk_save_objects(courses)
-    db.session.commit()
+    try:
+        db.session.bulk_save_objects(courses)
+    except sqlerror:
+        print("Courses already seeded")
+        db.session.rollback()
+    else:
+        db.session.flush()
     print("Seeded Courses.")
+    return courses
 
-def seed_modules(module_names):
-    course = Courses.query.filter_by(id=5).first()
+def seed_modules(module_names, course):
+    existing_course = Courses.query.filter_by(course_name = course.course_name).first()
     modules = []
 
     for i in range(len(module_names)):
         module = Modules(
-            course_id=course.id,
+            course_id=existing_course.id,
             order=i+1,
             module_name=module_names[i]
         )
         modules.append(module)
-    db.session.bulk_save_objects(modules)
-    db.session.commit()
+
+    try:
+        db.session.bulk_save_objects(modules)
+    except sqlerror:
+        print("Modules already seeded")
+        db.session.rollback()
+    else:
+        db.session.commit()
     print("Seeded Modules.")
 
-contents = {}
 
 def seed_contents(module_names):
     modules = Modules.query.all()
@@ -109,7 +126,7 @@ def seed_contents(module_names):
                 "module_id": module.id,
                 "order": 1,
                 "content_body": "<INPUT HERE>",
-                "image": 'powerful.jpg'
+                "image": "powerful.jpg"
             },
         },
         {
@@ -117,6 +134,7 @@ def seed_contents(module_names):
             "attributes": {
                 "module_id": module.id,
                 "order": 2,
+                "image": "memories.jpg"
             }
         },
         {
@@ -125,8 +143,21 @@ def seed_contents(module_names):
                 "module_id": module.id,
                 "order": 3,
                 "content_body": "<INPUT HERE>",
-                "image": None
+                "image": "nyahiru.png"
             },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": None,
+                    "code": "<?php echo('hello world') ?>",
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "The only correct answer", "is_correct": True},
+                    ]
+                }
+            }
         }
     ]
     all_contents.append(content_module)
@@ -138,7 +169,7 @@ def seed_contents(module_names):
             "attributes": {
                 "module_id": module.id,
                 "order": 1,
-                "content_body": "<INPUT HERE>",
+                "content_body": None,
                 "image": None
             },
         },
@@ -147,7 +178,7 @@ def seed_contents(module_names):
             "attributes": {
                 "module_id": module.id,
                 "order": 2,
-                "image": None
+                "image": "sleeping_shaq.jpg"
             }
         },
         {
@@ -161,7 +192,7 @@ def seed_contents(module_names):
                 "model": ChallengeQuestions,
                 "attributes": {
                     "question_text": "<QUESTION HERE>",
-                    "code": "<CODE HERE>",
+                    "code": None,
                 },
                 "options": {
                     "model": ChallengeOptions,
@@ -176,8 +207,10 @@ def seed_contents(module_names):
         }
     ]
     all_contents.append(content_module)
+
     
-    for module_contents in all_contents:
+    for i, module_contents in enumerate(all_contents):
+        print(f'Seeding {module_names[i]}...')
         for content in module_contents:
             add_content(**content)
 
@@ -190,8 +223,12 @@ def add_content(model, attributes: dict, questions=None):
         filename = attributes.pop("image")
 
     content = model(**attributes)
-    db.session.add(content)
-    db.session.flush()
+    try:
+        db.session.add(content)
+        db.session.flush()
+    except sqlerror:
+        print(f'Content number:{content.order} already added')
+        db.session.rollback()
 
     if filename:
         upload_image(content.id, filename)
@@ -206,8 +243,13 @@ def add_content(model, attributes: dict, questions=None):
 def add_questions(model, attributes: dict, options=None):
     question = model(**attributes)
 
-    db.session.add(question)
-    db.session.flush()
+    try:
+        db.session.add(question)
+        db.session.flush()
+    except sqlerror:
+        print(f'Question for {question.content_id} already added')
+        db.session.rollback()
+    
     if options:
         for option in options["rows"]:
             option["question_id"] = question.id
@@ -217,13 +259,17 @@ def add_questions(model, attributes: dict, options=None):
 
     
 def add_options(model, rows):
-    new_rows = []
+
     for row in rows:
         new_row = model(**row)
-        new_rows.append(new_row)
+        try:
+            db.session.add(new_row)
+            db.session.flush()
+        except sqlerror:
+            print(f'Option {new_row.option_text} for {new_row.question_id} already added')
+            db.session.rollback()
 
-    db.session.bulk_save_objects(new_rows)
-    db.session.commit()
+
 
 def upload_image(content_id, filename):
     from CodeGuard.utils.uploads import upload_file
@@ -256,14 +302,9 @@ def seed_all():
         "Cryptographic Failures",
     ]
     seed_users()
-    seed_courses()
-    seed_modules(module_names)
+    courses = seed_courses()
+    seed_modules(module_names, courses[0])
     seed_contents(module_names)
-    # seed_images()
-    # seed_exams()
-    # seed_questions()
-    # seed_options()
-    # seed_enrollments()
     db.session.close()
     click.echo('Seeded the database')
 
