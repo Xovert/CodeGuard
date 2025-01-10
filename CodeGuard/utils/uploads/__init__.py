@@ -48,9 +48,10 @@ def upload_file(file: FileStorage, id=None, location=None):
         filename = path.parts[1]
         location = parent + "/" + filename
 
+    
     uploader = get_uploader()
     location = uploader.upload(file_obj=file_obj, filename=filename, path=parent)
-    
+
     model = Images
     model_args = {
         "original_filename": filename,
@@ -66,9 +67,15 @@ def upload_file(file: FileStorage, id=None, location=None):
     else:
         file_row = model(**model_args)
         db.session.add(file_row)
-        db.session.commit()
-    return file_row
+        try:
+            db.session.commit()
+        except Exception as e:
+            print('Image has no content_id!')
+            uploader.delete(location)
+            db.session.rollback()
+    
 
+    return file_row
 
 def delete_file(file_id):
     f = Images.query.filter_by(id=file_id).first_or_404()

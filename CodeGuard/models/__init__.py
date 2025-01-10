@@ -114,7 +114,7 @@ class Images(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     original_filename: Mapped[str] = mapped_column(String(255), nullable=False)
     location: Mapped[str] = mapped_column(String(255), nullable=False)
-    content_id: Mapped[Optional[int]] = mapped_column(ForeignKey("contents.id"), unique=True, nullable=True, default=None)
+    content_id: Mapped[int] = mapped_column(ForeignKey("contents.id"), unique=True, nullable=False)
     
     content: Mapped["Contents"] = relationship(
         back_populates="image", single_parent=True
