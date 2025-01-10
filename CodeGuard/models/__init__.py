@@ -12,7 +12,9 @@ from sqlalchemy import (
     LargeBinary, 
     DateTime, 
     Text,
-    Enum
+    Enum,
+    Float,
+    UniqueConstraint
 )
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -52,8 +54,8 @@ class Courses(db.Model):
     __tablename__ = "courses"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    course_name: Mapped[str] = mapped_column(String(255), nullable=False)
-    duration: Mapped[int] = mapped_column(Integer, nullable=False)
+    course_name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    duration: Mapped[float] = mapped_column(Float, nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=False)
     status: Mapped[CourseStatus] = mapped_column(Enum(CourseStatus),nullable=True, default=CourseStatus.DRAFT)
 
@@ -61,6 +63,9 @@ class Courses(db.Model):
         back_populates="course", cascade="all, delete-orphan"
     )
     enrollment: Mapped[List["Enrollments"]] = relationship(
+        back_populates="course", cascade="all, delete-orphan"
+    )
+    exams: Mapped[List["Exams"]] = relationship(
         back_populates="course", cascade="all, delete-orphan"
     )
     def __repr__(self):
@@ -95,6 +100,11 @@ class Modules(db.Model):
         back_populates="module", cascade='all, delete-orphan'
     )
     course: Mapped["Courses"] = relationship(back_populates="module")
+
+    __table_args__ = (
+        UniqueConstraint('course_id', 'order', name='uq_duplicate_modules'),
+    )
+
     def __repr__(self):
         return f'Modules: course_id:{self.course_id} order={self.order} module_name={self.module_name}'
 
@@ -123,10 +133,15 @@ class Contents(db.Model):
     
     module: Mapped["Modules"] = relationship(back_populates="contents")
     image: Mapped["Images"] = relationship(back_populates='content', cascade='all, delete-orphan')
+
     __mapper_args__ = {
         "polymorphic_identity": "standard",
         "polymorphic_on": type,
     }
+    __table_args__ = (
+        UniqueConstraint('module_id', 'order', name='uq_duplicate_contents'),
+    )
+
 
     def __repr__(self):
         return f'Contents: module_id:{self.module_id} order={self.order} type={self.type}'
@@ -150,10 +165,14 @@ class Exams(db.Model):
     __tablename__ = "exams"
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    duration: Mapped[int] = mapped_column(Integer, nullable=False)
+    duration: Mapped[float] = mapped_column(Float, nullable=False)
+    course_id: Mapped[int] = mapped_column(ForeignKey("courses.id"), nullable=False)
 
     questions: Mapped[List["ExamQuestions"]] = relationship(
         back_populates='content', cascade='all, delete-orphan'
+    )
+    course: Mapped["Courses"] = relationship(
+        back_populates="exams"
     )
 
     def __repr__(self):
@@ -165,7 +184,7 @@ class Questions(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     type: Mapped[str] = mapped_column(String(80), nullable=False, default='standard')
-    question_text: Mapped[str] = mapped_column(String(255), nullable=False)
+    question_text: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     code: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     __mapper_args__ = {
