@@ -14,7 +14,8 @@ from sqlalchemy import (
     Text,
     Enum,
     Float,
-    UniqueConstraint
+    UniqueConstraint,
+    Time
 )
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -68,6 +69,9 @@ class Courses(db.Model):
     exams: Mapped[List["Exams"]] = relationship(
         back_populates="course", cascade="all, delete-orphan"
     )
+    image: Mapped["CourseImages"] = relationship(
+        back_populates="course", cascade='all, delete-orphan'
+    )
     def __repr__(self):
         return f'Course: name:{self.course_name} duration={self.duration} description={self.description} status={self.status}'
 
@@ -79,10 +83,13 @@ class Enrollments(db.Model):
     course_id: Mapped[int] = mapped_column(ForeignKey("courses.id", ondelete='CASCADE'))
     enrollment_date: Mapped[datetime.date] = mapped_column(Date)
     progress: Mapped[int] = mapped_column(Integer, nullable=False)
-    last_enrolled_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    last_enrolled_time: Mapped[datetime.time] = mapped_column(Time, nullable=False)
 
     user: Mapped["Users"] = relationship(back_populates="enrollment")
     course: Mapped["Courses"] = relationship(back_populates="enrollment")
+    __table_args__ = (
+        UniqueConstraint('user_id', 'course_id', name='uq_enrolled_twice'),
+    )
 
     def __repr__(self):
         return f'Enrollment: user:{self.user_id} course={self.course_id} date={self.enrollment_date} progress={self.progress}'
@@ -112,16 +119,36 @@ class Modules(db.Model):
 class Images(db.Model):
     __tablename__ = "images"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    type: Mapped[str] = mapped_column(String(80), nullable=False, default='standard')
     original_filename: Mapped[str] = mapped_column(String(255), nullable=False)
+    new_filename: Mapped[str] = mapped_column(String(255), nullable=False)
     location: Mapped[str] = mapped_column(String(255), nullable=False)
-    content_id: Mapped[int] = mapped_column(ForeignKey("contents.id"), unique=True, nullable=False)
-    
-    content: Mapped["Contents"] = relationship(
-        back_populates="image", single_parent=True
-    )
+
+    __mapper_args__ = {
+        "polymorphic_identity": "standard",
+        "polymorphic_on": type,
+    }
     def __repr__(self):
         return f'Images: ori:{self.original_filename} new_filename={self.new_filename} location={self.location} content_id={self.content_id}'
 
+class ContentImages(Images):
+    __mapper_args__ = {
+        "polymorphic_identity": "content",
+    }
+    content_id: Mapped[Optional[int]] = mapped_column(ForeignKey("contents.id"), unique=True, nullable=True, default=None)
+    content: Mapped["Contents"] = relationship(
+        back_populates="image", single_parent=True
+    )
+
+class CourseImages(Images):
+    __mapper_args__ = {
+        "polymorphic_identity": "course",
+    }
+    course_id: Mapped[Optional[int]] = mapped_column(ForeignKey("courses.id"), unique=True, nullable=True, default=None)
+    course: Mapped["Courses"] = relationship(
+        back_populates="image", single_parent=True
+    )
+    
 
 class Contents(db.Model):
     __tablename__ = "contents"
@@ -132,7 +159,9 @@ class Contents(db.Model):
     type: Mapped[str] = mapped_column(String(60), nullable=False)
     
     module: Mapped["Modules"] = relationship(back_populates="contents")
-    image: Mapped["Images"] = relationship(back_populates='content', cascade='all, delete-orphan')
+    image: Mapped["ContentImages"] = relationship(
+        back_populates='content', cascade='all, delete-orphan'
+    )
 
     __mapper_args__ = {
         "polymorphic_identity": "standard",
