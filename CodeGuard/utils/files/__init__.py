@@ -3,9 +3,10 @@ import shutil
 from pathlib import Path
 from flask import current_app as app
 from werkzeug.datastructures.file_storage import FileStorage
+from io import BytesIO
 
-from CodeGuard.models import Images, db
-from CodeGuard.utils.uploads.uploaders import FilesystemUploads, S3Uploads
+from CodeGuard.models import Images, ContentImages, CourseImages, db
+from CodeGuard.utils.files.uploaders import FilesystemUploads, S3Uploads
 import boto3
 from botocore.client import Config
 
@@ -17,18 +18,26 @@ def get_uploader():
     else:
         return FilesystemUploads()
     
-def stream(filename):
-    uploader = get_uploader()
-    response = uploader.get_image(filename)
-    file_stream = response['Body']
-    content_type = response.get('ContentType', 'application/octet-stream')
+def get_model(type):
+    model = {
+        "content": ContentImages,
+        "course": CourseImages,
+    }
+    return model.get(type, Images)
     
-    for chunk in file_stream.iter_chunks(chunk_size=8192):
-        yield chunk
+def get_file(filename):
+    image = db.session.scalars(db.select(Images).where(Images.new_filename == filename)).first()
+    if image:
+        uploader = get_uploader()
+        response = uploader.get_image(image.location)
+        streamObj = response.get("Body").read()
+        return BytesIO(streamObj)
+    
 
-def upload_file(file: FileStorage, id=None, location=None):
+        
+def upload_file(file: FileStorage, usage, id=None, location=None):
     file_obj = file
-    content_id = id
+    usage_for = usage
     # challenge_id = kwargs.get("challenge_id") or kwargs.get("challenge")
     # page_id = kwargs.get("page_id") or kwargs.get("page")
     # file_type = kwargs.get("type", "standard")
@@ -50,30 +59,35 @@ def upload_file(file: FileStorage, id=None, location=None):
 
     
     uploader = get_uploader()
-    location = uploader.upload(file_obj=file_obj, filename=filename, path=parent)
+    location, new_filename = uploader.upload(file_obj=file_obj, filename=filename, path=parent)
+
+    model_attrs = {
+        "original_filename": filename,
+        "new_filename": new_filename,
+        "location": location,
+    }
 
     model = Images
-    model_args = {
-        "original_filename": filename,
-        "location": location,
-        "content_id": content_id
-    }
-    existing_file = Images.query.filter_by(location=location).first()
+    if usage_for == "content":
+        model = ContentImages
+        model_attrs['content_id'] = id
+    if usage_for == "course":
+        model = CourseImages
+        model_attrs['course_id'] = id
+
+    existing_file = db.session.scalars(
+        db.select(Images)
+        .where(Images.location == location)
+    ).first()
     if existing_file:
-        for k, v in model_args.items():
+        for k, v in model_attrs.items():
             setattr(existing_file, k, v)
         db.session.commit()
         file_row = existing_file
-    else:
-        file_row = model(**model_args)
+    else: # new file
+        file_row = model(**model_attrs)
         db.session.add(file_row)
-        try:
-            db.session.commit()
-        except Exception as e:
-            print('Image has no content_id!')
-            uploader.delete(location)
-            db.session.rollback()
-    
+        db.session.commit()
 
     return file_row
 

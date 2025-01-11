@@ -3,6 +3,7 @@ import os
 import posixpath
 import string
 import time
+import uuid
 from pathlib import Path, PurePath
 from shutil import copyfileobj, rmtree
 from urllib.parse import urlparse
@@ -185,13 +186,14 @@ class S3Uploads(Uploads):
         filename = "".join(filename)
         if len(filename) <= 0:
             return False
+        filename = str(uuid.uuid4()) + "-" + filename
 
         dst = path + "/" + filename
         s3_dst = dst
         if self.s3_prefix:
             s3_dst = self.s3_prefix + dst
         self.s3.upload_fileobj(file_obj, self.bucket, s3_dst)
-        return dst
+        return dst, filename
 
     def download(self, filename):
         # S3 URLs by default are valid for one hour.
@@ -228,8 +230,8 @@ class S3Uploads(Uploads):
         self.s3.delete_object(Bucket=self.bucket, Key=filename)
         return True
     
-    def get_image(self, filename):
-        s3_response = self.s3.get_object(Bucket=self.bucket, Key=filename)
+    def get_image(self, location):
+        s3_response = self.s3.get_object(Bucket=self.bucket, Key=location)
         return s3_response
 
     def sync(self):

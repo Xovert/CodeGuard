@@ -1,34 +1,32 @@
-from flask import Blueprint, current_app, render_template, url_for, session, make_response
+from flask import Blueprint, current_app as app, render_template, url_for, session, make_response, send_file
 
 from CodeGuard.utils.decorators import login_required
-from CodeGuard.utils.uploads import stream
+from CodeGuard.utils.files import get_file
 
 courses = Blueprint('courses', __name__, template_folder='front-end')
+from CodeGuard.courses import catalogue
 
 @courses.route('/dashboard', methods=('GET',))
 @login_required
 def dashboard():
     username = session.get('username', '')
+    enrolled = catalogue.get_enrolled()
+    unenrolled = catalogue.get_catalogue()
     return render_template("course/dashboard.html", username=username)
 
+
 @courses.route('/course', methods=('GET',))
+@login_required
 def details():
     username = session.get('username', '')
     return render_template('course/course_details.html', username=username)
+
 
 # Temporary
 @courses.route('/learning') # temporary only, nnti diganti
 def learning():
     #login required
     return render_template('course/learning.html')
-
-@courses.route('/render-image')
-def renderimage():
-    return render_template('test.html')
-
-@courses.route('/image/<path:key_object>', methods=("GET",))
-def image(key_object):
-    return make_response(stream(key_object))
 
 @courses.route('/challenge_option')
 def challenge_option():

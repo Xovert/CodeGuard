@@ -1,5 +1,6 @@
 from flask import current_app as app
 import enum
+import enum
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from typing import Optional, List
@@ -14,7 +15,8 @@ from sqlalchemy import (
     Text,
     Enum,
     Float,
-    UniqueConstraint
+    UniqueConstraint,
+    Time
 )
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -46,6 +48,7 @@ class Users(db.Model):
         return f'User: id={self.id} username={self.username} password={self.password} email={self.email}'
 
 class CourseStatus(enum.Enum):
+class CourseStatus(enum.Enum):
     DRAFT = "Draft"
     PUBLISHED = "Published"
     ARCHIVED = "Archived"
@@ -56,7 +59,10 @@ class Courses(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     course_name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     duration: Mapped[float] = mapped_column(Float, nullable=False)
+    course_name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    duration: Mapped[float] = mapped_column(Float, nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=False)
+    status: Mapped[CourseStatus] = mapped_column(Enum(CourseStatus),nullable=True, default=CourseStatus.DRAFT)
     status: Mapped[CourseStatus] = mapped_column(Enum(CourseStatus),nullable=True, default=CourseStatus.DRAFT)
 
     module: Mapped[List["Modules"]] = relationship(
@@ -67,6 +73,9 @@ class Courses(db.Model):
     )
     exams: Mapped[List["Exams"]] = relationship(
         back_populates="course", cascade="all, delete-orphan"
+    )
+    image: Mapped["CourseImages"] = relationship(
+        back_populates="course", cascade='all, delete-orphan'
     )
     def __repr__(self):
         return f'Course: name:{self.course_name} duration={self.duration} description={self.description} status={self.status}'
@@ -79,10 +88,13 @@ class Enrollments(db.Model):
     course_id: Mapped[int] = mapped_column(ForeignKey("courses.id", ondelete='CASCADE'))
     enrollment_date: Mapped[datetime.date] = mapped_column(Date)
     progress: Mapped[int] = mapped_column(Integer, nullable=False)
-    last_enrolled_time: Mapped[datetime] = mapped_column(DateTime, nullable=False)
+    last_enrolled_time: Mapped[datetime.time] = mapped_column(Time, nullable=False)
 
     user: Mapped["Users"] = relationship(back_populates="enrollment")
     course: Mapped["Courses"] = relationship(back_populates="enrollment")
+    __table_args__ = (
+        UniqueConstraint('user_id', 'course_id', name='uq_enrolled_twice'),
+    )
 
     def __repr__(self):
         return f'Enrollment: user:{self.user_id} course={self.course_id} date={self.enrollment_date} progress={self.progress}'
@@ -105,6 +117,11 @@ class Modules(db.Model):
         UniqueConstraint('course_id', 'order', name='uq_duplicate_modules'),
     )
 
+
+    __table_args__ = (
+        UniqueConstraint('course_id', 'order', name='uq_duplicate_modules'),
+    )
+
     def __repr__(self):
         return f'Modules: course_id:{self.course_id} order={self.order} module_name={self.module_name}'
 
@@ -112,16 +129,36 @@ class Modules(db.Model):
 class Images(db.Model):
     __tablename__ = "images"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    type: Mapped[str] = mapped_column(String(80), nullable=False, default='standard')
     original_filename: Mapped[str] = mapped_column(String(255), nullable=False)
+    new_filename: Mapped[str] = mapped_column(String(255), nullable=False)
     location: Mapped[str] = mapped_column(String(255), nullable=False)
-    content_id: Mapped[int] = mapped_column(ForeignKey("contents.id"), unique=True, nullable=False)
-    
-    content: Mapped["Contents"] = relationship(
-        back_populates="image", single_parent=True
-    )
+
+    __mapper_args__ = {
+        "polymorphic_identity": "standard",
+        "polymorphic_on": type,
+    }
     def __repr__(self):
         return f'Images: ori:{self.original_filename} new_filename={self.new_filename} location={self.location} content_id={self.content_id}'
 
+class ContentImages(Images):
+    __mapper_args__ = {
+        "polymorphic_identity": "content",
+    }
+    content_id: Mapped[Optional[int]] = mapped_column(ForeignKey("contents.id"), unique=True, nullable=True, default=None)
+    content: Mapped["Contents"] = relationship(
+        back_populates="image", single_parent=True
+    )
+
+class CourseImages(Images):
+    __mapper_args__ = {
+        "polymorphic_identity": "course",
+    }
+    course_id: Mapped[Optional[int]] = mapped_column(ForeignKey("courses.id"), unique=True, nullable=True, default=None)
+    course: Mapped["Courses"] = relationship(
+        back_populates="image", single_parent=True
+    )
+    
 
 class Contents(db.Model):
     __tablename__ = "contents"
@@ -132,12 +169,18 @@ class Contents(db.Model):
     type: Mapped[str] = mapped_column(String(60), nullable=False)
     
     module: Mapped["Modules"] = relationship(back_populates="contents")
-    image: Mapped["Images"] = relationship(back_populates='content', cascade='all, delete-orphan')
+    image: Mapped["ContentImages"] = relationship(
+        back_populates='content', cascade='all, delete-orphan'
+    )
 
     __mapper_args__ = {
         "polymorphic_identity": "standard",
         "polymorphic_on": type,
     }
+    __table_args__ = (
+        UniqueConstraint('module_id', 'order', name='uq_duplicate_contents'),
+    )
+
     __table_args__ = (
         UniqueConstraint('module_id', 'order', name='uq_duplicate_contents'),
     )
@@ -167,9 +210,14 @@ class Exams(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     duration: Mapped[float] = mapped_column(Float, nullable=False)
     course_id: Mapped[int] = mapped_column(ForeignKey("courses.id"), nullable=False)
+    duration: Mapped[float] = mapped_column(Float, nullable=False)
+    course_id: Mapped[int] = mapped_column(ForeignKey("courses.id"), nullable=False)
 
     questions: Mapped[List["ExamQuestions"]] = relationship(
         back_populates='content', cascade='all, delete-orphan'
+    )
+    course: Mapped["Courses"] = relationship(
+        back_populates="exams"
     )
     course: Mapped["Courses"] = relationship(
         back_populates="exams"
@@ -184,6 +232,7 @@ class Questions(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     type: Mapped[str] = mapped_column(String(80), nullable=False, default='standard')
+    question_text: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     question_text: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     code: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 

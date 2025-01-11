@@ -1,9 +1,12 @@
+import time
+import click
+import os
 from flask import session, current_app as app
 from datetime import datetime, timezone, timedelta
 from uuid import uuid4
 from werkzeug.datastructures.file_storage import FileStorage
-import click
-import os
+from sqlalchemy.exc import IntegrityError as sqlerror
+from freezegun import freeze_time
 
 from CodeGuard.auth import bcrypt
 from CodeGuard.models import (
@@ -47,74 +50,164 @@ def seed_users():
             uuid=uuid4(),
             role='user',
             fullname='John Doe',
-            username='testing',
-            password=hash_pass('t3st!ng'),
-            email='testing@gmail.com',
+            username='john',
+            password=hash_pass('j0hn#'),
+            email='john@gmail.com',
+            is_confirmed=False,
+            confirmed_on=None,
+            registration_date=datetime.now(timezone(timedelta(hours=7)))
+        ),
+        Users(
+            uuid=uuid4(),
+            role='user',
+            fullname='Jane Doe',
+            username='jane',
+            password=hash_pass('j@ne#'),
+            email='jane@gmail.com',
+            is_confirmed=False,
+            confirmed_on=None,
+            registration_date=datetime.now(timezone(timedelta(hours=7)))
+        ),
+        Users(
+            uuid=uuid4(),
+            role='user',
+            fullname='Amandoos',
+            username='scaramochi',
+            password=hash_pass('sc@ram0ch!'),
+            email='nathania@gmail.com',
+            is_confirmed=False,
+            confirmed_on=None,
+            registration_date=datetime.now(timezone(timedelta(hours=7)))
+        ),
+        Users(
+            uuid=uuid4(),
+            role='user',
+            fullname='Greyson',
+            username='grey',
+            password=hash_pass('tokora'),
+            email='kora@gmail.com',
+            is_confirmed=False,
+            confirmed_on=None,
+            registration_date=datetime.now(timezone(timedelta(hours=7)))
+        ),
+        Users(
+            uuid=uuid4(),
+            role='user',
+            fullname='Sir Ian Fleming',
+            username='fl3ming_hot',
+            password=hash_pass('007b!nd'),
+            email='bond007@gmail.com',
             is_confirmed=False,
             confirmed_on=None,
             registration_date=datetime.now(timezone(timedelta(hours=7)))
         ),
         # Add more users as needed
     ]
-    try:
-        db.session.bulk_save_objects(users)
-    except sqlerror:
-        print("Users already seeded")
-        db.session.rollback()
-    else:
-        db.session.commit()
+
+    for user in users:
+        db.session.add(user)
+        try:
+            db.session.flush()
+            print(f'User {user.username} has succesfully been seeded')
+        except sqlerror:
+            print(f"User {user.username} already seeded")
+            db.session.rollback()
+        else:
+            db.session.commit()
     print("Seeded Users.")
 
 def seed_courses():
-    courses = [
-        Courses(
+    courses = [ 
+        {
+            "course": Courses(
             course_name='PHP',
+            duration=timedelta(days=30).total_seconds(),  # in hours
             duration=timedelta(days=30).total_seconds(),  # in hours
             description='PHP Secure Coding',
             status=CourseStatus.DRAFT # Assuming 1 means active,
-        ),
-        Courses(
-            course_name='JS',
-            duration=timedelta(days=30).total_seconds(),
-            description='JS Secure Coding',
-            status=CourseStatus.DRAFT
-        ),
+            ),
+            "image": "php.png"
+        },
+        {
+            "course": Courses(
+                course_name='JS',
+                duration=timedelta(days=30).total_seconds(),
+                description='JS Secure Coding',
+                status=CourseStatus.DRAFT
+            ),
+            "image": "js.png"
+        },
+        {
+            "course": Courses(
+                course_name='Python',
+                duration=timedelta(days=30).total_seconds(),
+                description='Hmm yes yes snake~',
+                status=CourseStatus.PUBLISHED
+            ),
+            "image": "nyahiru.png"
+        },
+        {
+            "course": Courses(
+                course_name='C/C++',
+                duration=timedelta(days=30).total_seconds(),
+                description='How to shoot yourself in the foot',
+                status=CourseStatus.ARCHIVED
+            ),
+            "image": "powerful.jpg"
+        }
         # Add more courses as needed
     ]
-    try:
-        db.session.bulk_save_objects(courses)
-    except sqlerror:
-        print("Courses already seeded")
-        db.session.rollback()
-    else:
-        db.session.flush()
+
+    for course in courses:
+        db.session.add(course["course"])
+        try:
+            db.session.flush()
+            print(f'Course {course["course"].course_name} has succesfully been seeded')
+            upload_image(
+                ref_id=course["course"].id,
+                filename=course["image"], 
+                usage="course"
+            )
+        except sqlerror:
+            print(f"Course {course["course"].course_name} already seeded")
+            db.session.rollback()
+        else:
+            db.session.commit()
+
     print("Seeded Courses.")
     return courses
 
-def seed_modules(module_names, course):
-    existing_course = Courses.query.filter_by(course_name = course.course_name).first()
+
+def seed_modules(module_names):
+    existing_course = db.session.scalars(
+        db.select(Courses)
+        .where(Courses.course_name == "PHP")
+    ).first()
+
     modules = []
 
     for i in range(len(module_names)):
         module = Modules(
             course_id=existing_course.id,
+            course_id=existing_course.id,
             order=i+1,
             module_name=module_names[i]
         )
-        modules.append(module)
+        db.session.add(module)
+        try:
+            db.session.flush()
+            print(f'Module {module.module_name} has succesfully been seeded')
+        except sqlerror:
+            print(f"Module {module.module_name} already seeded")
+            db.session.rollback()
+        else:
+            db.session.commit()
 
-    try:
-        db.session.bulk_save_objects(modules)
-    except sqlerror:
-        print("Modules already seeded")
-        db.session.rollback()
-    else:
-        db.session.commit()
     print("Seeded Modules.")
 
 
 def seed_contents(module_names):
-    modules = Modules.query.all()
+    modules = db.session.scalars(db.select(Modules)).all()
     module_map = {module.module_name: module for module in modules}
     
     all_contents = []
@@ -127,6 +220,7 @@ def seed_contents(module_names):
                 "order": 1,
                 "content_body": "<INPUT HERE>",
                 "image": "powerful.jpg"
+                "image": "powerful.jpg"
             },
         },
         {
@@ -134,6 +228,7 @@ def seed_contents(module_names):
             "attributes": {
                 "module_id": module.id,
                 "order": 2,
+                "image": "memories.jpg"
                 "image": "memories.jpg"
             }
         },
@@ -143,6 +238,21 @@ def seed_contents(module_names):
                 "module_id": module.id,
                 "order": 3,
                 "content_body": "<INPUT HERE>",
+                "image": "nyahiru.png"
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": None,
+                    "code": "<?php echo('hello world') ?>",
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "The only correct answer", "is_correct": True},
+                    ]
+                }
+            }
                 "image": "nyahiru.png"
             },
             "questions": {
@@ -170,6 +280,7 @@ def seed_contents(module_names):
                 "module_id": module.id,
                 "order": 1,
                 "content_body": None,
+                "content_body": None,
                 "image": None
             },
         },
@@ -178,6 +289,7 @@ def seed_contents(module_names):
             "attributes": {
                 "module_id": module.id,
                 "order": 2,
+                "image": "sleeping_shaq.jpg"
                 "image": "sleeping_shaq.jpg"
             }
         },
@@ -193,6 +305,7 @@ def seed_contents(module_names):
                 "attributes": {
                     "question_text": "<QUESTION HERE>",
                     "code": None,
+                    "code": None,
                 },
                 "options": {
                     "model": ChallengeOptions,
@@ -207,6 +320,10 @@ def seed_contents(module_names):
         }
     ]
     all_contents.append(content_module)
+
+    
+    for i, module_contents in enumerate(all_contents):
+        print(f'Seeding {module_names[i]}...')
 
     
     for i, module_contents in enumerate(all_contents):
@@ -229,20 +346,30 @@ def add_content(model, attributes: dict, questions=None):
     except sqlerror:
         print(f'Content number:{content.order} already added')
         db.session.rollback()
+        db.session.commit()
+        return
 
     if filename:
-        upload_image(content.id, filename)
-
+        upload_image(content.id, filename, "content")
     
     if questions:
         questions["attributes"]["content_id"] = content.id
         add_questions(**questions)
         return
+    
+    db.session.commit()
 
 
 def add_questions(model, attributes: dict, options=None):
     question = model(**attributes)
 
+    try:
+        db.session.add(question)
+        db.session.flush()
+    except sqlerror:
+        print(f'Question for {question.content_id} already added')
+        db.session.rollback()
+    
     try:
         db.session.add(question)
         db.session.flush()
@@ -260,6 +387,7 @@ def add_questions(model, attributes: dict, options=None):
     
 def add_options(model, rows):
 
+
     for row in rows:
         new_row = model(**row)
         try:
@@ -268,11 +396,15 @@ def add_options(model, rows):
         except sqlerror:
             print(f'Option {new_row.option_text} for {new_row.question_id} already added')
             db.session.rollback()
+        else:
+            db.session.commit()
+    
+    return
 
 
 
-def upload_image(content_id, filename):
-    from CodeGuard.utils.uploads import upload_file
+def upload_image(ref_id, filename, usage=None):
+    from CodeGuard.utils.files import upload_file
     import mimetypes
     base = app.root_path
     path = os.path.join(base, 'images', filename)
@@ -291,9 +423,57 @@ def upload_image(content_id, filename):
         content_type=mime_type
     )
 
-    upload_file(file_storage, content_id)
+    upload_file(
+        file=file_storage, 
+        id=ref_id, 
+        usage=usage
+    )
 
-    
+
+def seed_enrollments():
+    courses = db.session.scalars(db.select(Courses)).all()
+    users = db.session.scalars(
+        db.select(Users)
+        .where(Users.role != 'admin')
+    ).all()
+
+    if not users or not courses:
+        print("No users or courses found. Cannot seed enrollments.")
+        return
+
+    enrollments = []
+    import random
+    for _ in range(10):
+        # Pick a random user and a random course
+        user = random.choice(users)
+        course = random.choice(courses)
+
+        # Create an Enrollment object
+        tz = timezone(timedelta(hours=7))
+        curr_time = datetime.now(tz=tz)
+        enrollment = Enrollments(
+            user_id=user.id,
+            course_id=course.id,
+            enrollment_date=curr_time,  # Localized datetime
+            progress=0,
+            last_enrolled_time=curr_time.timetz() # Time only, extracted from datetime
+        )
+        db.session.add(enrollment)
+        try:
+            db.session.flush()
+            print(f"Enrollment for User {enrollment.user_id}; Course {enrollment.course_id} success")
+        except sqlerror:
+            db.session.rollback()
+            print(f"Enrollment for User {enrollment.user_id}; Course {enrollment.course_id} failed")
+        else:
+            db.session.commit()
+
+    return
+
+
+def seed_exams():
+    pass
+
 
 @click.command('seed')
 def seed_all():
@@ -305,8 +485,35 @@ def seed_all():
     courses = seed_courses()
     seed_modules(module_names, courses[0])
     seed_contents(module_names)
+    seed_enrollments()
+    seed_exams()
     db.session.close()
     click.echo('Seeded the database')
 
+
+@click.command('query')
+@click.argument('id', type=int)
+def test_query(id):
+    user_uuid = db.session.scalar(db.select(Users.uuid).where(Users.id == id))
+    # stmt = (
+    #     db.select(Courses)
+    #     .outerjoin(Enrollments)
+    #     .outerjoin(Users)
+    #     .where(Users.uuid == user_uuid)
+    #     .where(Enrollments.user_id == None)
+    # )
+    stmt = (
+        db.select(Courses)
+        .outerjoin(Courses.enrollment)
+        .outerjoin(Enrollments.user.and_(Users.uuid == user_uuid))
+        .where(Users.id == None)  # Filter for unenrolled courses
+    )
+    courses = db.session.scalars(
+        stmt
+    ).all()
+    print(stmt)
+    print(courses)
+
 def init_seed(app):
     app.cli.add_command(seed_all)
+    app.cli.add_command(test_query)

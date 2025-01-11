@@ -36,19 +36,17 @@ def register():
         error = None
         success = None
 
-        usernames = (
-            Users.query
-            .with_entities(Users.username)
-            .filter_by(username=username)
-            .first()
-        )
+        usernames = db.session.scalars(
+            db.select(Users.username)
+            .where(Users.username == username)
+        ).first()
 
-        emails = (
-            Users.query
-            .with_entities(Users.email)
-            .filter_by(email=email)
-            .first()
-        )
+
+        emails = db.sesssion.scalars(
+            db.select(Users.email)
+            .where(Users.email == email)
+        ).first()
+
 
         if not username:
             error = 'Username is required.'
@@ -106,7 +104,6 @@ def verify(token):
     if current_user.email == email:
         current_user.is_confirmed = True
         current_user.confirmed_on = datetime.now(timezone(timedelta(hours=7)))
-        db.session.add(current_user)
         db.session.commit()
         db.session.close()
         flash("You have confirmed your email, thank you!")
