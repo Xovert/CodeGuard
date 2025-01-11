@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Exam{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/content.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/learning.css') }}">
+<script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
+  <!-- CodeMirror Core CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.css">
+  <!-- Material Theme CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/theme/material.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/theme/twilight.min.css" integrity="sha512-9XfQ3Zcaow5VlrlCe3DVZmexqCQ+t5S2vDffn2KHq0kOixYFCq6ZuGOkmaBe8iYP5A8waFp7kotCd5RvdmWoJA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- CodeMirror Core JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/codemirror.min.js"></script>
+  <!-- PHP Mode -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/php/php.min.js"></script>
+  <!-- Additional Modes : htmlmixed, xml, js, and css-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/htmlmixed/htmlmixed.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.18/mode/clike/clike.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- NAVBAR -->
+{% include "navbar.html" ignore missing %}
+
+<!-- CONTENT -->
+<div id="wrapper">
+    <section class="top">
+        <a href="#" class="back d-flex align-items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M7.825 13L13.425 18.6L12 20L4 12L12 4L13.425 5.4L7.825 11H20V13H7.825Z" fill="#AEAEAE" />
+            </svg>
+            <span>Back</span>
+        </a>
+        <div class="progress-wrapper d-flex justify-content-center align-items-center">
+            <span>Progress</span>
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </section>
+
+<!-- CONTENT -->
+<div class="content-wrapper d-flex align-items-center flex-column">
+    <h1>PHP EXAM !</h1>
+    <p>Good Luck Coder !</p>
+    <!-- codeMirror -->
+
+    <div class="exam-editor-container">
+
+        <span id="php">PHP  </span>
+        <textarea id="editor"><?php
+// Vulnerable PHP database connection and query example
+$servername = "localhost";
+            $username = "root";
+            $password = "";
+            $dbname = "example_db";
+            
+// Create connection
+$conn = new mysqli($servername, $username, $password, $dbname);
+            
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+            
+// Vulnerable SQL query
+$user_input = $_GET['username']; // Directly using user input from GET parameter
+$sql = "SELECT * FROM users WHERE username = '$user_input'"; // Unsafe query construction
+            
+// Execute the query
+$result = $conn->query($sql);
+            
+if ($result->num_rows > 0) {
+    // Output data of each row
+    while($row = $result->fetch_assoc()) {
+        echo "id: " . $row["id"] . " - Name: " . $row["username"] . "<br>";
+    }
+} else {
+    echo "0 results";
+}
+            
+// Close connection
+$conn->close();
+?>
+</textarea>
+<input type="reset" class="reset"></input>
+    </div>
+
+    <input id="run" type="image" src="{{ url_for('static', filename='assets/run-logo.png')}}" alt="Submit" onclick="RunFunction()">
+
+    <script>
+
+        const editorElement = document.getElementById("editor");
+        const initialContent = editorElement.value; // Save the initial content of the editor
+
+        // Initialize CodeMirror
+        const editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+            scrollbarStyle: null,
+            lineNumbers: true,
+            mode: "application/x-httpd-php",
+            theme: "material",
+            viewportMargin: Infinity,
+        });
+
+        function RunFunction() {
+            const code = editor.getValue(); // Get code from CodeMirror
+            fetch('/run-code', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: code }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Display the output
+                alert(data.output); // Or display in a designated output area
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        const resetButton = document.querySelector('.reset');
+        resetButton.addEventListener('click', () => {
+        editor.setValue(initialContent); // Restore the initial content
+    });
+    </script>
+    
+
+<!-- buttons -->
+    <div class="buttons">
+        <button>Previous</button>
+        <button>Next</button>
+    </div>
+</div>
+</div>
+
+<!-- FOOTER -->
+{% include "footer.html" ignore missing %}
+{% endblock %}

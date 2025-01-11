@@ -27,6 +27,7 @@ from CodeGuard.models import (
     ChallengeOptions,
     db
 )
+from sqlalchemy.exc import IntegrityError as sqlerror
 
 
 def hash_pass(passes):
@@ -121,6 +122,7 @@ def seed_courses():
             "course": Courses(
             course_name='PHP',
             duration=timedelta(days=30).total_seconds(),  # in hours
+            duration=timedelta(days=30).total_seconds(),  # in hours
             description='PHP Secure Coding',
             status=CourseStatus.DRAFT # Assuming 1 means active,
             ),
@@ -173,6 +175,7 @@ def seed_courses():
             db.session.commit()
 
     print("Seeded Courses.")
+    return courses
 
 
 def seed_modules(module_names):
@@ -185,6 +188,7 @@ def seed_modules(module_names):
 
     for i in range(len(module_names)):
         module = Modules(
+            course_id=existing_course.id,
             course_id=existing_course.id,
             order=i+1,
             module_name=module_names[i]
@@ -216,6 +220,7 @@ def seed_contents(module_names):
                 "order": 1,
                 "content_body": "<INPUT HERE>",
                 "image": "powerful.jpg"
+                "image": "powerful.jpg"
             },
         },
         {
@@ -223,6 +228,7 @@ def seed_contents(module_names):
             "attributes": {
                 "module_id": module.id,
                 "order": 2,
+                "image": "memories.jpg"
                 "image": "memories.jpg"
             }
         },
@@ -232,6 +238,21 @@ def seed_contents(module_names):
                 "module_id": module.id,
                 "order": 3,
                 "content_body": "<INPUT HERE>",
+                "image": "nyahiru.png"
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": None,
+                    "code": "<?php echo('hello world') ?>",
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "The only correct answer", "is_correct": True},
+                    ]
+                }
+            }
                 "image": "nyahiru.png"
             },
             "questions": {
@@ -259,6 +280,7 @@ def seed_contents(module_names):
                 "module_id": module.id,
                 "order": 1,
                 "content_body": None,
+                "content_body": None,
                 "image": None
             },
         },
@@ -267,6 +289,7 @@ def seed_contents(module_names):
             "attributes": {
                 "module_id": module.id,
                 "order": 2,
+                "image": "sleeping_shaq.jpg"
                 "image": "sleeping_shaq.jpg"
             }
         },
@@ -282,6 +305,7 @@ def seed_contents(module_names):
                 "attributes": {
                     "question_text": "<QUESTION HERE>",
                     "code": None,
+                    "code": None,
                 },
                 "options": {
                     "model": ChallengeOptions,
@@ -296,6 +320,10 @@ def seed_contents(module_names):
         }
     ]
     all_contents.append(content_module)
+
+    
+    for i, module_contents in enumerate(all_contents):
+        print(f'Seeding {module_names[i]}...')
 
     
     for i, module_contents in enumerate(all_contents):
@@ -342,6 +370,13 @@ def add_questions(model, attributes: dict, options=None):
         print(f'Question for {question.content_id} already added')
         db.session.rollback()
     
+    try:
+        db.session.add(question)
+        db.session.flush()
+    except sqlerror:
+        print(f'Question for {question.content_id} already added')
+        db.session.rollback()
+    
     if options:
         for option in options["rows"]:
             option["question_id"] = question.id
@@ -351,6 +386,7 @@ def add_questions(model, attributes: dict, options=None):
 
     
 def add_options(model, rows):
+
 
     for row in rows:
         new_row = model(**row)
@@ -446,8 +482,8 @@ def seed_all():
         "Cryptographic Failures",
     ]
     seed_users()
-    seed_courses()
-    seed_modules(module_names)
+    courses = seed_courses()
+    seed_modules(module_names, courses[0])
     seed_contents(module_names)
     seed_enrollments()
     seed_exams()

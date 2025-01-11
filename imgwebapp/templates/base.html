@@ -8,7 +8,7 @@
     <title>{% block title %}{% endblock %}</title>
 
     <!-- Icon -->
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='assets/NewCOdeGuard.png') }}">
 
     <!-- CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -31,6 +31,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
     {% block header %}
     {% endblock %}
+
+    <!-- black future -->
+    <style>
+        @font-face {
+            font-family: "Black-Future";
+            src: url("../static/font/Black\ Future.otf");
+        }
+    
+        :root {
+            --dark-magenta: #501F3A;
+            --hot-pink: #CB2D6F;
+            --orange: #EC744A;
+            --gray: #CCC;
+            --green: #14A098;
+            --medium-light-green: #AADDDA;
+            --super-light-green: #D0ECEA;
+            --dark-blue: #0F292F;
+            --black: #000000;
+            --white: #FFFFFF;
+            --blue: #37A2FF;
+            --red: #F00;
+        }
+    </style>
 </head>
 
 {% for message in get_flashed_messages() %}

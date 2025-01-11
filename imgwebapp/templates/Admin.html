@@ -3,39 +3,60 @@
 {% block title %}Admin Dashboard{% endblock %}
 
 {% block header %}
-<link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
-<script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
+<link rel="stylesheet" href="{{ url_for('static',filename='css/admin.css') }}">
+<script src="{{ url_for('static', filename='js/admin_dashboard.js') }}" defer></script>
 {% endblock %}
 
 {% block content %}
-    <div class="sidebar">
-        <!-- Logo  -->
-        <div style="position: absolute; top: 9px; left: 15px; display:flex;">
-            <img src="{{ url_for('static', filename='NewCOdeGuard.png') }}" style="width: 40px; height: 50px;" />
-            <div style="width: 461px; height: 49px; font-size: 35px;">
-                <span class="code">Code</span>
-                <span  class="guard">Guard</span>
+
+{% include "navbar_footer_admin.html" ignore missing %}
+
+<div class="content" style="height: fit-content;">
+    <!-- Main content goes here -->
+    <div class="title" style="height: fit-content;">
+        <h1>List of Courses</h1>
+    </div>
+    <div class="course-wrapper d-flex flex-wrap justify-content-center">
+        <div class="course">
+            <div class="more">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none">
+                    <rect width="28" height="28" rx="5" fill="white"/>
+                    <path d="M14.001 11.8C13.712 11.8 13.4258 11.857 13.1588 11.9676C12.8917 12.0782 12.6491 12.2403 12.4447 12.4447C12.2403 12.6491 12.0782 12.8917 11.9676 13.1588C11.857 13.4258 11.8 13.712 11.8 14.001C11.8 14.2901 11.857 14.5763 11.9676 14.8433C12.0782 15.1104 12.2403 15.353 12.4447 15.5574C12.6491 15.7618 12.8917 15.9239 13.1588 16.0345C13.4258 16.1451 13.712 16.202 14.001 16.202C14.5848 16.2019 15.1446 15.9699 15.5572 15.557C15.9699 15.1442 16.2017 14.5843 16.2015 14.0005C16.2014 13.4168 15.9694 12.857 15.5565 12.4444C15.1437 12.0317 14.5838 11.7999 14 11.8H14.001ZM7.00105 11.8C6.71201 11.8 6.4258 11.857 6.15876 11.9676C5.89173 12.0782 5.64909 12.2403 5.44471 12.4447C5.24033 12.6491 5.0782 12.8917 4.96759 13.1588C4.85698 13.4258 4.80005 13.712 4.80005 14.001C4.80005 14.2901 4.85698 14.5763 4.96759 14.8433C5.0782 15.1104 5.24033 15.353 5.44471 15.5574C5.64909 15.7618 5.89173 15.9239 6.15876 16.0345C6.4258 16.1451 6.71201 16.202 7.00105 16.202C7.58479 16.2019 8.14457 15.9699 8.55724 15.557C8.96992 15.1442 9.20168 14.5843 9.20155 14.0005C9.20142 13.4168 8.9694 12.857 8.55654 12.4444C8.14368 12.0317 7.58479 11.7999 7.00105 11.8ZM21.001 11.8C20.712 11.8 20.4258 11.857 20.1588 11.9676C19.8917 12.0782 19.6491 12.2403 19.4447 12.4447C19.2403 12.6491 19.0782 12.8917 18.9676 13.1588C18.857 13.4258 18.8 13.712 18.8 14.001C18.8 14.2901 18.857 14.5763 18.9676 14.8433C19.0782 15.1104 19.2403 15.353 19.4447 15.5574C19.6491 15.7618 19.8917 15.9239 20.1588 16.0345C20.4258 16.1451 20.712 16.202 21.001 16.202C21.5848 16.2019 22.1446 15.9699 22.5572 15.557C22.9699 15.1442 23.2017 14.5843 23.2015 14.0005C23.2014 13.4168 22.9694 12.857 22.5565 12.4444C22.1437 12.0317 21.5848 11.7999 21.001 11.8Z" fill="black"/>
+                </svg>
+            </div>
+            <div class="option d-none">
+                <ul>
+                    <li>Delete</li>
+                    <li><a href="#" class="edit">Edit</a></li>
+                </ul>
+            </div>
+            <div class="course-img d-flex justify-content-center align-items-center">
+                <img src="{{ url_for('static', filename='assets/php-logo.svg') }}" alt="">
+            </div>
+            <div class="course-name">
+                <p>PHP</p>
             </div>
         </div>
-
-    <!-- side panel -->
-        
-    <div style="margin-top: 65px;">
-        <ul>
-            <li><a href="{{ url_for('auth.admin') }}">Dashboard</a></li>
-            <li><a href="{{ url_for('auth.courseSetting') }}">Course</a></li>
-            <li><a href="{{ url_for('auth.settings') }}">Settings</a></li>
-            <li><a href="{{ url_for('auth.logout') }}">Logout</a></li>
-        </ul>
+        <div class="course">
+            <div class="more">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none">
+                    <rect width="28" height="28" rx="5" fill="white"/>
+                    <path d="M14.001 11.8C13.712 11.8 13.4258 11.857 13.1588 11.9676C12.8917 12.0782 12.6491 12.2403 12.4447 12.4447C12.2403 12.6491 12.0782 12.8917 11.9676 13.1588C11.857 13.4258 11.8 13.712 11.8 14.001C11.8 14.2901 11.857 14.5763 11.9676 14.8433C12.0782 15.1104 12.2403 15.353 12.4447 15.5574C12.6491 15.7618 12.8917 15.9239 13.1588 16.0345C13.4258 16.1451 13.712 16.202 14.001 16.202C14.5848 16.2019 15.1446 15.9699 15.5572 15.557C15.9699 15.1442 16.2017 14.5843 16.2015 14.0005C16.2014 13.4168 15.9694 12.857 15.5565 12.4444C15.1437 12.0317 14.5838 11.7999 14 11.8H14.001ZM7.00105 11.8C6.71201 11.8 6.4258 11.857 6.15876 11.9676C5.89173 12.0782 5.64909 12.2403 5.44471 12.4447C5.24033 12.6491 5.0782 12.8917 4.96759 13.1588C4.85698 13.4258 4.80005 13.712 4.80005 14.001C4.80005 14.2901 4.85698 14.5763 4.96759 14.8433C5.0782 15.1104 5.24033 15.353 5.44471 15.5574C5.64909 15.7618 5.89173 15.9239 6.15876 16.0345C6.4258 16.1451 6.71201 16.202 7.00105 16.202C7.58479 16.2019 8.14457 15.9699 8.55724 15.557C8.96992 15.1442 9.20168 14.5843 9.20155 14.0005C9.20142 13.4168 8.9694 12.857 8.55654 12.4444C8.14368 12.0317 7.58479 11.7999 7.00105 11.8ZM21.001 11.8C20.712 11.8 20.4258 11.857 20.1588 11.9676C19.8917 12.0782 19.6491 12.2403 19.4447 12.4447C19.2403 12.6491 19.0782 12.8917 18.9676 13.1588C18.857 13.4258 18.8 13.712 18.8 14.001C18.8 14.2901 18.857 14.5763 18.9676 14.8433C19.0782 15.1104 19.2403 15.353 19.4447 15.5574C19.6491 15.7618 19.8917 15.9239 20.1588 16.0345C20.4258 16.1451 20.712 16.202 21.001 16.202C21.5848 16.2019 22.1446 15.9699 22.5572 15.557C22.9699 15.1442 23.2017 14.5843 23.2015 14.0005C23.2014 13.4168 22.9694 12.857 22.5565 12.4444C22.1437 12.0317 21.5848 11.7999 21.001 11.8Z" fill="black"/>
+                </svg>
+            </div>
+            <div class="option d-none">
+                <ul>
+                    <li>Delete</li>
+                    <li><a href="#" class="edit">Edit</a></li>
+                </ul>
+            </div>
+            <div class="course-img d-flex justify-content-center align-items-center">
+                <img src="{{ url_for('static', filename='assets/php-logo.svg') }}" alt="">
+            </div>
+            <div class="course-name">
+                <p>PHP</p>
+            </div>
+        </div>
     </div>
-
-    <p style="position: absolute; bottom: 10px; left:10px">Welcome, {{username}}</p>
-    
-    </div>
-
-    <div class="content">
-        <!-- Main content goes here -->
-        <h1>Dashboard</h1>
-    </div>
-
+</div>
 {% endblock %}

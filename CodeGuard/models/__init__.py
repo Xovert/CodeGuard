@@ -1,5 +1,6 @@
 from flask import current_app as app
 import enum
+import enum
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from typing import Optional, List
@@ -47,6 +48,7 @@ class Users(db.Model):
         return f'User: id={self.id} username={self.username} password={self.password} email={self.email}'
 
 class CourseStatus(enum.Enum):
+class CourseStatus(enum.Enum):
     DRAFT = "Draft"
     PUBLISHED = "Published"
     ARCHIVED = "Archived"
@@ -57,7 +59,10 @@ class Courses(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     course_name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     duration: Mapped[float] = mapped_column(Float, nullable=False)
+    course_name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    duration: Mapped[float] = mapped_column(Float, nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=False)
+    status: Mapped[CourseStatus] = mapped_column(Enum(CourseStatus),nullable=True, default=CourseStatus.DRAFT)
     status: Mapped[CourseStatus] = mapped_column(Enum(CourseStatus),nullable=True, default=CourseStatus.DRAFT)
 
     module: Mapped[List["Modules"]] = relationship(
@@ -107,6 +112,11 @@ class Modules(db.Model):
         back_populates="module", cascade='all, delete-orphan'
     )
     course: Mapped["Courses"] = relationship(back_populates="module")
+
+    __table_args__ = (
+        UniqueConstraint('course_id', 'order', name='uq_duplicate_modules'),
+    )
+
 
     __table_args__ = (
         UniqueConstraint('course_id', 'order', name='uq_duplicate_modules'),
@@ -171,6 +181,10 @@ class Contents(db.Model):
         UniqueConstraint('module_id', 'order', name='uq_duplicate_contents'),
     )
 
+    __table_args__ = (
+        UniqueConstraint('module_id', 'order', name='uq_duplicate_contents'),
+    )
+
 
     def __repr__(self):
         return f'Contents: module_id:{self.module_id} order={self.order} type={self.type}'
@@ -196,9 +210,14 @@ class Exams(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     duration: Mapped[float] = mapped_column(Float, nullable=False)
     course_id: Mapped[int] = mapped_column(ForeignKey("courses.id"), nullable=False)
+    duration: Mapped[float] = mapped_column(Float, nullable=False)
+    course_id: Mapped[int] = mapped_column(ForeignKey("courses.id"), nullable=False)
 
     questions: Mapped[List["ExamQuestions"]] = relationship(
         back_populates='content', cascade='all, delete-orphan'
+    )
+    course: Mapped["Courses"] = relationship(
+        back_populates="exams"
     )
     course: Mapped["Courses"] = relationship(
         back_populates="exams"
@@ -213,6 +232,7 @@ class Questions(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     type: Mapped[str] = mapped_column(String(80), nullable=False, default='standard')
+    question_text: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     question_text: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     code: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
