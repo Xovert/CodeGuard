@@ -174,7 +174,12 @@ class Contents(db.Model):
     def __repr__(self):
         return f'Contents: module_id:{self.module_id} order={self.order} type={self.type}'
 
-      
+class ContentsLearning(Contents):
+    content_body: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    __mapper_args__ = {
+        "polymorphic_identity": "learning",
+    }
+
 class ContentsChallenges(Contents):
     questions: Mapped[List["ChallengeQuestions"]] = relationship(
         back_populates="content", cascade="all, delete-orphan"
