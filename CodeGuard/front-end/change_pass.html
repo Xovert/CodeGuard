@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Forgot Password{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
+<script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+<form action="{{ url_for('auth.changePass') }}" method="POST" style="color: #2A2A2A;">
+        <div class="input-box">
+            <label for="OldPassword" class="bigFont">Old Password</label>
+            <input type="password" id="OldPassword" name="old_password" placeholder="********" required>
+        </div>
+
+        <div class="input-box">
+            <label for="NewPassword" class="bigFont">New Password</label>
+            <input type="password" id="NewPassword" name="new_password" placeholder="********" required>
+        </div>
+
+        <div class="input-box">
+            <label for="RetypePassword" class="bigFont">Re-Type New Password</label>
+            <input type="password" id="RetypePassword" name="retype_password" placeholder="********" required>
+        </div>
+
+        <div class="button-group">
+
+            <button type="submit" class="basic-button">
+                Change Password
+            </button>
+
+            <a href="{{ url_for('auth.cancelPass') }}" class="basic-button" style="background-color: #CB2D6F; text-decoration: none;">
+                Cancel
+            </a>
+        </div>
+        
+    </form>
+</div>
+
+{% endblock %}

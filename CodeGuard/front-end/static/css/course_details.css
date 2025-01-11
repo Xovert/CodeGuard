@@ -1,0 +1,148 @@
+#content{
+    min-height: 75vh;
+    position: relative;
+}
+
+.background{
+    background-color: var(--dark-blue);
+    width: 100%;
+    height: 376px;
+    position: absolute;
+    z-index: -1;
+}
+
+.wrapper-outside{
+    padding: 60px 10%;
+}
+
+.wrapper-inside{
+    background-color: var(--white);
+    border-radius: 20px;
+    box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.35);
+    padding: 60px;
+}
+
+/* COURSE TITLE */
+.title-wrapper{
+    margin-bottom: 32px;
+}
+
+.course-img{
+    width: 277px;
+    height: 150px;
+    margin-right: 32px;
+    flex-shrink: 0;
+}
+
+.course-img img{
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.course-details *{
+    margin: 0px;
+    color: var(--black);
+}
+
+.course-title{
+    margin-bottom: 8px;
+    font-family: Manrope;
+    font-size: 32px;
+    font-weight: 700;
+}
+
+.course-desc{
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+/* PROGRESS BAR */
+.progress-bar-wrapper{
+    width: 100%;
+    height: 32px;
+    background-color: var(--gray);
+    position: relative;
+    margin-bottom: 32px;
+}
+
+.progress-bar{
+    width: 36%;
+    height: 32px;
+    background-color: var(--hot-pink);
+    position: absolute;
+    left: 0;
+    z-index: 2;
+}
+
+.progress-bar-wrapper span{
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 600;
+    position: absolute;
+    z-index: 10;
+}
+
+/* LESSON */
+.lesson-wrapper{
+    row-gap: 24px;
+}
+
+.lesson{
+    width: 100%;
+    position: relative;
+    border-radius: 10px;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.lesson:hover{
+    transform: scale(1.01);
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
+.lesson > a{
+    text-decoration: none;
+}
+
+.learning{
+    background-color: var(--hot-pink);
+}
+
+.locked{
+    opacity: 0.7;
+}
+
+.locked:hover{
+    cursor: not-allowed;
+}
+
+.exam{
+    background-color: var(--dark-magenta);
+}
+
+.lesson-name{
+    padding: 12px 16px;
+}
+
+.lesson-name span{
+    color: var(--white);
+    font-family: Poppins;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.lesson-name span:first-child{
+    margin-right: 24px;
+}
+
+.icon{
+    background-color: var(--dark-magenta);
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    height: 100%;
+    width: 60px;
+    border-radius: 0px 10px 10px 0px;
+    padding: 8px 12px;
+}
