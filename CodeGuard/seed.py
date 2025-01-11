@@ -120,10 +120,10 @@ def seed_courses():
     courses = [ 
         {
             "course": Courses(
-            course_name='PHP',
-            duration=timedelta(days=30).total_seconds(),  # in seconds
-            description='PHP Secure Coding',
-            status=CourseStatus.DRAFT # Assuming 1 means active,
+                course_name='PHP',
+                duration=timedelta(days=30).total_seconds(),  # in seconds
+                description='PHP Secure Coding',
+                status=CourseStatus.DRAFT # Assuming 1 means active,
             ),
             "image": "php.png"
         },
@@ -324,6 +324,8 @@ def add_content(model, attributes: dict, questions=None):
         db.session.rollback()
         db.session.commit()
         return
+    else:
+        db.session.commit()
 
     if filename:
         upload_image(content.id, filename, "content")
@@ -332,20 +334,11 @@ def add_content(model, attributes: dict, questions=None):
         questions["attributes"]["content_id"] = content.id
         add_questions(**questions)
         return
-    
-    db.session.commit()
 
 
 def add_questions(model, attributes: dict, options=None):
     question = model(**attributes)
 
-    try:
-        db.session.add(question)
-        db.session.flush()
-    except sqlerror:
-        print(f'Question for {question.content_id} already added')
-        db.session.rollback()
-    
     try:
         db.session.add(question)
         db.session.flush()

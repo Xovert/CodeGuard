@@ -1,6 +1,5 @@
 from flask import current_app as app
 import enum
-import enum
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from typing import Optional, List
@@ -171,17 +170,11 @@ class Contents(db.Model):
     __table_args__ = (
         UniqueConstraint('module_id', 'order', name='uq_duplicate_contents'),
     )
-
+    
     def __repr__(self):
         return f'Contents: module_id:{self.module_id} order={self.order} type={self.type}'
 
-
-class ContentsLearning(Contents):
-    content_body: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    __mapper_args__ = {
-        "polymorphic_identity": "learning",
-    }
-
+      
 class ContentsChallenges(Contents):
     questions: Mapped[List["ChallengeQuestions"]] = relationship(
         back_populates="content", cascade="all, delete-orphan"
