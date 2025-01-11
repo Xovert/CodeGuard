@@ -121,8 +121,7 @@ def seed_courses():
         {
             "course": Courses(
             course_name='PHP',
-            duration=timedelta(days=30).total_seconds(),  # in hours
-            duration=timedelta(days=30).total_seconds(),  # in hours
+            duration=timedelta(days=30).total_seconds(),  # in seconds
             description='PHP Secure Coding',
             status=CourseStatus.DRAFT # Assuming 1 means active,
             ),
@@ -175,23 +174,25 @@ def seed_courses():
             db.session.commit()
 
     print("Seeded Courses.")
-    return courses
 
 
-def seed_modules(module_names):
+def seed_modules():
     existing_course = db.session.scalars(
         db.select(Courses)
         .where(Courses.course_name == "PHP")
     ).first()
 
     modules = []
+    module_names = [
+        "Broken Access Control",
+        "Cryptographic Failures",
+    ]
 
-    for i in range(len(module_names)):
+    for i, module_name in enumerate(module_names):
         module = Modules(
             course_id=existing_course.id,
-            course_id=existing_course.id,
             order=i+1,
-            module_name=module_names[i]
+            module_name=module_name
         )
         db.session.add(module)
         try:
@@ -206,20 +207,18 @@ def seed_modules(module_names):
     print("Seeded Modules.")
 
 
-def seed_contents(module_names):
+def seed_contents():
     modules = db.session.scalars(db.select(Modules)).all()
     module_map = {module.module_name: module for module in modules}
     
-    all_contents = []
     module = module_map["Broken Access Control"]
-    content_module = [
+    module_map["Broken Access Control"] = [
         {
             "model": ContentsLearning,
             "attributes": {
                 "module_id": module.id,
                 "order": 1,
                 "content_body": "<INPUT HERE>",
-                "image": "powerful.jpg"
                 "image": "powerful.jpg"
             },
         },
@@ -228,7 +227,6 @@ def seed_contents(module_names):
             "attributes": {
                 "module_id": module.id,
                 "order": 2,
-                "image": "memories.jpg"
                 "image": "memories.jpg"
             }
         },
@@ -253,33 +251,16 @@ def seed_contents(module_names):
                     ]
                 }
             }
-                "image": "nyahiru.png"
-            },
-            "questions": {
-                "model": ChallengeQuestions,
-                "attributes": {
-                    "question_text": None,
-                    "code": "<?php echo('hello world') ?>",
-                },
-                "options": {
-                    "model": ChallengeOptions,
-                    "rows": [
-                        {"option_text": "The only correct answer", "is_correct": True},
-                    ]
-                }
-            }
         }
     ]
-    all_contents.append(content_module)
 
     module = module_map["Cryptographic Failures"]
-    content_module = [
+    module_map["Cryptographic Failures"] = [
         {
             "model": ContentsLearning,
             "attributes": {
                 "module_id": module.id,
                 "order": 1,
-                "content_body": None,
                 "content_body": None,
                 "image": None
             },
@@ -289,7 +270,6 @@ def seed_contents(module_names):
             "attributes": {
                 "module_id": module.id,
                 "order": 2,
-                "image": "sleeping_shaq.jpg"
                 "image": "sleeping_shaq.jpg"
             }
         },
@@ -305,7 +285,6 @@ def seed_contents(module_names):
                 "attributes": {
                     "question_text": "<QUESTION HERE>",
                     "code": None,
-                    "code": None,
                 },
                 "options": {
                     "model": ChallengeOptions,
@@ -319,16 +298,13 @@ def seed_contents(module_names):
             }
         }
     ]
-    all_contents.append(content_module)
 
     
-    for i, module_contents in enumerate(all_contents):
-        print(f'Seeding {module_names[i]}...')
-
-    
-    for i, module_contents in enumerate(all_contents):
-        print(f'Seeding {module_names[i]}...')
-        for content in module_contents:
+    for name, contents in module_map.items():
+        if type(contents) is Modules:
+            continue
+        print(f'Seeding module {name}...')
+        for content in contents:
             add_content(**content)
 
     print("Seeded Contents.")
@@ -386,8 +362,6 @@ def add_questions(model, attributes: dict, options=None):
 
     
 def add_options(model, rows):
-
-
     for row in rows:
         new_row = model(**row)
         try:
@@ -441,7 +415,6 @@ def seed_enrollments():
         print("No users or courses found. Cannot seed enrollments.")
         return
 
-    enrollments = []
     import random
     for _ in range(10):
         # Pick a random user and a random course
@@ -477,14 +450,10 @@ def seed_exams():
 
 @click.command('seed')
 def seed_all():
-    module_names = [
-        "Broken Access Control",
-        "Cryptographic Failures",
-    ]
     seed_users()
-    courses = seed_courses()
-    seed_modules(module_names, courses[0])
-    seed_contents(module_names)
+    seed_courses()
+    seed_modules()
+    seed_contents()
     seed_enrollments()
     seed_exams()
     db.session.close()

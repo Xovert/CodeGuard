@@ -48,7 +48,6 @@ class Users(db.Model):
         return f'User: id={self.id} username={self.username} password={self.password} email={self.email}'
 
 class CourseStatus(enum.Enum):
-class CourseStatus(enum.Enum):
     DRAFT = "Draft"
     PUBLISHED = "Published"
     ARCHIVED = "Archived"
@@ -116,7 +115,6 @@ class Modules(db.Model):
     __table_args__ = (
         UniqueConstraint('course_id', 'order', name='uq_duplicate_modules'),
     )
-
 
     __table_args__ = (
         UniqueConstraint('course_id', 'order', name='uq_duplicate_modules'),
