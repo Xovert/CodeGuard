@@ -57,7 +57,7 @@ class Courses(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     course_name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
     duration: Mapped[float] = mapped_column(Float, nullable=False)
-    description: Mapped[str] = mapped_column(String(255), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
     status: Mapped[CourseStatus] = mapped_column(Enum(CourseStatus),nullable=True, default=CourseStatus.DRAFT)
 
     module: Mapped[List["Modules"]] = relationship(
@@ -82,11 +82,15 @@ class Enrollments(db.Model):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete='CASCADE'))
     course_id: Mapped[int] = mapped_column(ForeignKey("courses.id", ondelete='CASCADE'))
     enrollment_date: Mapped[datetime.date] = mapped_column(Date)
-    progress: Mapped[int] = mapped_column(Integer, nullable=False)
-    last_enrolled_time: Mapped[datetime.time] = mapped_column(Time, nullable=False)
+    progress: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    last_accessed_time: Mapped[datetime.time] = mapped_column(Time, nullable=False)
 
     user: Mapped["Users"] = relationship(back_populates="enrollment")
     course: Mapped["Courses"] = relationship(back_populates="enrollment")
+    enrollment_module: Mapped[List["EnrollmentsModules"]] = relationship(
+        back_populates="enrollment", cascade="all, delete-orphan"
+    )
+
     __table_args__ = (
         UniqueConstraint('user_id', 'course_id', name='uq_enrolled_twice'),
     )
@@ -94,6 +98,26 @@ class Enrollments(db.Model):
     def __repr__(self):
         return f'Enrollment: user:{self.user_id} course={self.course_id} date={self.enrollment_date} progress={self.progress}'
 
+class EnrollmentsModules(db.Model):
+    __tablename__ = "enrollments_modules"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    enrollment_id: Mapped[int] = mapped_column(ForeignKey("enrollments.id"), nullable=False)
+    module_id: Mapped[int] = mapped_column(ForeignKey("modules.id"), nullable=False)
+    progress: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+
+    module: Mapped["Modules"] = relationship(
+        back_populates='enrollment_module'
+    )
+    enrollment: Mapped["Enrollments"] = relationship(
+        back_populates='enrollment_module'
+    )
+
+    __table_args__ = (
+        UniqueConstraint('enrollment_id', 'module_id', name='uq_duplicate_progress'),
+    )
+
+    def __repr__(self):
+        return f'id: {self.course_id} enrollment_id: {self.enrollment_id} module_id: {self.module_id} progress: {self.progress}'
 
 class Modules(db.Model):
     __tablename__ = "modules"
@@ -107,6 +131,9 @@ class Modules(db.Model):
         back_populates="module", cascade='all, delete-orphan'
     )
     course: Mapped["Courses"] = relationship(back_populates="module")
+    enrollment_module: Mapped[List["EnrollmentsModules"]] = relationship(
+        back_populates="module", cascade="all, delete-orphan"
+    )
 
     __table_args__ = (
         UniqueConstraint('course_id', 'order', name='uq_duplicate_modules'),
@@ -129,7 +156,7 @@ class Images(db.Model):
         "polymorphic_on": type,
     }
     def __repr__(self):
-        return f'Images: ori:{self.original_filename} new_filename={self.new_filename} location={self.location} content_id={self.content_id}'
+        return f'Images: ori:{self.original_filename} new_filename={self.new_filename} location={self.location}'
 
 class ContentImages(Images):
     __mapper_args__ = {
@@ -211,7 +238,7 @@ class Questions(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     type: Mapped[str] = mapped_column(String(80), nullable=False, default='standard')
-    question_text: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+    question_text: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     code: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     __mapper_args__ = {

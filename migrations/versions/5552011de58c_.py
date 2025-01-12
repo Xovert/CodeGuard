@@ -1,4 +1,4 @@
-"""empty message
+"""Make content_id in image not nullable
 
 Revision ID: 5552011de58c
 Revises: 00d29d278dfa

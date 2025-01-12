@@ -29,24 +29,18 @@
                     <h1>Recent Courses</h1>
                 </div>
                 <div class="course-wrapper d-flex justify-content-center flex-wrap">
-                        <a href="{{ url_for('courses.details') }}" class="course-links">
+                    {% for course_name, course_image in enrolled %}
+                        <a href="{{ url_for('courses.details', course_name=course_name) }}" class="course-links">
                             <div class="course">
                                 <div class="course-img d-flex justify-content-center align-items-center">
-                                    <img src="{{ url_for('static', filename='assets/php-logo.svg') }}" alt="">
+                                    <img src="{{ url_for('views.image', filename=course_image) }}" alt="">
                                 </div>
                                 <div class="course-name">
-                                    <p>PHP</p>
+                                    <p>{{ course_name }}</p>
                                 </div>
                             </div>
                         </a>
-                    <div class="course">
-                        <div class="course-img d-flex justify-content-center align-items-center">
-                            <img src="{{ url_for('static', filename='assets/php-logo.svg') }}" alt="">
-                        </div>
-                        <div class="course-name">
-                            <p>PHP</p>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
 
@@ -55,22 +49,18 @@
                     <h1>Course Catalogue</h1>
                 </div>
                 <div class="course-wrapper d-flex justify-content-center flex-wrap">
-                    <div class="course">
-                        <div class="course-img d-flex justify-content-center align-items-center">
-                            <img src="{{ url_for('static', filename='assets/php-logo.svg') }}" alt="">
-                        </div>
-                        <div class="course-name">
-                            <p>PHP</p>
-                        </div>
-                    </div>
-                    <div class="course">
-                        <div class="course-img d-flex justify-content-center align-items-center">
-                            <img src="{{ url_for('static', filename='assets/php-logo.svg') }}" alt="">
-                        </div>
-                        <div class="course-name">
-                            <p>PHP</p>
-                        </div>
-                    </div>
+                    {% for course_name, course_image in catalogue %}
+                        <a href="{{ url_for('courses.details', course_name=course_name) }}" class="course-links">
+                            <div class="course">
+                                <div class="course-img d-flex justify-content-center align-items-center">
+                                    <img src="{{ url_for('views.image', filename=course_image) }}" alt="">
+                                </div>
+                                <div class="course-name">
+                                    <p>{{ course_name }}</p>
+                                </div>
+                            </div>
+                        </a>
+                    {% endfor %}
                 </div>
             </div>
         </div>

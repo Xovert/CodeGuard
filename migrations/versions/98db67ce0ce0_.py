@@ -1,4 +1,4 @@
-"""empty message
+"""Alter Course, Exams, Questions table.
 
 Revision ID: 98db67ce0ce0
 Revises: 31ddcf7a453f

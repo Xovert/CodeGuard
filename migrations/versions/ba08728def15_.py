@@ -1,4 +1,4 @@
-"""empty message
+"""Alter Enrollments for time
 
 Revision ID: ba08728def15
 Revises: 5552011de58c

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Course Details{% endblock %}
+{% block title %}{{ course_name }}{% endblock %}
 
 {% block header %}
 <link rel="stylesheet" href="{{ url_for('static',filename='css/course_details.css') }}">
@@ -18,11 +18,14 @@
             <!-- COURSE TITLE -->
             <div class="title-wrapper d-flex flex-row">
                 <div class="course-img">
-                    <img src="{{ url_for('static', filename='assets/php-logo.svg') }}" alt="">
+                    <img src="{{ url_for('views.image', filename=course.new_filename) }}" alt="">
                 </div>
                 <div class="course-details">
-                    <h1 class="course-title">PHP Secure Coding</h1>
-                    <p class="course-desc">PHP is a powerful and widely-used server-side scripting language, but its popularity makes it a common target for security threats. This course, based on the OWASP Top 10 2021, focuses on secure coding practices in PHP, teaching you how to prevent vulnerabilities like SQL injection, XSS, and CSRF, and many others.</p>
+                    <h1 class="course-title">{{ course.course_name }}</h1>
+                    <p class="course-desc">
+                        {{ course.description }}
+                        <!-- PHP is a powerful and widely-used server-side scripting language, but its popularity makes it a common target for security threats. This course, based on the OWASP Top 10 2021, focuses on secure coding practices in PHP, teaching you how to prevent vulnerabilities like SQL injection, XSS, and CSRF, and many others. -->
+                    </p>
                 </div>
             </div>
 
@@ -35,70 +38,73 @@
 
             <!-- LESSON -->
             <div class="lesson-wrapper d-flex flex-column">
-                <!-- lesson done -->
-                <div class="lesson learning">
-                    <a href="{{ url_for('courses.learning') }}">
-                        <div class="lesson-name">
-                            <span>#1</span>
-                            <span>Broken Access Control (Lesson Done)</span>
+                {% for module_name, order, progress in modules %}
+                    {% if progress == -1 %}
+                    <!-- lesson done -->
+                        <div class="lesson learning">
+                            <div class="lesson-name">
+                                <span>#{{ order }}</span>
+                                <span>{{ module_name }}</span>
+                            </div>
+                            <div class="icon d-flex align-items-center justify-content-center">
+                                <img src="{{ url_for('static', filename='assets/icon_checkmark.svg')}}" alt="">
+                            </div>
                         </div>
-                        <div class="icon d-flex align-items-center justify-content-center">
-                              <img src="{{ url_for('static', filename='assets/icon_checkmark.svg')}}" alt="">
+                    {% elif progress > 0 %}
+                        <!-- lesson unlocked -->
+                        <div class="lesson learning">
+                            <a href="{{ url_for('courses.contents', course_name=course.course_name, module_name=module_name) }}">
+                                <div class="lesson-name">
+                                    <span>#{{ order }}</span>
+                                    <span>{{ module_name }}</span>
+                                </div>
+                                <div class="icon d-flex align-items-center justify-content-center">
+                                    <img src="{{ url_for('static', filename='assets/icon_unlocked.svg') }}" alt="">
+                                </div>
+                            </a>
                         </div>
-                    </a>
-                </div>
-
-                <!-- lesson unlocked -->
-                <div class="lesson learning">
-                    <div class="lesson-name">
-                        <span>#2</span>
-                        <span>Cryptographic Failures (Lesson Unlocked)</span>
-                    </div>
-                    <div class="icon d-flex align-items-center justify-content-center">
-                        <img src="{{ url_for('static', filename='assets/icon_unlocked.svg') }}" alt="">
-                    </div>
-                </div>
-
-                <!-- lesson locked -->
-                <div class="lesson learning locked">
-                    <div class="lesson-name">
-                        <span>#3</span>
-                        <span>Injection (Lesson Locked)</span>
-                    </div>
-                    <div class="icon d-flex align-items-center justify-content-center">
-                        <img src="{{ url_for('static', filename='assets/icon_locked.svg') }}" alt="">
-                    </div>
-                </div>
-
+                    {% else %}
+                        <!-- lesson locked -->
+                            <div class="lesson learning locked">
+                                <div class="lesson-name">
+                                    <span>#{{ order }}</span>
+                                    <span>{{ module_name }}</span>
+                                </div>
+                                <div class="icon d-flex align-items-center justify-content-center">
+                                    <img src="{{ url_for('static', filename='assets/icon_locked.svg') }}" alt="">
+                                </div>
+                            </div>
+                    {% endif %}
+                {% endfor %}
                 <!-- exam done -->
-                <div class="lesson exam">
+                <!-- <div class="lesson exam">
                     <div class="lesson-name">
                         <span>Take Exam (Exam Done)</span>
                     </div>
                     <div class="icon d-flex align-items-center justify-content-center">
                         <img src="{{ url_for('static', filename='assets/icon_checkmark.svg')}}" alt="">
                     </div>
-                </div>
+                </div> -->
 
                 <!-- exam unlocked -->
-                <div class="lesson exam">
+                <!-- <div class="lesson exam">
                     <div class="lesson-name">
                         <span>Take Exam (Exam Unlocked)</span>
                     </div>
                     <div class="icon d-flex align-items-center justify-content-center">
                           <img src="{{ url_for('static', filename='assets/icon_unlocked.svg') }}" alt="">
                     </div>
-                </div>
+                </div> -->
                 
                 <!-- exam locked -->
-                <div class="lesson exam locked">
+                <!-- <div class="lesson exam locked">
                     <div class="lesson-name">
                         <span>Take Exam (Exam Locked)</span>
                     </div>
                     <div class="icon d-flex align-items-center justify-content-center">
                           <img src="{{ url_for('static', filename='assets/icon_locked.svg') }}" alt="">
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
