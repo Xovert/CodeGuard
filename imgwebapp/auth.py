@@ -52,6 +52,13 @@ def material_exam_option():
     return render_template('material_exam_option.html')
 # template materials
 
+# receive data from add new module
+@bp.route('/add-new-module', methods=('GET', 'POST'))
+def addNewModule():
+    if request.method == 'POST':
+        print("dapet!lalala")
+# receive data from add new module
+
 @bp.route('/examPHP')
 def examPHP():
     return render_template('examPHP.html')
