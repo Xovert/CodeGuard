@@ -499,11 +499,11 @@ def reset():
     db.create_all()
     click.echo('Recreated tables')
 
-@click.command('reseed')
-def reseed():
-    reset()
-    seed_all()
-    click.echo('Re-seeded.')
+# @click.command('reseed')
+# def reseed():
+#     reset()
+#     seed_all()
+#     click.echo('Re-seeded.')
 
 
 @click.command('query')
@@ -512,31 +512,25 @@ def test_query(id):
     user_uuid = db.session.scalar(db.select(Users.uuid).where(Users.id == id))
 
     course_name = "PHP"
-    subq = (
-        db.select(Enrollments.id)
-        .join(Users)
-        .join(Courses)
-        .where(Users.uuid == user_uuid)
+    module_name = "Broken Access Control"
+    module_id = db.session.scalar(
+        db.select(Modules.id)
+        .where(Modules.module_name == module_name)
+    )
+    course_id = db.session.scalar(
+        db.select(Courses.id)
         .where(Courses.course_name == course_name)
     )
-    stmt = (
-        db.select(Modules.module_name, Modules.order, EnrollmentsModules.progress)
-        .join(EnrollmentsModules, Modules.id == EnrollmentsModules.module_id)
-        .join(Enrollments, Enrollments.id == EnrollmentsModules.enrollment_id)
-        .join(Users, Users.id == Enrollments.user_id)
-        .join(Courses, Courses.id == Modules.course_id)
-        .where(Users.uuid == user_uuid)
-        .where(Courses.course_name == course_name)
-        .order_by()
+    query = (
+        db.select(Contents)
+        .where(Contents.module_id == module_id)
     )
-    # courses = db.session.execute(
-    #     stmt
-    # ).all()
-    user = db.session.scalars(
-        db.select(Users).where(Users.uuid == user_uuid)
-    ).first()
-    print(stmt)
-    print(user.username)
+    pagination = db.paginate(query, page=1, per_page=1, error_out=False)
+    print(pagination.items)
+    print(dir(pagination))
+    print(pagination.next)
+    print(pagination.total)
+    print(pagination.iter_pages)
     # for name in courses:
     #     print(f'name: {name}')
     # for name, filename in courses:
@@ -547,4 +541,4 @@ def init_seed(app):
     app.cli.add_command(seed_all)
     app.cli.add_command(test_query)
     app.cli.add_command(reset)
-    app.cli.add_command(reseed)
+    # app.cli.add_command(reseed)

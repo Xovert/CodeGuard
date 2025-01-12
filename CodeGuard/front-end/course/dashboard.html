@@ -30,7 +30,7 @@
                 </div>
                 <div class="course-wrapper d-flex justify-content-center flex-wrap">
                     {% for course_name, course_image in enrolled %}
-                        <a href="{{ url_for('courses.details', course_name=course_name) }}" class="course-links">
+                        <a href="{{ url_for('courses.details', course_name=course_name|urlencode|replace('/', '%2F')) }}" class="course-links">
                             <div class="course">
                                 <div class="course-img d-flex justify-content-center align-items-center">
                                     <img src="{{ url_for('views.image', filename=course_image) }}" alt="">
@@ -50,7 +50,7 @@
                 </div>
                 <div class="course-wrapper d-flex justify-content-center flex-wrap">
                     {% for course_name, course_image in catalogue %}
-                        <a href="{{ url_for('courses.details', course_name=course_name) }}" class="course-links">
+                        <a href="{{ url_for('courses.details', course_name=course_name|urlencode|replace('/', '%2F')) }}" class="course-links">
                             <div class="course">
                                 <div class="course-img d-flex justify-content-center align-items-center">
                                     <img src="{{ url_for('views.image', filename=course_image) }}" alt="">
