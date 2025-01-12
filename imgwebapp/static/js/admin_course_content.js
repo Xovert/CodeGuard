@@ -742,7 +742,7 @@ submitButton.addEventListener('click', async function (e) {
                 return {
                     id: option.querySelector('input')?.id || '',
                     value: option.querySelector('input')?.value || '',
-                    text: option.querySelector('label')?.textContent || '',
+                    is_correct: option.querySelector('input')?.checked || false,
                 };
             });
         }
@@ -765,7 +765,7 @@ submitButton.addEventListener('click', async function (e) {
             question: question,
             code: code,
             options: options,
-            timer: timer,
+            duration: timer,
         };
     });
 
@@ -778,24 +778,26 @@ submitButton.addEventListener('click', async function (e) {
     formData.append('data', JSON.stringify(moduleData));
 
     // Submit FormData to the backend
-    try {
-        const response = await fetch('/add-new-module', {
-            method: 'POST',
-            body: formData,
-        });
+    // try { // SUBMIT KEMANA NIH
+    //     const response = await fetch('/add-new-module', {
+    //         method: 'POST',
+    //         body: formData,
+    //     });
 
-        if (response.ok) {
-            alert('New module has been succesfully added');
-        } 
+    //     if (response.ok) {
+    //         const data = await response.json();
+    //         alert(data.message + '\nNew module has been succesfully added');
+    //     } 
         
-        else {
-            alert('Failed to add a new module. Please try again.');
-        }
-    } catch (error) {
-        console.error('Error submitting form:', error);
-        alert('An error occurred while submitting the form. Please try again.');
-    }
-
+    //     else {
+    //         const data = await response.json();
+    //         alert(data.message + '\nFailed to add a new module. Please try again.');
+    //     }
+    // } catch (error) {
+    //     console.error('Error submitting form:', error);
+    //     alert('An error occurred while submitting the form. Please try again.');
+    // }
+});
 
 
     // alert('Validation Passed. Form will be submitted.');
@@ -856,4 +858,3 @@ submitButton.addEventListener('click', async function (e) {
 ]
 
     */
-});
