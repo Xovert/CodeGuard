@@ -12,22 +12,32 @@ def dashboard():
     username = session.get('username', '')
     enrolled = catalogue.get_enrolled()
     unenrolled = catalogue.get_catalogue()
-    return render_template("course/dashboard.html", username=username)
+    return render_template("course/dashboard.html", username=username, enrolled=enrolled, catalogue=unenrolled)
 
 
-@courses.route('/course', methods=('GET',))
+@courses.route('/course/<string:course_name>', methods=('GET',))
 @login_required
-def details():
-    username = session.get('username', '')
-    return render_template('course/course_details.html', username=username)
+def details(course_name):
+    modules = catalogue.get_modules(course_name)
+    course = catalogue.get_course_fields(course_name)
+    return render_template(
+        'course/course_details.html',
+        course = course,
+        modules = modules
+    )
+
+@courses.route('/course/<string:course_name>/<string:module_name>', methods=("GET",))
+@login_required
+def contents(course_name, module_name):
+    return render_template(
+        "course/learning.html",
+        course_name=course_name,
+        module_name=module_name
+    )
+
 
 
 # Temporary
-@courses.route('/learning') # temporary only, nnti diganti
-def learning():
-    #login required
-    return render_template('course/learning.html')
-
 @courses.route('/challenge_option')
 def challenge_option():
     return render_template('course/challenge_option.html')

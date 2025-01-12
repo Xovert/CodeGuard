@@ -1,4 +1,4 @@
-"""empty message
+"""Make course_name unique
 
 Revision ID: cbae9d741ee1
 Revises: 98db67ce0ce0

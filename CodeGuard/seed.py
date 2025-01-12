@@ -25,6 +25,9 @@ from CodeGuard.models import (
     Options,
     ExamOptions,
     ChallengeOptions,
+    ContentImages,
+    CourseImages,
+    EnrollmentsModules,
     db
 )
 from sqlalchemy.exc import IntegrityError as sqlerror
@@ -120,11 +123,10 @@ def seed_courses():
     courses = [ 
         {
             "course": Courses(
-            course_name='PHP',
-            duration=timedelta(days=30).total_seconds(),  # in hours
-            duration=timedelta(days=30).total_seconds(),  # in hours
-            description='PHP Secure Coding',
-            status=CourseStatus.DRAFT # Assuming 1 means active,
+                course_name='PHP',
+                duration=timedelta(days=30).total_seconds(),  # in seconds
+                description='PHP is a powerful and widely-used server-side scripting language, but its popularity makes it a common target for security threats. This course, based on the OWASP Top 10 2021, focuses on secure coding practices in PHP, teaching you how to prevent vulnerabilities like SQL injection, XSS, and CSRF, and many others.',
+                status=CourseStatus.DRAFT # Assuming 1 means active,
             ),
             "image": "php.png"
         },
@@ -175,23 +177,33 @@ def seed_courses():
             db.session.commit()
 
     print("Seeded Courses.")
-    return courses
 
 
-def seed_modules(module_names):
+def seed_modules():
     existing_course = db.session.scalars(
         db.select(Courses)
         .where(Courses.course_name == "PHP")
     ).first()
 
     modules = []
+    module_names = [
+        "Broken Access Control",
+        "Cryptographic Failures",
+        "Injection",
+        "Insecure Design",
+        "Security Misconfiguration",
+        "Vulnerable & Outdated Components",
+        "Identification & Authentication Failures",
+        "Software & Data Integrity Failures",
+        "Security Logging & Monitoring Failures",
+        "Server-Side Request Forgery (SSRF)"
+    ]
 
-    for i in range(len(module_names)):
+    for i, module_name in enumerate(module_names):
         module = Modules(
             course_id=existing_course.id,
-            course_id=existing_course.id,
             order=i+1,
-            module_name=module_names[i]
+            module_name=module_name
         )
         db.session.add(module)
         try:
@@ -206,20 +218,18 @@ def seed_modules(module_names):
     print("Seeded Modules.")
 
 
-def seed_contents(module_names):
+def seed_contents():
     modules = db.session.scalars(db.select(Modules)).all()
     module_map = {module.module_name: module for module in modules}
     
-    all_contents = []
     module = module_map["Broken Access Control"]
-    content_module = [
+    module_map["Broken Access Control"] = [
         {
             "model": ContentsLearning,
             "attributes": {
                 "module_id": module.id,
                 "order": 1,
                 "content_body": "<INPUT HERE>",
-                "image": "powerful.jpg"
                 "image": "powerful.jpg"
             },
         },
@@ -228,7 +238,6 @@ def seed_contents(module_names):
             "attributes": {
                 "module_id": module.id,
                 "order": 2,
-                "image": "memories.jpg"
                 "image": "memories.jpg"
             }
         },
@@ -253,33 +262,16 @@ def seed_contents(module_names):
                     ]
                 }
             }
-                "image": "nyahiru.png"
-            },
-            "questions": {
-                "model": ChallengeQuestions,
-                "attributes": {
-                    "question_text": None,
-                    "code": "<?php echo('hello world') ?>",
-                },
-                "options": {
-                    "model": ChallengeOptions,
-                    "rows": [
-                        {"option_text": "The only correct answer", "is_correct": True},
-                    ]
-                }
-            }
         }
     ]
-    all_contents.append(content_module)
 
     module = module_map["Cryptographic Failures"]
-    content_module = [
+    module_map["Cryptographic Failures"] = [
         {
             "model": ContentsLearning,
             "attributes": {
                 "module_id": module.id,
                 "order": 1,
-                "content_body": None,
                 "content_body": None,
                 "image": None
             },
@@ -289,7 +281,6 @@ def seed_contents(module_names):
             "attributes": {
                 "module_id": module.id,
                 "order": 2,
-                "image": "sleeping_shaq.jpg"
                 "image": "sleeping_shaq.jpg"
             }
         },
@@ -305,7 +296,6 @@ def seed_contents(module_names):
                 "attributes": {
                     "question_text": "<QUESTION HERE>",
                     "code": None,
-                    "code": None,
                 },
                 "options": {
                     "model": ChallengeOptions,
@@ -319,16 +309,13 @@ def seed_contents(module_names):
             }
         }
     ]
-    all_contents.append(content_module)
 
     
-    for i, module_contents in enumerate(all_contents):
-        print(f'Seeding {module_names[i]}...')
-
-    
-    for i, module_contents in enumerate(all_contents):
-        print(f'Seeding {module_names[i]}...')
-        for content in module_contents:
+    for name, contents in module_map.items():
+        if type(contents) is Modules:
+            continue
+        print(f'Seeding module {name}...')
+        for content in contents:
             add_content(**content)
 
     print("Seeded Contents.")
@@ -348,6 +335,8 @@ def add_content(model, attributes: dict, questions=None):
         db.session.rollback()
         db.session.commit()
         return
+    else:
+        db.session.commit()
 
     if filename:
         upload_image(content.id, filename, "content")
@@ -356,20 +345,11 @@ def add_content(model, attributes: dict, questions=None):
         questions["attributes"]["content_id"] = content.id
         add_questions(**questions)
         return
-    
-    db.session.commit()
 
 
 def add_questions(model, attributes: dict, options=None):
     question = model(**attributes)
 
-    try:
-        db.session.add(question)
-        db.session.flush()
-    except sqlerror:
-        print(f'Question for {question.content_id} already added')
-        db.session.rollback()
-    
     try:
         db.session.add(question)
         db.session.flush()
@@ -386,8 +366,6 @@ def add_questions(model, attributes: dict, options=None):
 
     
 def add_options(model, rows):
-
-
     for row in rows:
         new_row = model(**row)
         try:
@@ -441,7 +419,6 @@ def seed_enrollments():
         print("No users or courses found. Cannot seed enrollments.")
         return
 
-    enrollments = []
     import random
     for _ in range(10):
         # Pick a random user and a random course
@@ -456,7 +433,7 @@ def seed_enrollments():
             course_id=course.id,
             enrollment_date=curr_time,  # Localized datetime
             progress=0,
-            last_enrolled_time=curr_time.timetz() # Time only, extracted from datetime
+            last_accessed_time=curr_time.timetz() # Time only, extracted from datetime
         )
         db.session.add(enrollment)
         try:
@@ -470,6 +447,32 @@ def seed_enrollments():
 
     return
 
+def seed_enrollments_modules():
+    enrollments_modules = db.session.execute(
+        db.select(Enrollments.id, Modules.id)
+        .join(Enrollments.course)
+        .join(Courses.module)
+        .order_by(Enrollments.id)
+        .order_by(Modules.id)
+    ).all()
+
+
+    for enrollment, module in enrollments_modules:
+        enrollment_module = EnrollmentsModules(
+            enrollment_id =  enrollment,
+            module_id = module,
+            progress = 1 if module == 1 else 0
+        )
+        db.session.add(enrollment_module)
+        try:
+            db.session.flush()
+            print(f"Enrollment_id: {enrollment} and module: {module} seeded")
+        except sqlerror:
+            db.session.rollback()
+            print(f"Enrollment_id: {enrollment} and module: {module} failed to seed")
+        else:
+            db.session.commit()
+
 
 def seed_exams():
     pass
@@ -477,43 +480,71 @@ def seed_exams():
 
 @click.command('seed')
 def seed_all():
-    module_names = [
-        "Broken Access Control",
-        "Cryptographic Failures",
-    ]
     seed_users()
-    courses = seed_courses()
-    seed_modules(module_names, courses[0])
-    seed_contents(module_names)
+    seed_courses()
+    seed_modules()
+    seed_contents()
     seed_enrollments()
+    seed_enrollments_modules()
     seed_exams()
     db.session.close()
     click.echo('Seeded the database')
+
+@click.command('reset')
+def reset():
+    db.drop_all()
+    db.session.commit()
+    click.echo('All tables dropped')
+
+    db.create_all()
+    click.echo('Recreated tables')
+
+@click.command('reseed')
+def reseed():
+    reset()
+    seed_all()
+    click.echo('Re-seeded.')
 
 
 @click.command('query')
 @click.argument('id', type=int)
 def test_query(id):
     user_uuid = db.session.scalar(db.select(Users.uuid).where(Users.id == id))
-    # stmt = (
-    #     db.select(Courses)
-    #     .outerjoin(Enrollments)
-    #     .outerjoin(Users)
-    #     .where(Users.uuid == user_uuid)
-    #     .where(Enrollments.user_id == None)
-    # )
-    stmt = (
-        db.select(Courses)
-        .outerjoin(Courses.enrollment)
-        .outerjoin(Enrollments.user.and_(Users.uuid == user_uuid))
-        .where(Users.id == None)  # Filter for unenrolled courses
+
+    course_name = "PHP"
+    subq = (
+        db.select(Enrollments.id)
+        .join(Users)
+        .join(Courses)
+        .where(Users.uuid == user_uuid)
+        .where(Courses.course_name == course_name)
     )
-    courses = db.session.scalars(
-        stmt
-    ).all()
+    stmt = (
+        db.select(Modules.module_name, Modules.order, EnrollmentsModules.progress)
+        .join(EnrollmentsModules, Modules.id == EnrollmentsModules.module_id)
+        .join(Enrollments, Enrollments.id == EnrollmentsModules.enrollment_id)
+        .join(Users, Users.id == Enrollments.user_id)
+        .join(Courses, Courses.id == Modules.course_id)
+        .where(Users.uuid == user_uuid)
+        .where(Courses.course_name == course_name)
+        .order_by()
+    )
+    # courses = db.session.execute(
+    #     stmt
+    # ).all()
+    user = db.session.scalars(
+        db.select(Users).where(Users.uuid == user_uuid)
+    ).first()
     print(stmt)
-    print(courses)
+    print(user.username)
+    # for name in courses:
+    #     print(f'name: {name}')
+    # for name, filename in courses:
+    #     print(f'Name: {name}, Filename: {filename}')
+
 
 def init_seed(app):
     app.cli.add_command(seed_all)
     app.cli.add_command(test_query)
+    app.cli.add_command(reset)
+    app.cli.add_command(reseed)

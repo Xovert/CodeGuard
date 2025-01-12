@@ -19,6 +19,8 @@ def is_authed():
 def is_admin():
     return session.get("role") == "admin"
 
+def get_uuid():
+    return session.get('uuid', None)
 
 def login_session(user):
     session["uuid"] = user.uuid
