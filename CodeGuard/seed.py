@@ -25,6 +25,9 @@ from CodeGuard.models import (
     Options,
     ExamOptions,
     ChallengeOptions,
+    ContentImages,
+    CourseImages,
+    EnrollmentsModules,
     db
 )
 from sqlalchemy.exc import IntegrityError as sqlerror
@@ -122,7 +125,7 @@ def seed_courses():
             "course": Courses(
                 course_name='PHP',
                 duration=timedelta(days=30).total_seconds(),  # in seconds
-                description='PHP Secure Coding',
+                description='PHP is a powerful and widely-used server-side scripting language, but its popularity makes it a common target for security threats. This course, based on the OWASP Top 10 2021, focuses on secure coding practices in PHP, teaching you how to prevent vulnerabilities like SQL injection, XSS, and CSRF, and many others.',
                 status=CourseStatus.DRAFT # Assuming 1 means active,
             ),
             "image": "php.png"
@@ -186,6 +189,14 @@ def seed_modules():
     module_names = [
         "Broken Access Control",
         "Cryptographic Failures",
+        "Injection",
+        "Insecure Design",
+        "Security Misconfiguration",
+        "Vulnerable & Outdated Components",
+        "Identification & Authentication Failures",
+        "Software & Data Integrity Failures",
+        "Security Logging & Monitoring Failures",
+        "Server-Side Request Forgery (SSRF)"
     ]
 
     for i, module_name in enumerate(module_names):
@@ -422,7 +433,7 @@ def seed_enrollments():
             course_id=course.id,
             enrollment_date=curr_time,  # Localized datetime
             progress=0,
-            last_enrolled_time=curr_time.timetz() # Time only, extracted from datetime
+            last_accessed_time=curr_time.timetz() # Time only, extracted from datetime
         )
         db.session.add(enrollment)
         try:
@@ -436,6 +447,32 @@ def seed_enrollments():
 
     return
 
+def seed_enrollments_modules():
+    enrollments_modules = db.session.execute(
+        db.select(Enrollments.id, Modules.id)
+        .join(Enrollments.course)
+        .join(Courses.module)
+        .order_by(Enrollments.id)
+        .order_by(Modules.id)
+    ).all()
+
+
+    for enrollment, module in enrollments_modules:
+        enrollment_module = EnrollmentsModules(
+            enrollment_id =  enrollment,
+            module_id = module,
+            progress = 1 if module == 1 else 0
+        )
+        db.session.add(enrollment_module)
+        try:
+            db.session.flush()
+            print(f"Enrollment_id: {enrollment} and module: {module} seeded")
+        except sqlerror:
+            db.session.rollback()
+            print(f"Enrollment_id: {enrollment} and module: {module} failed to seed")
+        else:
+            db.session.commit()
+
 
 def seed_exams():
     pass
@@ -448,34 +485,66 @@ def seed_all():
     seed_modules()
     seed_contents()
     seed_enrollments()
+    seed_enrollments_modules()
     seed_exams()
     db.session.close()
     click.echo('Seeded the database')
+
+@click.command('reset')
+def reset():
+    db.drop_all()
+    db.session.commit()
+    click.echo('All tables dropped')
+
+    db.create_all()
+    click.echo('Recreated tables')
+
+@click.command('reseed')
+def reseed():
+    reset()
+    seed_all()
+    click.echo('Re-seeded.')
 
 
 @click.command('query')
 @click.argument('id', type=int)
 def test_query(id):
     user_uuid = db.session.scalar(db.select(Users.uuid).where(Users.id == id))
-    # stmt = (
-    #     db.select(Courses)
-    #     .outerjoin(Enrollments)
-    #     .outerjoin(Users)
-    #     .where(Users.uuid == user_uuid)
-    #     .where(Enrollments.user_id == None)
-    # )
-    stmt = (
-        db.select(Courses)
-        .outerjoin(Courses.enrollment)
-        .outerjoin(Enrollments.user.and_(Users.uuid == user_uuid))
-        .where(Users.id == None)  # Filter for unenrolled courses
+
+    course_name = "PHP"
+    subq = (
+        db.select(Enrollments.id)
+        .join(Users)
+        .join(Courses)
+        .where(Users.uuid == user_uuid)
+        .where(Courses.course_name == course_name)
     )
-    courses = db.session.scalars(
-        stmt
-    ).all()
+    stmt = (
+        db.select(Modules.module_name, Modules.order, EnrollmentsModules.progress)
+        .join(EnrollmentsModules, Modules.id == EnrollmentsModules.module_id)
+        .join(Enrollments, Enrollments.id == EnrollmentsModules.enrollment_id)
+        .join(Users, Users.id == Enrollments.user_id)
+        .join(Courses, Courses.id == Modules.course_id)
+        .where(Users.uuid == user_uuid)
+        .where(Courses.course_name == course_name)
+        .order_by()
+    )
+    # courses = db.session.execute(
+    #     stmt
+    # ).all()
+    user = db.session.scalars(
+        db.select(Users).where(Users.uuid == user_uuid)
+    ).first()
     print(stmt)
-    print(courses)
+    print(user.username)
+    # for name in courses:
+    #     print(f'name: {name}')
+    # for name, filename in courses:
+    #     print(f'Name: {name}, Filename: {filename}')
+
 
 def init_seed(app):
     app.cli.add_command(seed_all)
     app.cli.add_command(test_query)
+    app.cli.add_command(reset)
+    app.cli.add_command(reseed)
