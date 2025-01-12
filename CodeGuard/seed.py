@@ -165,11 +165,14 @@ def seed_courses():
         try:
             db.session.flush()
             print(f'Course {course["course"].course_name} has succesfully been seeded')
-            upload_image(
-                ref_id=course["course"].id,
-                filename=course["image"], 
-                usage="course"
-            )
+            try:
+                upload_image(
+                    ref_id=course["course"].id,
+                    filename=course["image"], 
+                    usage="course"
+                )
+            except FileNotFoundError as e:
+                print(f"An error occcured while uploading course image:\n\t {e}")
         except sqlerror:
             print(f"Course {course["course"].course_name} already seeded")
             db.session.rollback()
@@ -192,11 +195,11 @@ def seed_modules():
         "Injection",
         "Insecure Design",
         "Security Misconfiguration",
-        "Vulnerable & Outdated Components",
-        "Identification & Authentication Failures",
-        "Software & Data Integrity Failures",
-        "Security Logging & Monitoring Failures",
-        "Server-Side Request Forgery (SSRF)"
+        "Vulnerable and Outdated Components",
+        "Identification and Authentication Failures",
+        "Software and Data Integrity Failures",
+        "Security Logging and Monitoring Failures",
+        "Server-Side Request Forgery"
     ]
 
     for i, module_name in enumerate(module_names):
@@ -222,92 +225,1377 @@ def seed_contents():
     modules = db.session.scalars(db.select(Modules)).all()
     module_map = {module.module_name: module for module in modules}
     
+    
+    #1 Broken Access Control
     module = module_map["Broken Access Control"]
     module_map["Broken Access Control"] = [
+        #IDOR
         {
             "model": ContentsLearning,
             "attributes": {
                 "module_id": module.id,
                 "order": 1,
-                "content_body": "<INPUT HERE>",
-                "image": "powerful.jpg"
+                "content_body": "Broken Access Control (BAC) adalah kategori kerentanan yang mengakibatkan penyerang dapat mengakses, memodifikasi, atau menjalankan suatu fungsi yang ada di luar batasan yang seharusnya diberikan kepada pengguna.",
+                "image": 'BrokenAccessControl.png'
             },
         },
         {
-            "model": ContentsChallenges,
+            "model": ContentsLearning,
             "attributes": {
                 "module_id": module.id,
                 "order": 2,
-                "image": "memories.jpg"
-            }
+                "content_body": "Insecure Direct Object Reference (IDOR), adalah salah satu contoh kerentanan dengan kategori BAC yang terjadi ketika penyerang dapat mengakses atau mengubah data dengan memanipulasi pengidentifikasi yang digunakan dalam URL atau parameter aplikasi web. Kerentanan ini dapat terjadi karena tidak adanya pemeriksaan kontrol akses / access control list (ACL) yang baik, sehingga gagal memverifikasi apakah pengguna diizinkan untuk mengakses data tertentu.",
+                "image": None
+            },
         },
         {
             "model": ContentsLearning,
             "attributes": {
                 "module_id": module.id,
                 "order": 3,
-                "content_body": "<INPUT HERE>",
-                "image": "nyahiru.png"
+                "content_body": "Untuk mencegah IDOR, kita dapat melakukan berbagai cara seperti, selalu verifikasi bahwa pengguna memiliki izin untuk mengakses objek yang diminta",
+                "image": 'IDORPrevent1.jpg'
             },
-            "questions": {
-                "model": ChallengeQuestions,
-                "attributes": {
-                    "question_text": None,
-                    "code": "<?php echo('hello world') ?>",
-                },
-                "options": {
-                    "model": ChallengeOptions,
-                    "rows": [
-                        {"option_text": "The only correct answer", "is_correct": True},
-                    ]
-                }
-            }
-        }
-    ]
-
-    module = module_map["Cryptographic Failures"]
-    module_map["Cryptographic Failures"] = [
+        },
+        
         {
             "model": ContentsLearning,
             "attributes": {
                 "module_id": module.id,
-                "order": 1,
-                "content_body": None,
-                "image": None
+                "order": 4,
+                "content_body": "Selain itu, hindari juga penggunaan identifier yang mudah ditebak dengan menggunakan sesuatu seperti Universally Unique Identifier (UUID)",
+                "image": 'UUID.png'
             },
         },
+        
         {
             "model": ContentsChallenges,
             "attributes": {
                 "module_id": module.id,
-                "order": 2,
-                "image": "sleeping_shaq.jpg"
-            }
-        },
-        {
-            "model": ContentsChallenges,
-            "attributes": {
-                "module_id": module.id,
-                "order": 3,
-                "image": None
+                "order": 5,
+                "image": 'IDOR.png'
             },
             "questions": {
                 "model": ChallengeQuestions,
                 "attributes": {
-                    "question_text": "<QUESTION HERE>",
+                    "question_text": "Isi bagian yang kosong untuk membuat identifier yang unik berdasarkan waktu dibuatnya id untuk pengguna!",
                     "code": None,
                 },
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "option A", "is_correct": True},
-                        {"option_text": "option B", "is_correct": False},
-                        {"option_text": "option C", "is_correct": False},
-                        {"option_text": "option D", "is_correct": False},
+                        {"option_text": "uniqid()", "is_correct": True},
+                    ]
+                },
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 6,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Apa cara utama untuk memitigasi Insecure Direct Object Reference (IDOR)?",
+                    "code": None,
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a.	Mengamankan objek dengan parameter tertentu", "is_correct": False},
+                        {"option_text": "b.	Menyimpan semua data pengguna di sisi klien untuk mengurangi risiko IDOR", "is_correct": False},
+                        {"option_text": "c.	Menerapkan access control checks untuk setiap objek yang coba diakses pengguna.", "is_correct": True},
+                        {"option_text": "d.	Menggunakan CAPTCHA untuk setiap permintaan data sensitif", "is_correct": False},
                     ]
                 }
-            }
+            },
+        },
+
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 7,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Apa itu Insecure Direct Object References (IDOR)?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. Merupakan kerentanan dimana penyerang dapat mengakses atau memodifikasi data dengan cara memanipulasi id pada URL/parameter.","is_correct": True},
+                        {"option_text": "b. Objek direk yang tidak aman", "is_correct": False},
+                        {"option_text": "c. Objek tertentu di aplikasi web yang tidak dienkripsi dengan benar","is_correct": False},
+                        {"option_text": "d. Jenis serangan di mana hacker menggunakan SQL Query untuk mendapatkan akses langsung ke database aplikasi","is_correct": False}
+                    ]
+                }
+            },
+        },
+        
+        #Path Traversal
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 8,
+                "content_body": "Path Traversal, atau biasa disebut juga directory traversal adalah kerentanan yang memungkinkan penyerang untuk mengakses file dan direktori yang disimpan di luar folder utama dari website file.",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 9,
+                "content_body": "Kita dapat mencegah path traversal dengan cara validasi dan sanitasi user input menggunakan fungsi realpath()",
+                "image": 'PathTraversal.png'
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 10,
+                "image": 'PathTraversalITB.png'
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Isi bagian yang kosong untuk mencegah terjadinya serangan path traversal! Gunakan function yang ada pada PHP!",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "realpath($filePath);", "is_correct": True},
+                    ]
+                }
+            },
+
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 11,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Skenario: Aplikasi Anda memiliki URL seperti http://example.com/view?file=report.txt. Namun, seorang penyerang mencoba mengakses file /etc/passwd menggunakan URL berikut:\nhttp://example.com/view?file=../../../../etc/passwd. Apa langkah terbaik untuk mencegah serangan ini?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. Gunakan HTTPS untuk mengenkripsi komunikasi", "is_correct": False},
+                        {"option_text": "b. Validasi dan sanitasi input pengguna untuk mencegah akses file di luar direktori yang diizinkan", "is_correct": True},
+                        {"option_text": "c. Berikan hak akses root ke aplikasi agar dapat membaca file penting", "is_correct": False},
+                        {"option_text": "d. Sembunyikan URL aplikasi dari pengguna", "is_correct": False}
+                    ]
+                }
+            },
         }
+
+    ]
+
+    #2 Cryptographic Failures
+    module = module_map["Cryptographic Failures"]
+    module_map["Cryptographic Failures"] = [
+        #Hard-Coded Cryptographic Key
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 1,
+                "content_body": "Cryptographic Failures merupakan kategori kerentanan yang terkait erat dengan kegagalan penggunaan / implementasi kriptografi pada data yang harusnya dilindungi. Kerentanan ini biasanya menyebabkan terungkapnya data sensitif. Contoh dari kerentanan ini adalah Hard-Coded Cryptographic Key dan Use of one-way hash without a salt or with predictable salt",
+                "image": 'cryptographicfailure.png'
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 2,
+                "content_body": "Hard-Coded Cryptographic Key, adalah praktik penyimpanan cryptography key di dalam source code. Hal ini berbahaya karena attacker dapat menemukan dan mengeksplotasi key tersebut. Data sensitif yang dilindungi dengan key tersebut dapat dengan mudah didekripsi.",
+                "image": 'HardCodedKey.png'
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 3,
+                "content_body": "Untuk menghindari hal tersebut kita dapat mengimplementasikan penyimpanan cryptography key pada file .env atau penggunaan Key Management Service (KMS). Pada PHP sendiri, terdapat library phpdotenv yang dapat membantu dalam penyimpanan cryptography key dalam file .env",
+                "image": 'phpdotenv.png'
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 4,
+                "image": 'phpdotchal.png'
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Isi bagian kosong pada potongan kode berikut untuk menggunakan dotenv!",
+                    "code": None,
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "load();", "is_correct": True},
+                    ]
+                }
+            },
+        },
+        
+        #Use of one-way hash without a salt or with predictable salt
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 5,
+                "content_body": "Penggunaan algoritma hash yang baik kurang cukup untuk melindungi password. Penyerang tetap bisa mendapatkan password dengan melakukan teknik serangan rainbow tables. Untuk itu, kita perlu menambahkan salt dan pepper pada teknik hashing yang kita gunakan.",
+                "image": 'saltpaper.png'
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 6,
+                "image": 'saltpaperchal.png'
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Isi bagian kosong pada potongan kode berikut untuk membuat hash dengan salt dan pepper!",
+                    "code": None,
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "generateSalt();", "is_correct": True},
+                    ]
+                }
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 7,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Apa perbedaan utama antara salt dan pepper dalam konteks keamanan hashing password?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. Salt bersifat unik untuk setiap password, sedangkan pepper adalah nilai rahasia yang sama untuk semua password.", "is_correct": True},
+                        {"option_text": "b. Salt adalah algoritma hashing yang lebih kuat, sedangkan pepper adalah algoritma tambahan untuk enkripsi.", "is_correct": False},
+                        {"option_text": "c. Salt digunakan untuk mengenkripsi password, sedangkan pepper digunakan untuk mendekripsi password.", "is_correct": False},
+                        {"option_text": "d. Salt meningkatkan panjang hash secara acak, sedangkan pepper mengurangi panjang hash agar lebih cepat diproses.", "is_correct": False}
+                    ]
+                }
+            },
+        },
+
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 8,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Apa risiko utama ketika menggunakan one-way hash tanpa salt dalam menyimpan password pengguna?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. Penggunaan memori menjadi lebih efisien karena tidak ada tambahan data.", "is_correct": False},
+                        {"option_text": "b. Password yang sama akan menghasilkan hash yang sama, sehingga rentan terhadap serangan tabel pelangi (rainbow table).", "is_correct": True},
+                        {"option_text": "c. Kecepatan hashing meningkat karena tidak perlu menghitung tambahan salt.", "is_correct": False},
+                        {"option_text": "d. Memastikan keamanan tambahan dengan mengurangi kompleksitas.", "is_correct": False}
+                    ]
+                }
+            },
+        }
+
+    ]
+    
+    #3 Injection
+    module = module_map["Injection"]
+    module_map["Injection"] = [
+        
+        #SQL Injection
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 1,
+                "content_body": "Injection merupakan kategori kerentanan dimana penyerang memasukkan payload, file, ataupun query ke dalam suatu input dalam website. Serangan paling umum dari kategori ini adalah: SQL Injection dan Cross Site Scripting (XSS)",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 2,
+                "content_body": "SQL Injection adalah kerentanan dimana penyerang mengeksploitasi input dalam aplikasi untuk menjalankan perintah SQL",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 3,
+                "content_body": "Pencegahan utama SQL injection adalah prepare statements. Prepare statements adalah teknik dalam SQL yang memungkinkan pengembang memisahkan logika kueri dari data input pengguna. Dengan cara ini, kueri SQL menjadi lebih aman, efisien, dan dapat digunakan kembali, sekaligus mencegah risiko injeksi SQL",
+                "image": 'PrepareStatement.png'
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 4,
+                "content_body": "Selain itu, kita juga dapat implementasikan validasi dan sanitasi input. Pastikan input yang dimasukkan sesuai dengan keinginan kita. Misalnya jika login menggunakan email, maka validasi input sebagai email dan sanitasi agar tidak ada karakter berbahaya yang dapat ikut masuk.",
+                "image": 'ValidSanitSQL.png'
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 5,
+                "image": 'SQLIfitb.png'
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Isi bagian yang kosong dengan kode untuk membuat prepare statement!",
+                    "code": None,
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "$stmt->bindParam('s', $item);", "is_correct": True},
+                    ]
+                }
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 6,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Pilihlah baris kode mana yang paling cocok untuk melengkapi prepare statement berikut untuk menghindari serangan SQLInjection!",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. $stmt->execute();", "is_correct": True},
+                        {"option_text": "b. $stmt->run();", "is_correct": False},
+                        {"option_text": "c. $stmt->operate();", "is_correct": False},
+                        {"option_text": "d. $stmt->execute(':username'; ':password');", "is_correct": False}
+                        ]
+                    }
+            },
+        },
+    
+    #XSS
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 7,
+                "content_body": "XSS Injection, atau Cross-Site Scripting adalah serangan dimana skrip berbahaya dimasukan ke input dalam web. Hal ini dapat terjadi karena kurang baiknya validasi input pada web.",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 8,
+                "content_body": "Untuk mencegah terjadinya XSS, kita dapat melakukan beberapa hal seperti mengimpementasikan encoding. Pada php sendiri, terdapat suatu function yang dapat melakukan hal tersebut, yaitu htmlspecialchars().",
+                "image": 'htmlspecialchars.png'
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 9,
+                "image": 'XSSfitb.png'
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Isi bagian yang kosong dengan kode agar output dari $safestring menjadi “&lt;script&gt;alert('XSS);&lt;/script&gt;” !",
+                    "code": None,
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "htmlspecialchars", "is_correct": True},
+                    ]
+                }
+            },
+        },
+    
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 10,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Untuk menghindari serangan XSS, apa yang harus dilakukan?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. input encoding", "is_correct": True},
+                        {"option_text": "b. gunakan http header X-Frame-Options", "is_correct": False},
+                        {"option_text": "c. implementasikan rate-limit", "is_correct": False},
+                        {"option_text": "d. implementasikan captcha", "is_correct": False}
+                    ]
+                }
+            },
+        },
+
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 11,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Dalam XSS, apa yang diinject ke dalam input field?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. command", "is_correct": False},
+                        {"option_text": "b. query", "is_correct": False},
+                        {"option_text": "c. script", "is_correct": True},
+                        {"option_text": "d. semuanya benar", "is_correct": False}
+                    ]
+                }
+            },
+        }
+
+    ]
+    
+    #4 Insecure Design
+    module = module_map["Insecure Design"]
+    module_map["Insecure Design"] = [
+        #no rate limit
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 1,
+                "content_body": "Insecure Design adalah sebuah kategori resiko keamanan yang mencakup tidak efektifnya atau bahkan tidak adanya sistem keamanan dalam desain aplikasi. Dengan kata lain, Insecure Design adalah masalah konseptual",
+                "image": None
+            },
+        },
+       
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 2,
+                "content_body": "Desain yang tidak aman mencakup beberapa hal misalnya No rate-limit dan exposure of sensitive information.",
+                "image": None
+            },
+        },
+       
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 3,
+                "content_body": "No rate-limit merupakan kerentanan yang berkaitan juga dengan kategori identification and authentication failures. Dengan menggunakan rate-limit, kita membatasi berapa kali user dapat mencoba untuk login. Jika user login lebih dari batasan yang kita berikan, kita lock fitur login mereka. Hal ini dibutuhkan sebagai langkah preventif serangan brute-force.",
+                "image": 'RateLimit.png'
+            },
+        },
+       
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 4,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Mengapa no-rate limit pada halaman login dapat berisiko bagi sistem keamanan?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. Membuat pengguna dapat mengakses akun mereka tanpa masalah", "is_correct": False},
+                        {"option_text": "b. Memberikan kesempatan bagi penyerang untuk mencoba password yang berbeda dalam jumlah banyak", "is_correct": True},
+                        {"option_text": "c. Menyebabkan halaman login menjadi lebih cepat dan efisien", "is_correct": False},
+                        {"option_text": "d. Mengurangi kebutuhan akan verifikasi dua faktor", "is_correct": False}
+                    ]
+                }
+            },
+        },
+
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 5,
+                "image": 'RateLimitChal.png'
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Isi bagian yang kosong dengan kode untuk membuat rate limit dengan maksimum percobaan login 5 dan lockout time 300 detik!",
+                    "code": None,
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "$lockout_time", "is_correct": True},
+                    ]
+                }
+            },
+        },
+    
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 6,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Apa sebenarnya yang dimaksud dengan \"rate limit\" dalam konteks aplikasi web?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. Pembatasan jumlah data yang dapat diunggah oleh pengguna", "is_correct": False},
+                        {"option_text": "b. Pembatasan jumlah permintaan (request) yang dapat dilakukan oleh pengguna dalam periode waktu tertentu", "is_correct": True},
+                        {"option_text": "c. Pembatasan jumlah pengguna yang dapat login dalam satu waktu", "is_correct": False},
+                        {"option_text": "d. Pembatasan panjang password yang dapat digunakan oleh pengguna", "is_correct": False}
+                    ]
+                }
+            },
+        },
+    
+    #Exposure of sensitive information
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 7,
+                "content_body": "Exposure of sensitive information merupakan kerentanan dimana informasi sensitif terpampang dikarenakan fungsionalitas dalam aplikasi. Pada saat mengembangkan aplikasi, desain aplikasi juga harus mempertimbangkan informasi apa yang sensitif dan harus dilindungi.",
+                "image": 'Exposure.png'
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 8,
+                "content_body": "Untuk mencegah terjadinya exposure of sensitive information, kita dapat mencegahnya dengan mengimplementasikan enkripsi pada data sensitive dan juga validasi dan sanitasi input. Untuk melakukan validasi dan sanitasi dalam PHP sendiri, terdapat fungsi filter_var()",
+                "image": 'encryptexpose.png'
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 9,
+                "image": 'FilterEmail.png'
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Isi bagian yang kosong dengan kode yang tepat untuk membuat validasi dan sanitasi untuk input email!",
+                    "code": None,
+                },
+                "options": {
+                        "model": ChallengeOptions,
+                        "rows": [
+                            {"option_text": "FILTER_SANITIZE_EMAIL", "is_correct": True},
+                        ]
+                }
+            },
+        },
+    
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 10,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Manakah dari berikut ini yang dapat meningkatkan risiko Exposure of Sensitive Information ?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. Menggunakan HTTPS untuk komunikasi data", "is_correct": False},
+                        {"option_text": "b. Menyimpan password pengguna dalam bentuk teks biasa (plain text) di database", "is_correct": True},
+                        {"option_text": "c. Memastikan setiap sesi pengguna terlindungi dengan session ID yang kuat", "is_correct": False},
+                        {"option_text": "d. Mengimplementasikan validasi input untuk mencegah SQL injection", "is_correct": False}
+                    ]
+                }
+            },
+        } 
+    ]
+    
+    #5 Security Misconfiguration
+    module = module_map["Security Misconfiguration"]
+    module_map["Security Misconfiguration"] = [
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 1,
+                "content_body": "Security Misconfiguration adalah kategori kerentanan yang diakibatkan oleh kesalahan atau tidak adanya konfigurasi keamanan dalam web, application frameworks, databases, atau software. Selain itu, penggunaan konfigurasi yang tidak dibutuhkan dan membuat keamanan terancam juga masuk  ke dalam kategori ini.",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 2,
+                "content_body": "contoh kerentanan dari Security Misconfiguration adalah XML External Entities (XXE) dan HTTP Header Misconfigurations.",
+                "image": None
+            },
+        },
+        
+        #XML External Entities (XXE)
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 3,
+                "content_body": "XML External Entities (XXE), adalah jenis serangan yang menargetkan aplikasi yang memproses input XML. Serangan ini memanfaatkan kelemahan dalam konfigurasi parser XML.",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 4,
+                "content_body": "Utamanya, untuk mencegah XXE, kita bisa mematikan penggunaan DTD (external entities) jika tidak diperlukan serta implementasi sanitasi input agar tidak dapat menerima / memproses XML command. Pada PHP, kita dapat menggunakan library berikut untuk mematikan penggunaan external entities.",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 5,
+                "content_body": "Untuk PHP versi 8 ke bawah, gunakan libxml_disable_entity_loader()",
+                "image": 'phpdiatas.png'
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 6,
+                "content_body": "Untuk PHP versi di atas 8, gunakan libxml_set_external_entity_loader()",
+                "image": 'phpdibawah.png'
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 7,
+                "image": 'libxml.png'
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Isi bagian kosong pada potongan kode berikut untuk mematikan DTD loading secara total pada PHP dengan versi di atas 8!",
+                    "code": None,
+                },
+                "options": {
+                        "model": ChallengeOptions,
+                        "rows": [
+                            {"option_text": "set_external_entity_loader(null);", "is_correct": True},
+                        ]
+                }
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 8,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Bagaimana cara menghindari serangan XML External Entities (XXE) dalam PHP?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. Menggunakan fungsi simplexml_load_file() untuk membaca XML dari sumber tidak tepercaya", "is_correct": False},
+                        {"option_text": "b. Menonaktifkan pengolahan entitas eksternal saat mem-parsing XML menggunakan set_external_entity_loader(null)", "is_correct": True},
+                        {"option_text": "c. Menggunakan format lain seperti JSON untuk menggantikan XML", "is_correct": False},
+                        {"option_text": "d. Menyimpan file XML di server tanpa validasi apa pun", "is_correct": False}
+                    ]
+                }
+            },
+        },
+    
+        #HTTP Header Misconfigurations
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 9,
+                "content_body": "HTTP Header Misconfiguration, penggunaan HTTP header yang tepat dapat menjadikan keamanan web lebih terjaga. Kesalahan atau tidak adanya konfigurasi HTTP header dapat mengakibatkan banyak jenis kerentanan.",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 10,
+                "content_body": "Beberapa jenis HTTP Header yang dapat kita konfigurasi antara lain adalah X-Frame-Options (untuk mencegah clickjacking); X-Content-Type-Options (mencegah MIME type confusion); X-Powered-By (untuk mencegah terungkapnya informasi mengenai framework, bahasa pemrograman, atau server yang digunakan.)",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 11,
+                "content_body": "Pada PHP, untuk melakukan konfigurasi HTTP header, kita dapat menggunakan function header(). Sedangkan untuk menghapus HTTP header kita dapat menggunakan header_remove()",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 12,
+                "image": 'anticlickjack.png'
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Isi bagian kosong pada potongan kode berikut untuk memastikan serangan click-jacking tidak dapat dilakukan!",
+                    "code": None,
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "X-Frame-Options: DENY", "is_correct": True},
+                    ]
+                }
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 13,
+                "image": 'antiexpose.png'
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Isi bagian yang kosong pada potongan kode berikut untuk memastikan teknologi sisi server pada aplikasi web tidak dapat diketahui melalui HTTP header!",
+                    "code": None,
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "X-Powered-By", "is_correct": True},
+                    ]
+                }
+            },
+        },
+    ]
+    
+    #6 Vulnerable and Outdated Components
+    module = module_map["Vulnerable and Outdated Components"]
+    module_map["Vulnerable and Outdated Components"] = [
+         {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 1,
+                "content_body": "Vulnerable and Outdated Components, adalah kategori kerentanan yang terjadi ketika komponen software yang digunakan dalam aplikasi tidak diperbarui atau memiliki kerentanan, sehingga membuka celah bagi penyerang untuk mengeksploitasi sistem. Komponen – komponen yang dimaksud antara lain adalah software, libraries, frameworks, dan dependencies.",
+                "image": None
+            },
+        },
+         
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 2,
+                "content_body": "Untuk mencegah adanya vulnerable dan outdate components, developer harus selalu mengecek software, libraries, frameworks dan dependencies yang akan dipakai apakah berbahaya / outdated atau tidak.",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 3,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Apa yang dimaksud dengan Vulnerable and Outdated Components dalam konteks aplikasi web?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. Komponen yang tidak dapat diperbarui karena ketergantungan sistem", "is_correct": False},
+                        {"option_text": "b. Komponen perangkat keras yang tidak kompatibel dengan aplikasi web", "is_correct": False},
+                        {"option_text": "c. Komponen perangkat lunak dalam aplikasi yang memiliki celah keamanan atau tidak diperbarui ke versi terbaru", "is_correct": True},
+                        {"option_text": "d. Komponen yang tidak memerlukan pembaruan untuk tetap berfungsi dengan baik", "is_correct": False}
+                    ]
+                }
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 4,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Apa yang seharusnya dilakukan pengembang setelah mengidentifikasi komponen yang rentan atau usang dalam aplikasi PHP?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. Menghentikan aplikasi dan melaporkan masalah ke pihak ketiga", "is_correct": False},
+                        {"option_text": "b. Segera mengupdate atau mengganti komponen yang rentan dengan versi yang lebih baru dan aman", "is_correct": True},
+                        {"option_text": "c. Menunggu sampai masalah menjadi lebih besar sebelum mengupdate", "is_correct": False},
+                        {"option_text": "d. Membiarkan komponen usang tetap digunakan karena tidak menyebabkan masalah langsung", "is_correct": False}
+                    ]
+                }
+            },
+        }
+        
+    ]
+
+    #7 Identification and Authentication Failures
+    module = module_map["Identification and Authentication Failures"]
+    module_map["Identification and Authentication Failures"] = [
+        #
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 1,
+                "content_body": "Identification and Authentication Failures, adalah kategori kerentanan yang diakibatkan kurang baiknya penerapan proses identifikasi dan autentikasi dalam suatu sistem. Kegagalan dalam proses tersebut memungkinkan penyerang mendapatkan akses tidak sah ke dalam sistem atau data sensitif.",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 2,
+                "content_body": "Beberapa contoh kerentanan dalam kategori ini ada Permits of default or weak passwords dan juga Exposes session identifier in the URL.",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 3,
+                "content_body": "Permits of default or weak passwords, kata kunci atau password yang baik  adalah kata kunci yang susah ditebak baik secara manual maupun ditebak menggunakan automated tools. Kata kunci yang kuat harus kompleks, panjang, dan tidak dapat diprediksi. Dengan mengizinkan penggunaan kata kunci yang lemah, dapat mengakibatkan akses tidak sah. Kata kunci yang lemah misalnya adalah Password1 atau admin/admin.",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 4,
+                "content_body": "Untuk mencegah hal tersebut, kita dapat mengimplementasikan pengecekan terhadap input password pengguna",
+                "image": 'strongpass.png'
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 5,
+                "image": 'strlen.png'
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Isi bagian kosong pada potongan kode berikut untuk membuat pengecekan panjang karakter dari input $password user! Buat input password user harus lebih dari 8 karakter!",
+                    "code": None,
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "strlen($password) < 8", "is_correct": True},
+                    ]
+                }
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 6,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Apa yang dimaksud dengan weak password?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. Password yang panjang dan kompleks", "is_correct": False},
+                        {"option_text": "b. Password yang mudah ditebak dan menggunakan kombinasi yang sederhana (misalnya, 123456 dan password)", "is_correct": True},
+                        {"option_text": "c. Password yang tidak dapat ditebak", "is_correct": False},
+                        {"option_text": "d. Password yang susah untuk diingat", "is_correct": False}
+                    ]
+                }
+            },
+        },
+        
+        #Exposes session identifier in the URL
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 7,
+                "content_body": "Exposes session identifier in the URL, merupakan kerentanan dimana session ID terpampang dalam URL. Hal ini memungkinkan penyerang untuk mendapatkan hak akses dari akun yang session ID-nya dicuri.",
+                "image": 'sessionSteal.png'
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 8,
+                "content_body": "Terdapat beberapa cara pencegahan dari exposes session identifier in the URL, salah satunya adalah dengan mengimplmentasikan cookie untuk menyimpan session ID",
+                "image": 'cookie.png'
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 9,
+                "content_body": "Setup cookie pada file php.ini (global configuration file for php)",
+                "image": 'cookieCode.png'
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 10,
+                "image": 'cookieChal.png'
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Isi bagian kosong pada potongan kode berikut untuk mengatur cookie agar valid sampai 5 jam setelah user login!",
+                    "code": None,
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "1800", "is_correct": True},
+                    ]
+                }
+            },
+        },
+      
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 11,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Mengapa \"Exposes session identifier in the URL\" dianggap sebagai risiko keamanan?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. Karena session ID yang terdapat dalam URL dapat dilihat dan dicuri oleh pihak yang tidak berwenang", "is_correct": True},
+                        {"option_text": "b. Karena session ID terenkripsi di dalam URL, sehingga tidak dapat diakses oleh pengguna lain.", "is_correct": False},
+                        {"option_text": "c. Exposes session identifier in the URL bukan merupakan risiko keamanan", "is_correct": False},
+                        {"option_text": "d. Karena session ID yang disembunyikan dalam URL lebih aman daripada menggunakan cookie.", "is_correct": False}
+                    ]
+                }
+            },
+        },
+
+    ]
+
+    #8 Software and Data Integrity Failures
+    module = module_map["Software and Data Integrity Failures"]
+    module_map["Software and Data Integrity Failures"] = [
+         {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 1,
+                "content_body": "Software and Data Integrity Failures, adalah kategori kerentanan yang muncul karena adanya kegagalan dalam sisi software integrity maupun data integrity.",
+                "image": None
+            },
+        },
+         
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 2,
+                "content_body": "Software integrity memastikan kode software tidak dimodifikasi atau dimanipulasi secara tidak sah. Sedangkan data integrity memastikan bahwa data yang disimpan atau dikirim tidak diubah atau dirusak secara tidak sah.",
+                "image": None
+            },
+        },
+         
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 3,
+                "content_body": "Contoh kerentanan dalam kategori adalah Insecure Deserialization. Insecure Deserialization, merupakan kerentanan keamanan yang terjadi ketika saat data yang telah diserialisasi (misalnya, objek atau struktur data yang dikonversi ke format tertentu untuk disimpan atau dikirim) tidak diperlakukan dengan aman saat dide-serialisasi kembali ke dalam objek atau struktur aslinya. Kerentanan ini memungkinkan penyerang untuk mengeksekusi kode berbahaya, mendapatkan akses tidak sah, atau mengubah perilaku aplikasi.",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 4,
+                "content_body": "Untuk mencegah kerentanan ini terjadi dalam PHP, kita dapat melakukan beberapa hal seperti menghindari penggunaan fungsi unserialize() dan gunakan Gunakan format serialisasi yang lebih aman seperti JSON (json_encode / json_decode) untuk menyimpan dan membaca data.",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 5,
+                "content_body": "Tapi jika harus menggunakan fungsi unserialize(), pastikan  pastikan data yang di-deserialize berasal dari sumber yang terpercaya.",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 6,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Manakah dari tindakan berikut yang bisa membantu mencegah masalah insecure deserialization dalam aplikasi PHP?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. Menggunakan fungsi serialize() dan unserialize() tanpa validasi input pengguna.", "is_correct": False},
+                        {"option_text": "b. Menggunakan metode enkripsi untuk semua data yang diserialisasi dan deserialisasi.", "is_correct": False},
+                        {"option_text": "c. Menggunakan fungsi unserialize() hanya pada data yang berasal dari sumber tepercaya dan terverifikasi.", "is_correct": True},
+                        {"option_text": "d. Mengandalkan PHP untuk secara otomatis memvalidasi data yang diserialisasi.", "is_correct": False}
+                    ]
+                }
+            },
+        },
+
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 7,
+                "image": 'diencode.png'
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Lengkapi bagian kosong pada potongan kode berikut untuk deserialisasi data yang telah diencode menggunakan json_encode()!",
+                    "code": None,
+                },
+                "options": {
+                        "model": ChallengeOptions,
+                        "rows": [
+                            {"option_text": "json_decode()", "is_correct": True},
+                        ]
+                }
+            },
+        },
+    ]
+
+    #9 Security Logging and Monitoring Failures
+    module = module_map["Security Logging and Monitoring Failures"]
+    module_map["Security Logging and Monitoring Failures"] = [
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 1,
+                "content_body": "Security Logging and Monitoring Failures, adalah kategori kerentanan yang terjadi akibat adanya langkah yang tidak aman dalam mekanisme logging dan monitoring pada suatu aplikasi.",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 2,
+                "content_body": "Salah satu contoh kerentanan yang masuk ke dalam kategori ini adalah Insertion of Sensitive Information into Log File.	Insertion of Sensitive Information into Log File, adalah kerentanan yang terjadi saat aplikasi menuliskan data sensitif, seperti kata sandi, API key, atau data kredensial langsung ke dalam log.",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 3,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Manakah dari hal berikut yang dapat membantu mengurangi kebocoran informasi sensitif melalui log file?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. Mengaktifkan log_errors = 1 dan display_errors = 1 di file konfigurasi PHP.", "is_correct": False},
+                        {"option_text": "b. Penggunaan error_log() untuk mencatat hanya pesan kesalahan umum tanpa detail sensitif.", "is_correct": True},
+                        {"option_text": "c. Menyimpan file log di lokasi yang mudah diakses oleh pengguna dan pengembang.", "is_correct": False},
+                        {"option_text": "d. Menyimpan informasi sensitif, seperti kata sandi, dalam file log untuk tujuan audit.", "is_correct": False}
+                    ]
+                }
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 4,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Mengapa penting untuk menghindari penyisipan informasi sensitif ke dalam log file dalam aplikasi PHP?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. Karena file log dapat diakses oleh pihak yang tidak berwenang, mengungkapkan data yang seharusnya dirahasiakan.", "is_correct": True},
+                        {"option_text": "b. Agar file log tidak terlalu besar dan lebih mudah diproses.", "is_correct": False},
+                        {"option_text": "c. Agar proses debug lebih cepat dilakukan tanpa memerlukan banyak data.", "is_correct": False},
+                        {"option_text": "d. Untuk memastikan bahwa informasi dalam log dapat diakses oleh pengembang dengan mudah.", "is_correct": False}
+                    ]
+                }
+            },
+        }
+    ]
+
+    #10 Server-Side Request Forgery
+    module = module_map["Server-Side Request Forgery"]
+    module_map["Server-Side Request Forgery"] = [
+        #This is where you left
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 1,
+                "content_body": "Server-Side Request Forgery (SSRF) adalah kerentanan dimana penyerang membuat request tidak sah atas nama suatu server ke server lain. SSRF dapat terjadi ketika web-app mengambil resource dari tempat lain tanpa memvalidasi URL yang diberikan pengguna.",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsLearning,
+            "attributes": {
+                "module_id": module.id,
+                "order": 2,
+                "content_body": "Untuk mencegah SSRF, lakukan: Sanitasi dan validasi semua input dari client-side, Jangan pernah kirimkan respon mentah ke client-side, Nonaktifkan HTTP redirect, Validasi url schema, destinasi dan port ke tempat yang hanya diizinkan menggunakan whitelist.",
+                "image": None
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 3,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Apa yang dimaksud dengan Server-Side Request Forgery (SSRF)?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. Sebuah serangan yang memungkinkan penyerang mengakses data lokal pada perangkat korban.", "is_correct": False},
+                        {"option_text": "b. Sebuah serangan di mana penyerang memanipulasi server untuk melakukan permintaan HTTP ke lokasi yang tidak diinginkan.", "is_correct": True},
+                        {"option_text": "c. Sebuah teknik untuk mengelabui pengguna agar memberikan informasi pribadi melalui email.", "is_correct": False},
+                        {"option_text": "d. Sebuah serangan di mana kode berbahaya disisipkan ke dalam input form HTML.", "is_correct": False}
+                    ]
+                }
+            },
+        },
+        
+        {
+            "model": ContentsChallenges,
+            "attributes": {
+                "module_id": module.id,
+                "order": 4,
+                "image": None
+            },
+            "questions": {
+                "model": ChallengeQuestions,
+                "attributes": {
+                    "question_text": "Manakah teknik mitigasi berikut yang TIDAK efektif untuk mencegah SSRF?",
+                    "code": None
+                },
+                "options": {
+                    "model": ChallengeOptions,
+                    "rows": [
+                        {"option_text": "a. Membatasi permintaan HTTP ke domain eksternal tertentu menggunakan whitelist.", "is_correct": False},
+                        {"option_text": "b. Menggunakan validasi input untuk memastikan URL sesuai format yang diizinkan.", "is_correct": False},
+                        {"option_text": "c. Memblokir semua permintaan HTTP yang menggunakan protokol HTTPS.", "is_correct": True},
+                        {"option_text": "d. Menggunakan library cURL dengan konfigurasi CURLOPT_FOLLOWLOCATION diatur ke false.", "is_correct": False}
+                    ]
+                }
+            },
+        }
+        
     ]
 
     
@@ -339,7 +1627,10 @@ def add_content(model, attributes: dict, questions=None):
         db.session.commit()
 
     if filename:
-        upload_image(content.id, filename, "content")
+        try:
+            upload_image(content.id, filename, "content")
+        except FileNotFoundError as e:
+            print(f'An Error occured while uploading a content image:\n\t {e}')
     
     if questions:
         questions["attributes"]["content_id"] = content.id
@@ -542,3 +1833,5 @@ def init_seed(app):
     app.cli.add_command(test_query)
     app.cli.add_command(reset)
     # app.cli.add_command(reseed)
+    
+#flask seed 
