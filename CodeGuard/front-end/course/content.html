@@ -7,9 +7,11 @@
 <link rel="stylesheet" href="{{ url_for('static',filename='css/learning.css') }}">
 <link rel="stylesheet" href="{{ url_for('static',filename='css/navbar.css') }}">
 <link rel="stylesheet" href="{{ url_for('static',filename='css/footer.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/challenge_exam.css') }}">
 {% endblock %}
 
 {% block content %}
+
 <!-- NAVBAR -->
 
 <div id="wrapper">
@@ -32,12 +34,28 @@
 
     <!-- CONTENT -->
     <section class="content-wrapper d-flex align-items-center flex-column">
-        <img src="{{ url_for('static', filename='assets/web-security.svg') }}" alt="">
-        <p>Broken Access Control occurs when users can access data or perform actions beyond their permissions due to
-            weak access controls. It’s a critical OWASP Top 10 vulnerability that can expose sensitive data or allow
-            unauthorized actions. Implementing strong policies and secure coding practices is essential to prevent it.
-        </p>
-        <button>Next</button>
+        {% with content = pagination.items[0] %}
+            {% if content.type == "learning" %}
+                <img src="{{ url_for('views.image', filename=) }}" >
+                <!-- <img src="{{ url_for('static', filename='assets/web-security.svg') }}" alt="">
+                <p>Broken Access Control occurs when users can access data or perform actions beyond their permissions due to
+                    weak access controls. It’s a critical OWASP Top 10 vulnerability that can expose sensitive data or allow
+                    unauthorized actions. Implementing strong policies and secure coding practices is essential to prevent it.
+                </p> -->
+            {% elif content.items.type == "challenges" %}
+
+
+            {% endif %}
+            <div class="btn-wrapper">
+                {% if pagination.has_next %}
+                    <button class="button btn-next">Next</button>
+                {% endif %}
+                {% if pagination.has_prev %}
+                    <button class="button btn-previous">Previous</button>
+                {% endif %}
+                <!-- kalo udah pilih jawabannya, baru jadi active (green) warnanya. add the active class pls -->
+            </div>
+        {% endwith %}
     </section>
 </div>
 {% endblock %}

@@ -53,7 +53,7 @@
                     {% elif progress > 0 %}
                         <!-- lesson unlocked -->
                         <div class="lesson learning">
-                            <a href="{{ url_for('courses.contents', course_name=course.course_name, module_name=module_name) }}">
+                            <a href="{{ url_for('courses.contents', course_name=course.course_name|urlencode|replace('/', '%2F'), module_name=module_name|urlencode|replace('/', '%2F')) }}">
                                 <div class="lesson-name">
                                     <span>#{{ order }}</span>
                                     <span>{{ module_name }}</span>
