@@ -171,7 +171,7 @@ def seed_courses():
                 usage="course"
             )
         except sqlerror:
-            print(f"Course {course["course"].course_name} already seeded")
+            print(f'Course {course["course"].course_name} already seeded')
             db.session.rollback()
         else:
             db.session.commit()

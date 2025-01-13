@@ -4,29 +4,31 @@
 
 {% block header %}
 <link rel="stylesheet" href="{{ url_for('static',filename='css/profile.css') }}">
-<link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
 <link rel="stylesheet" href="{{ url_for('static',filename='css/navbar.css') }}">
 <link rel="stylesheet" href="{{ url_for('static',filename='css/footer.css') }}">
 <script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
 {% endblock %}
 
 {% block content %}
-<body style="background-color: aquamarine;">
-    <div class="profile-container">
+<div class="profile-container position-relative">
+    <div class="profile-picture-wrapper position-absolute d-flex align-items-center justify-content-center">
         <img src="https://via.placeholder.com/100" alt="Profile Picture" class="profile-picture">
-        
-        <h2>{{username}}</h2>
-        
-        <div class="profile-details">
-            <p><span>Full name:</span> {{ fullname }}</p>
-            <p><span>Email:</span> {{ email }}</p>
-            <p><span>Registration date:</span> {{ regis_date }}</p>
-        </div>
-
-        <div class="buttons">
-            <a href="{{ url_for('user.settings') }}" class="edit-btn">Edit Profile</a>
-            <a href="{{ url_for('user.change') }}"class="password-btn">Change Password</a>
-        </div>
+        <img src="{{ url_for('static', filename='assets/icon_editpencil.svg') }}" alt="" class="icon-pencil">
     </div>
+    <h1 class="position-absolute title">Profile Information</h1>
+    
+    <!-- <h2>{{username}}</h2> -->
+    
+    <div class="profile-details">
+        <p><span>Full name:</span> {{ fullname }}</p>
+        <p><span>Email:</span> {{ email }}</p>
+        <p><span>Registration date:</span> {{ regis_date }}</p>
+    </div>
+
+    <div class="buttons">
+        <a href="{{ url_for('user.settings') }}" class="edit-btn">Edit Profile</a>
+        <a href="{{ url_for('user.change') }}"class="password-btn">Change Password</a>
+    </div>
+</div>
 
 {% endblock %}

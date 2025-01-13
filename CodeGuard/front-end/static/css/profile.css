@@ -1,33 +1,92 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    margin: 0;
-    display: flex;
+    background-color: var(--dark-blue);
+    /* display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: center; */
     height: 100vh;
 }
 
 .profile-container {
-    padding: 40px 133px 112px 134px; 
-    background: white; 
-    border-radius: 24px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    align-items: center;
+    /* padding: 40px 133px 112px 134px;  */
+    margin-top: 160px;
+    background-color: var(--green);
+    /* border-radius: 24px; */
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
+    /* text-align: center;
+    align-items: center; */
+}
+
+.profile-picture-wrapper{
+    top: -75px;
+    left: 10%;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.profile-picture-wrapper::before{
+    content: ''; /* Required for pseudo-elements */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%; /* Ensure the pseudo-element matches the shape */
+    background: linear-gradient(
+        0deg,
+        rgba(69, 69, 69, 0.40) 0%,
+        rgba(69, 69, 69, 0.40) 100%
+    );
+    opacity: 0; /* Hidden by default */
+    transition: opacity 0.3s ease; /* Smooth fade-in effect */
+    z-index: 2;
+}
+
+
+.profile-picture-wrapper:hover::before {
+    opacity: 1; /* Show the gradient on hover */
 }
 
 .profile-picture {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-    margin-bottom: 15px;
+    border-radius: 50%;
+    border: 3px solid var(--dark-blue);
+    transition: border-color 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+.profile-picture-wrapper:hover .profile-picture{
+    border-color: #007BFF;
+}
+
+.profile-picture-wrapper:hover .icon-pencil{
+    opacity: 1;
+    transition: opacity 0.3s ease;
+}
+
+.icon-pencil{
+    position: absolute;
+    z-index: 3;
+    top: calc(50% - 16px);
+    left: calc(50% - 16px);
+    opacity: 0;
+}
+
+.title{
+    top: -48px;
+    left: calc(10% + 150px + 24px);
+    color: var(--white);
+    font-size: 32px;
+    font-family: Manrope;
+    font-weight: 800;
 }
 
 .profile-details {
-    margin: 15px 0;
-    text-align: left;
+    padding: 107px 10% 10% 10%;
 }
 
 .profile-details p {
@@ -84,19 +143,6 @@ body {
     align-items: center;
 }
 
-.profile-picture {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 2px solid #ccc; /* Optional: styling for the image */
-    border-color: black;
-    transition: border-color 0.3s;
-}
-
-.profile-picture:hover {
-    border-color: #007BFF;
-}
 
 .change-password-section{
     padding-top: 20px;

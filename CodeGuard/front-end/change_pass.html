@@ -9,7 +9,7 @@
 
 {% block content %}
 <div class="container">
-<form action="{{ url_for('auth.changePass') }}" method="POST" style="color: #2A2A2A;">
+<form action="{{ url_for('auth.change_password') }}" method="POST" style="color: #2A2A2A;">
         <div class="input-box">
             <label for="OldPassword" class="bigFont">Old Password</label>
             <input type="password" id="OldPassword" name="old_password" placeholder="********" required>
