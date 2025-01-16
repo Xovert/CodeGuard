@@ -179,7 +179,7 @@ def seed_courses():
             except FileNotFoundError as e:
                 print(f"An error occcured while uploading course image:\n\t {e}")
         except sqlerror:
-            print(f"Course {course["course"].course_name} already seeded")
+            print(f'Course {course["course"].course_name} already seeded')
             db.session.rollback()
         else:
             db.session.commit()

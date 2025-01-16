@@ -1,0 +1,74 @@
+body{
+    background-color: var(--dark-blue);
+}
+
+.content{
+    height: 100vh;
+    row-gap: 60px;
+}
+
+.logo{
+    width: 400px;
+}
+
+.logo img{
+    width: 100%;
+}
+
+.form{
+    border-radius: 5px;
+    border: 1px solid var(--Green, #14A098);
+    background-color: rgba(20, 160, 152, 0.10);
+    padding: 32px 48px;
+    
+}
+
+.form h1{
+    color: var(--white);
+    text-align: center;
+    font-family: Manrope;
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 24px;
+}
+
+.form p{
+    color: var(--white);
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 400;
+    margin-bottom: 16px;
+}
+
+.input-wrapper{
+    row-gap: 16px;
+}
+
+.input-wrapper input{
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 10px;
+    background-color: transparent;
+    border: 1px solid var(--white);
+    color: var(--white);
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.input-wrapper input::placeholder{
+    font-style: italic;
+}
+
+.form button{
+    margin-top: 48px;
+    border-radius: 10px;
+    background-color: var(--orange);
+    border: none;
+    width: 100%;
+    color: var(--white);
+    font-family: Manrope;
+    font-size: 16px;
+    font-weight: 800;
+    padding: 16px 0px;
+}

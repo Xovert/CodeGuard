@@ -3,10 +3,10 @@ from flask import Blueprint, flash, g, redirect, render_template
 from flask import current_app, request, session, url_for
 from sqlalchemy import exc
 from flask_bcrypt import Bcrypt
-from uuid import uuid4
+from uuid import uuid4, UUID
 from datetime import datetime, timezone, timedelta
 
-from CodeGuard.forms.auth import LoginForm, RegisterForm
+from CodeGuard.forms.auth import LoginForm, RegisterForm, ForgotForm, ChangePass
 from CodeGuard.models import db, Users
 from CodeGuard.utils.user import is_authed, is_admin, login_session, logout_session, get_current_user
 from CodeGuard.utils.email import generate_token, confirm_token, send_email
@@ -42,7 +42,7 @@ def register():
         ).first()
 
 
-        emails = db.sesssion.scalars(
+        emails = db.session.scalars(
             db.select(Users.email)
             .where(Users.email == email)
         ).first()
@@ -75,7 +75,9 @@ def register():
                 db.session.commit()
             except db.IntegrityError:
                 error = f"User {username} is already registered."
+                flash(error)
                 db.session.rollback()
+                return redirect(url_for('auth.register'))
             
             token = generate_token(email)
             confirm_url = url_for('auth.verify', token=token, _external=True)
@@ -88,9 +90,12 @@ def register():
 
             flash(success)
             return redirect(url_for('courses.dashboard'))
-        
+    
+    error = "<br>".join(
+        message for messages in form.errors.values() for message in messages
+    )
     flash(error)
-    return redirect(url_for('views.index'))
+    return redirect(url_for('auth.register'))
 
 
 @auth.route('/verify/<token>', methods=('GET',))
@@ -141,39 +146,72 @@ def login():
         flash(error)
     return render_template('login.html')
 
-# def reset_password():
-    # return render_template('')
-
-
-@auth.route('/forgot')
-def forgotPass():
-    return render_template('forgot_pass.html')
+@auth.route('/forgot_pass', methods=('GET', 'POST'))
+def forgot_password():
+    if request.method == 'GET':
+        return render_template('forgot_pass.html')
     
+    elif request.method == 'POST':
+        form = ForgotForm()
 
-@auth.route('/changePass', methods=('GET', 'POST'))
-def change_password():
+        if form.validate_on_submit():
+            email = form.email.data
+            user = Users.query.filter_by(email=email).first()
+
+            if user:
+                uuid = str(user.uuid)
+                token = generate_token(uuid)
+                print(token)
+                change_url = url_for('auth.change_password', token=token, _external=True)
+                html = render_template("change_pass_email.html", url=change_url, fullname=user.fullname)
+                subject = "Reset Your Password"
+                send_email(user.email, subject, html)
+            flash("An email has been sent to your account!")           
+
+        else:
+            error = "<br>".join(
+                message for messages in form.errors.values() for message in messages
+            )
+            flash(error)
+        return redirect(url_for('auth.forgot_password'))
+    
+@auth.route('/change_pass/<token>', methods=('GET', 'POST'))
+def change_password(token):
     if request.method == "GET":
-        return render_template('change_pass.html')
-
-    # else:
-    #     oldpassword = request.form[]
-    #     password = request.form[]
-    #     rpt_password = request.form[]
-        
-    #     if oldpassword
-        
-    #     elif password != rpt_password:
-    #         error = 'Password is not the same'
-
-@auth.route('/cancelPass')
-def cancelPass():
-    # if cancel tapi changepass dari forgot password
-    if g.user is None:
-        return render_template('login.html')
-    # elif cancel tapi changepass dari edit profile
-    else:
-        return render_template('profile.html')
+        return render_template('change_pass.html', token=token)
     
+    elif request.method == 'POST':
+        form = ChangePass()
+
+        error = None
+        if form.validate_on_submit():
+            new_pw = form.password.data
+            print(new_pw)
+
+            uuid = confirm_token(token)
+            if uuid:
+                uuid = UUID(uuid)
+                user = Users.query.filter_by(uuid=uuid).first()
+
+                try:
+                    user.password = bcrypt.generate_password_hash(new_pw)
+                    db.session.commit()
+                    success = "Your password has been successfully reset"
+                    flash(success)
+                except db.IntegrityError:
+                    error = f"Reset password failed"
+                    db.session.rollback()
+            
+                return redirect(url_for('auth.logout'))
+            else:
+                flash("The link is invalid or has expired")
+                return redirect(url_for('auth.forgot_password'))
+        
+        error = "<br>".join(
+            message for messages in form.errors.values() for message in messages
+        )
+        flash(error)
+        return redirect(url_for('auth.change_password', token=token, _external=True))
 
 @auth.route('/logout')
 def logout():

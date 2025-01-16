@@ -98,19 +98,3 @@ input:focus {
     gap: 4px; 
     display: flex
 }
-
-.forgotYourPass{
-    color: #1E1E1E; 
-    font-size: 64px; 
-    font-family: Poppins;
-    font-weight: 600; 
-    margin-bottom: 20px;
-}
-
-.enterEmail{
-    color: #989898; 
-    font-size: 40px; 
-    font-family: Inter; 
-    font-weight: 600; 
-    margin-bottom: 40px;
-}

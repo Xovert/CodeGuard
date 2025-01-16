@@ -19,12 +19,38 @@ def admin():
     return render_template('admin.html')
 
 @bp.route('/admin_course_detail')
-def add_course():
-    return render_template('admin_setting_course.html')
+def admin_course_detail():
+    return render_template('admin_course_detail.html')
+
+@bp.route('/admin_course_content')
+def admin_course_content():
+    return render_template('admin_course_content.html')
 
 @bp.route('/challengePHP')
 def challengePHP():
     return render_template('challengePHP.html')
+
+# template materials
+@bp.route('/material_learning')
+def material_learning():
+    return render_template('material_learning.html')
+
+@bp.route('/material_challenge_code')
+def material_challenge_code():
+    return render_template('material_challenge_code.html')
+
+@bp.route('/material_challenge_option')
+def material_challenge_option():
+    return render_template('material_challenge_option.html')
+
+@bp.route('/material_exam_code')
+def material_exam_code():
+    return render_template('material_exam_code.html')
+
+@bp.route('/material_exam_option')
+def material_exam_option():
+    return render_template('material_exam_option.html')
+# template materials
 
 @bp.route('/examPHP')
 def examPHP():
@@ -58,10 +84,10 @@ def forgotPass():
 def testcodeMirror():
     return render_template('testcodeMirror.html')
 
-@bp.route('/changePass', methods=('GET', 'POST'))
-def changePass():
-    if request.method == "GET":
-        return render_template('changePass.html')
+# @bp.route('/changePass', methods=('GET', 'POST'))
+# def changePass():
+#     if request.method == "GET":
+#         return render_template('changePass.html')
 
     # else:
     #     oldpassword = request.form[]

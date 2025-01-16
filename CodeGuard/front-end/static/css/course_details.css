@@ -82,6 +82,21 @@
     z-index: 10;
 }
 
+/* ENROLL BUTTON */
+#enroll-btn{
+    margin-bottom: 32px;
+    width: 100%;
+    padding: 12px 0px;
+    text-align: center;
+    font-family: Poppins;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--white);
+    border-radius: 10px;
+    border: none;
+    background-color: var(--orange);
+}
+
 /* LESSON */
 .lesson-wrapper{
     row-gap: 24px;

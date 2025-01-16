@@ -1,42 +1,32 @@
-{% extends 'base.html' %}
+{% extends 'base-no-bars.html' %}
 
 {% block title %}Forgot Password{% endblock %}
 
 {% block header %}
-<link rel="stylesheet" href="{{ url_for('static',filename='css/style.css') }}">
-<script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
+<link rel="stylesheet" href="{{ url_for('static',filename='css/forgot_change_pass.css') }}">
+<!-- <script src="{{ url_for('static', filename='js/index.js') }}" defer></script> -->
 {% endblock %}
 
 {% block content %}
-<div class="container">
-<form action="{{ url_for('auth.changePass') }}" method="POST" style="color: #2A2A2A;">
-        <div class="input-box">
-            <label for="OldPassword" class="bigFont">Old Password</label>
-            <input type="password" id="OldPassword" name="old_password" placeholder="********" required>
+<div class="content d-flex flex-column justify-content-center align-items-center">
+    <div class="logo">
+        <img src="{{ url_for('static', filename='assets/LogoCodeGuard.svg') }}" alt="">
+    </div>
+    {% with form = Forms.auth.ChangePass() %}
+    <form action="{{ url_for('auth.change_password', token=token) }}" method="POST" class="form">
+        {{ form.csrf_token() }}
+        <h1>Reset Your Password</h1>
+        <p>Enter your new password below and confirm it to reset your account password.</p>
+
+        <div class="input-wrapper d-flex flex-column">
+            {{ form.password(id="password") }}
+            
+            {{ form.rpt_password(id="rpt-password") }}
         </div>
-
-        <div class="input-box">
-            <label for="NewPassword" class="bigFont">New Password</label>
-            <input type="password" id="NewPassword" name="new_password" placeholder="********" required>
-        </div>
-
-        <div class="input-box">
-            <label for="RetypePassword" class="bigFont">Re-Type New Password</label>
-            <input type="password" id="RetypePassword" name="retype_password" placeholder="********" required>
-        </div>
-
-        <div class="button-group">
-
-            <button type="submit" class="basic-button">
-                Change Password
-            </button>
-
-            <a href="{{ url_for('auth.cancelPass') }}" class="basic-button" style="background-color: #CB2D6F; text-decoration: none;">
-                Cancel
-            </a>
-        </div>
-        
+        <button type="submit" class="basic-button">
+            Reset Password
+        </button>
     </form>
+    {% endwith %}
 </div>
-
 {% endblock %}

@@ -4,11 +4,12 @@
 
 {% block header %}
 <link rel="stylesheet" href="{{ url_for('static',filename='css/admin_course.css') }}">
-<link rel="stylesheet" href="{{ url_for('static',filename='css/navbar_footer_admin.css') }}">
 <script src="{{ url_for('static', filename='js/admin_course_detail.js') }}" defer></script>
 {% endblock %}
 
 {% block content %}
+
+{% include "navbar_footer_admin.html" ignore missing %}
 <div class="content">
     <form action="" class="course-details d-flex flex-column">
         <div class="title">
