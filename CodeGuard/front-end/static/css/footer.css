@@ -18,6 +18,7 @@ footer{
 
 .nav-footer li{
     list-style: none;
+    user-select: none;
 }
 
 .nav-footer a{

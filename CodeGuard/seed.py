@@ -7,6 +7,10 @@ from uuid import uuid4
 from werkzeug.datastructures.file_storage import FileStorage
 from sqlalchemy.exc import IntegrityError as sqlerror
 from freezegun import freeze_time
+from sqlalchemy.orm import joinedload, lazyload, selectinload
+from flask_migrate import upgrade, migrate, downgrade, stamp
+from flask_sqlalchemy.pagination import Pagination
+from sqlalchemy import func
 
 from CodeGuard.auth import bcrypt
 from CodeGuard.models import (
@@ -28,6 +32,7 @@ from CodeGuard.models import (
     ContentImages,
     CourseImages,
     EnrollmentsModules,
+    UsersChallenges,
     db
 )
 from sqlalchemy.exc import IntegrityError as sqlerror
@@ -306,10 +311,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a.	Mengamankan objek dengan parameter tertentu", "is_correct": False},
-                        {"option_text": "b.	Menyimpan semua data pengguna di sisi klien untuk mengurangi risiko IDOR", "is_correct": False},
-                        {"option_text": "c.	Menerapkan access control checks untuk setiap objek yang coba diakses pengguna.", "is_correct": True},
-                        {"option_text": "d.	Menggunakan CAPTCHA untuk setiap permintaan data sensitif", "is_correct": False},
+                        {"option_text": "Mengamankan objek dengan parameter tertentu", "is_correct": False},
+                        {"option_text": "Menyimpan semua data pengguna di sisi klien untuk mengurangi risiko IDOR", "is_correct": False},
+                        {"option_text": "Menerapkan access control checks untuk setiap objek yang coba diakses pengguna.", "is_correct": True},
+                        {"option_text": "Menggunakan CAPTCHA untuk setiap permintaan data sensitif", "is_correct": False},
                     ]
                 }
             },
@@ -331,10 +336,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. Merupakan kerentanan dimana penyerang dapat mengakses atau memodifikasi data dengan cara memanipulasi id pada URL/parameter.","is_correct": True},
-                        {"option_text": "b. Objek direk yang tidak aman", "is_correct": False},
-                        {"option_text": "c. Objek tertentu di aplikasi web yang tidak dienkripsi dengan benar","is_correct": False},
-                        {"option_text": "d. Jenis serangan di mana hacker menggunakan SQL Query untuk mendapatkan akses langsung ke database aplikasi","is_correct": False}
+                        {"option_text": "Merupakan kerentanan dimana penyerang dapat mengakses atau memodifikasi data dengan cara memanipulasi id pada URL/parameter.","is_correct": True},
+                        {"option_text": "Objek direk yang tidak aman", "is_correct": False},
+                        {"option_text": "Objek tertentu di aplikasi web yang tidak dienkripsi dengan benar","is_correct": False},
+                        {"option_text": "Jenis serangan di mana hacker menggunakan SQL Query untuk mendapatkan akses langsung ke database aplikasi","is_correct": False}
                     ]
                 }
             },
@@ -400,10 +405,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. Gunakan HTTPS untuk mengenkripsi komunikasi", "is_correct": False},
-                        {"option_text": "b. Validasi dan sanitasi input pengguna untuk mencegah akses file di luar direktori yang diizinkan", "is_correct": True},
-                        {"option_text": "c. Berikan hak akses root ke aplikasi agar dapat membaca file penting", "is_correct": False},
-                        {"option_text": "d. Sembunyikan URL aplikasi dari pengguna", "is_correct": False}
+                        {"option_text": "Gunakan HTTPS untuk mengenkripsi komunikasi", "is_correct": False},
+                        {"option_text": "Validasi dan sanitasi input pengguna untuk mencegah akses file di luar direktori yang diizinkan", "is_correct": True},
+                        {"option_text": "Berikan hak akses root ke aplikasi agar dapat membaca file penting", "is_correct": False},
+                        {"option_text": "Sembunyikan URL aplikasi dari pengguna", "is_correct": False}
                     ]
                 }
             },
@@ -516,10 +521,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. Salt bersifat unik untuk setiap password, sedangkan pepper adalah nilai rahasia yang sama untuk semua password.", "is_correct": True},
-                        {"option_text": "b. Salt adalah algoritma hashing yang lebih kuat, sedangkan pepper adalah algoritma tambahan untuk enkripsi.", "is_correct": False},
-                        {"option_text": "c. Salt digunakan untuk mengenkripsi password, sedangkan pepper digunakan untuk mendekripsi password.", "is_correct": False},
-                        {"option_text": "d. Salt meningkatkan panjang hash secara acak, sedangkan pepper mengurangi panjang hash agar lebih cepat diproses.", "is_correct": False}
+                        {"option_text": "Salt bersifat unik untuk setiap password, sedangkan pepper adalah nilai rahasia yang sama untuk semua password.", "is_correct": True},
+                        {"option_text": "Salt adalah algoritma hashing yang lebih kuat, sedangkan pepper adalah algoritma tambahan untuk enkripsi.", "is_correct": False},
+                        {"option_text": "Salt digunakan untuk mengenkripsi password, sedangkan pepper digunakan untuk mendekripsi password.", "is_correct": False},
+                        {"option_text": "Salt meningkatkan panjang hash secara acak, sedangkan pepper mengurangi panjang hash agar lebih cepat diproses.", "is_correct": False}
                     ]
                 }
             },
@@ -541,10 +546,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. Penggunaan memori menjadi lebih efisien karena tidak ada tambahan data.", "is_correct": False},
-                        {"option_text": "b. Password yang sama akan menghasilkan hash yang sama, sehingga rentan terhadap serangan tabel pelangi (rainbow table).", "is_correct": True},
-                        {"option_text": "c. Kecepatan hashing meningkat karena tidak perlu menghitung tambahan salt.", "is_correct": False},
-                        {"option_text": "d. Memastikan keamanan tambahan dengan mengurangi kompleksitas.", "is_correct": False}
+                        {"option_text": "Penggunaan memori menjadi lebih efisien karena tidak ada tambahan data.", "is_correct": False},
+                        {"option_text": "Password yang sama akan menghasilkan hash yang sama, sehingga rentan terhadap serangan tabel pelangi (rainbow table).", "is_correct": True},
+                        {"option_text": "Kecepatan hashing meningkat karena tidak perlu menghitung tambahan salt.", "is_correct": False},
+                        {"option_text": "Memastikan keamanan tambahan dengan mengurangi kompleksitas.", "is_correct": False}
                     ]
                 }
             },
@@ -635,10 +640,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. $stmt->execute();", "is_correct": True},
-                        {"option_text": "b. $stmt->run();", "is_correct": False},
-                        {"option_text": "c. $stmt->operate();", "is_correct": False},
-                        {"option_text": "d. $stmt->execute(':username'; ':password');", "is_correct": False}
+                        {"option_text": "$stmt->execute();", "is_correct": True},
+                        {"option_text": "$stmt->run();", "is_correct": False},
+                        {"option_text": "$stmt->operate();", "is_correct": False},
+                        {"option_text": "$stmt->execute(':username'; ':password');", "is_correct": False}
                         ]
                     }
             },
@@ -703,10 +708,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. input encoding", "is_correct": True},
-                        {"option_text": "b. gunakan http header X-Frame-Options", "is_correct": False},
-                        {"option_text": "c. implementasikan rate-limit", "is_correct": False},
-                        {"option_text": "d. implementasikan captcha", "is_correct": False}
+                        {"option_text": "input encoding", "is_correct": True},
+                        {"option_text": "gunakan http header X-Frame-Options", "is_correct": False},
+                        {"option_text": "implementasikan rate-limit", "is_correct": False},
+                        {"option_text": "implementasikan captcha", "is_correct": False}
                     ]
                 }
             },
@@ -728,10 +733,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. command", "is_correct": False},
-                        {"option_text": "b. query", "is_correct": False},
-                        {"option_text": "c. script", "is_correct": True},
-                        {"option_text": "d. semuanya benar", "is_correct": False}
+                        {"option_text": "command", "is_correct": False},
+                        {"option_text": "query", "is_correct": False},
+                        {"option_text": "script", "is_correct": True},
+                        {"option_text": "semuanya benar", "is_correct": False}
                     ]
                 }
             },
@@ -789,10 +794,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. Membuat pengguna dapat mengakses akun mereka tanpa masalah", "is_correct": False},
-                        {"option_text": "b. Memberikan kesempatan bagi penyerang untuk mencoba password yang berbeda dalam jumlah banyak", "is_correct": True},
-                        {"option_text": "c. Menyebabkan halaman login menjadi lebih cepat dan efisien", "is_correct": False},
-                        {"option_text": "d. Mengurangi kebutuhan akan verifikasi dua faktor", "is_correct": False}
+                        {"option_text": "Membuat pengguna dapat mengakses akun mereka tanpa masalah", "is_correct": False},
+                        {"option_text": "Memberikan kesempatan bagi penyerang untuk mencoba password yang berbeda dalam jumlah banyak", "is_correct": True},
+                        {"option_text": "Menyebabkan halaman login menjadi lebih cepat dan efisien", "is_correct": False},
+                        {"option_text": "Mengurangi kebutuhan akan verifikasi dua faktor", "is_correct": False}
                     ]
                 }
             },
@@ -836,10 +841,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. Pembatasan jumlah data yang dapat diunggah oleh pengguna", "is_correct": False},
-                        {"option_text": "b. Pembatasan jumlah permintaan (request) yang dapat dilakukan oleh pengguna dalam periode waktu tertentu", "is_correct": True},
-                        {"option_text": "c. Pembatasan jumlah pengguna yang dapat login dalam satu waktu", "is_correct": False},
-                        {"option_text": "d. Pembatasan panjang password yang dapat digunakan oleh pengguna", "is_correct": False}
+                        {"option_text": "Pembatasan jumlah data yang dapat diunggah oleh pengguna", "is_correct": False},
+                        {"option_text": "Pembatasan jumlah permintaan (request) yang dapat dilakukan oleh pengguna dalam periode waktu tertentu", "is_correct": True},
+                        {"option_text": "Pembatasan jumlah pengguna yang dapat login dalam satu waktu", "is_correct": False},
+                        {"option_text": "Pembatasan panjang password yang dapat digunakan oleh pengguna", "is_correct": False}
                     ]
                 }
             },
@@ -904,10 +909,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. Menggunakan HTTPS untuk komunikasi data", "is_correct": False},
-                        {"option_text": "b. Menyimpan password pengguna dalam bentuk teks biasa (plain text) di database", "is_correct": True},
-                        {"option_text": "c. Memastikan setiap sesi pengguna terlindungi dengan session ID yang kuat", "is_correct": False},
-                        {"option_text": "d. Mengimplementasikan validasi input untuk mencegah SQL injection", "is_correct": False}
+                        {"option_text": "Menggunakan HTTPS untuk komunikasi data", "is_correct": False},
+                        {"option_text": "Menyimpan password pengguna dalam bentuk teks biasa (plain text) di database", "is_correct": True},
+                        {"option_text": "Memastikan setiap sesi pengguna terlindungi dengan session ID yang kuat", "is_correct": False},
+                        {"option_text": "Mengimplementasikan validasi input untuk mencegah SQL injection", "is_correct": False}
                     ]
                 }
             },
@@ -1016,10 +1021,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. Menggunakan fungsi simplexml_load_file() untuk membaca XML dari sumber tidak tepercaya", "is_correct": False},
-                        {"option_text": "b. Menonaktifkan pengolahan entitas eksternal saat mem-parsing XML menggunakan set_external_entity_loader(null)", "is_correct": True},
-                        {"option_text": "c. Menggunakan format lain seperti JSON untuk menggantikan XML", "is_correct": False},
-                        {"option_text": "d. Menyimpan file XML di server tanpa validasi apa pun", "is_correct": False}
+                        {"option_text": "Menggunakan fungsi simplexml_load_file() untuk membaca XML dari sumber tidak tepercaya", "is_correct": False},
+                        {"option_text": "Menonaktifkan pengolahan entitas eksternal saat mem-parsing XML menggunakan set_external_entity_loader(null)", "is_correct": True},
+                        {"option_text": "Menggunakan format lain seperti JSON untuk menggantikan XML", "is_correct": False},
+                        {"option_text": "Menyimpan file XML di server tanpa validasi apa pun", "is_correct": False}
                     ]
                 }
             },
@@ -1140,10 +1145,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. Komponen yang tidak dapat diperbarui karena ketergantungan sistem", "is_correct": False},
-                        {"option_text": "b. Komponen perangkat keras yang tidak kompatibel dengan aplikasi web", "is_correct": False},
-                        {"option_text": "c. Komponen perangkat lunak dalam aplikasi yang memiliki celah keamanan atau tidak diperbarui ke versi terbaru", "is_correct": True},
-                        {"option_text": "d. Komponen yang tidak memerlukan pembaruan untuk tetap berfungsi dengan baik", "is_correct": False}
+                        {"option_text": "Komponen yang tidak dapat diperbarui karena ketergantungan sistem", "is_correct": False},
+                        {"option_text": "Komponen perangkat keras yang tidak kompatibel dengan aplikasi web", "is_correct": False},
+                        {"option_text": "Komponen perangkat lunak dalam aplikasi yang memiliki celah keamanan atau tidak diperbarui ke versi terbaru", "is_correct": True},
+                        {"option_text": "Komponen yang tidak memerlukan pembaruan untuk tetap berfungsi dengan baik", "is_correct": False}
                     ]
                 }
             },
@@ -1165,10 +1170,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. Menghentikan aplikasi dan melaporkan masalah ke pihak ketiga", "is_correct": False},
-                        {"option_text": "b. Segera mengupdate atau mengganti komponen yang rentan dengan versi yang lebih baru dan aman", "is_correct": True},
-                        {"option_text": "c. Menunggu sampai masalah menjadi lebih besar sebelum mengupdate", "is_correct": False},
-                        {"option_text": "d. Membiarkan komponen usang tetap digunakan karena tidak menyebabkan masalah langsung", "is_correct": False}
+                        {"option_text": "Menghentikan aplikasi dan melaporkan masalah ke pihak ketiga", "is_correct": False},
+                        {"option_text": "Segera mengupdate atau mengganti komponen yang rentan dengan versi yang lebih baru dan aman", "is_correct": True},
+                        {"option_text": "Menunggu sampai masalah menjadi lebih besar sebelum mengupdate", "is_correct": False},
+                        {"option_text": "Membiarkan komponen usang tetap digunakan karena tidak menyebabkan masalah langsung", "is_correct": False}
                     ]
                 }
             },
@@ -1258,10 +1263,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. Password yang panjang dan kompleks", "is_correct": False},
-                        {"option_text": "b. Password yang mudah ditebak dan menggunakan kombinasi yang sederhana (misalnya, 123456 dan password)", "is_correct": True},
-                        {"option_text": "c. Password yang tidak dapat ditebak", "is_correct": False},
-                        {"option_text": "d. Password yang susah untuk diingat", "is_correct": False}
+                        {"option_text": "Password yang panjang dan kompleks", "is_correct": False},
+                        {"option_text": "Password yang mudah ditebak dan menggunakan kombinasi yang sederhana (misalnya, 123456 dan password)", "is_correct": True},
+                        {"option_text": "Password yang tidak dapat ditebak", "is_correct": False},
+                        {"option_text": "Password yang susah untuk diingat", "is_correct": False}
                     ]
                 }
             },
@@ -1336,10 +1341,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. Karena session ID yang terdapat dalam URL dapat dilihat dan dicuri oleh pihak yang tidak berwenang", "is_correct": True},
-                        {"option_text": "b. Karena session ID terenkripsi di dalam URL, sehingga tidak dapat diakses oleh pengguna lain.", "is_correct": False},
-                        {"option_text": "c. Exposes session identifier in the URL bukan merupakan risiko keamanan", "is_correct": False},
-                        {"option_text": "d. Karena session ID yang disembunyikan dalam URL lebih aman daripada menggunakan cookie.", "is_correct": False}
+                        {"option_text": "Karena session ID yang terdapat dalam URL dapat dilihat dan dicuri oleh pihak yang tidak berwenang", "is_correct": True},
+                        {"option_text": "Karena session ID terenkripsi di dalam URL, sehingga tidak dapat diakses oleh pengguna lain.", "is_correct": False},
+                        {"option_text": "Exposes session identifier in the URL bukan merupakan risiko keamanan", "is_correct": False},
+                        {"option_text": "Karena session ID yang disembunyikan dalam URL lebih aman daripada menggunakan cookie.", "is_correct": False}
                     ]
                 }
             },
@@ -1416,10 +1421,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. Menggunakan fungsi serialize() dan unserialize() tanpa validasi input pengguna.", "is_correct": False},
-                        {"option_text": "b. Menggunakan metode enkripsi untuk semua data yang diserialisasi dan deserialisasi.", "is_correct": False},
-                        {"option_text": "c. Menggunakan fungsi unserialize() hanya pada data yang berasal dari sumber tepercaya dan terverifikasi.", "is_correct": True},
-                        {"option_text": "d. Mengandalkan PHP untuk secara otomatis memvalidasi data yang diserialisasi.", "is_correct": False}
+                        {"option_text": "Menggunakan fungsi serialize() dan unserialize() tanpa validasi input pengguna.", "is_correct": False},
+                        {"option_text": "Menggunakan metode enkripsi untuk semua data yang diserialisasi dan deserialisasi.", "is_correct": False},
+                        {"option_text": "Menggunakan fungsi unserialize() hanya pada data yang berasal dari sumber tepercaya dan terverifikasi.", "is_correct": True},
+                        {"option_text": "Mengandalkan PHP untuk secara otomatis memvalidasi data yang diserialisasi.", "is_correct": False}
                     ]
                 }
             },
@@ -1487,10 +1492,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. Mengaktifkan log_errors = 1 dan display_errors = 1 di file konfigurasi PHP.", "is_correct": False},
-                        {"option_text": "b. Penggunaan error_log() untuk mencatat hanya pesan kesalahan umum tanpa detail sensitif.", "is_correct": True},
-                        {"option_text": "c. Menyimpan file log di lokasi yang mudah diakses oleh pengguna dan pengembang.", "is_correct": False},
-                        {"option_text": "d. Menyimpan informasi sensitif, seperti kata sandi, dalam file log untuk tujuan audit.", "is_correct": False}
+                        {"option_text": "Mengaktifkan log_errors = 1 dan display_errors = 1 di file konfigurasi PHP.", "is_correct": False},
+                        {"option_text": "Penggunaan error_log() untuk mencatat hanya pesan kesalahan umum tanpa detail sensitif.", "is_correct": True},
+                        {"option_text": "Menyimpan file log di lokasi yang mudah diakses oleh pengguna dan pengembang.", "is_correct": False},
+                        {"option_text": "Menyimpan informasi sensitif, seperti kata sandi, dalam file log untuk tujuan audit.", "is_correct": False}
                     ]
                 }
             },
@@ -1512,10 +1517,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. Karena file log dapat diakses oleh pihak yang tidak berwenang, mengungkapkan data yang seharusnya dirahasiakan.", "is_correct": True},
-                        {"option_text": "b. Agar file log tidak terlalu besar dan lebih mudah diproses.", "is_correct": False},
-                        {"option_text": "c. Agar proses debug lebih cepat dilakukan tanpa memerlukan banyak data.", "is_correct": False},
-                        {"option_text": "d. Untuk memastikan bahwa informasi dalam log dapat diakses oleh pengembang dengan mudah.", "is_correct": False}
+                        {"option_text": "Karena file log dapat diakses oleh pihak yang tidak berwenang, mengungkapkan data yang seharusnya dirahasiakan.", "is_correct": True},
+                        {"option_text": "Agar file log tidak terlalu besar dan lebih mudah diproses.", "is_correct": False},
+                        {"option_text": "Agar proses debug lebih cepat dilakukan tanpa memerlukan banyak data.", "is_correct": False},
+                        {"option_text": "Untuk memastikan bahwa informasi dalam log dapat diakses oleh pengembang dengan mudah.", "is_correct": False}
                     ]
                 }
             },
@@ -1562,10 +1567,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. Sebuah serangan yang memungkinkan penyerang mengakses data lokal pada perangkat korban.", "is_correct": False},
-                        {"option_text": "b. Sebuah serangan di mana penyerang memanipulasi server untuk melakukan permintaan HTTP ke lokasi yang tidak diinginkan.", "is_correct": True},
-                        {"option_text": "c. Sebuah teknik untuk mengelabui pengguna agar memberikan informasi pribadi melalui email.", "is_correct": False},
-                        {"option_text": "d. Sebuah serangan di mana kode berbahaya disisipkan ke dalam input form HTML.", "is_correct": False}
+                        {"option_text": "Sebuah serangan yang memungkinkan penyerang mengakses data lokal pada perangkat korban.", "is_correct": False},
+                        {"option_text": "Sebuah serangan di mana penyerang memanipulasi server untuk melakukan permintaan HTTP ke lokasi yang tidak diinginkan.", "is_correct": True},
+                        {"option_text": "Sebuah teknik untuk mengelabui pengguna agar memberikan informasi pribadi melalui email.", "is_correct": False},
+                        {"option_text": "Sebuah serangan di mana kode berbahaya disisipkan ke dalam input form HTML.", "is_correct": False}
                     ]
                 }
             },
@@ -1587,10 +1592,10 @@ def seed_contents():
                 "options": {
                     "model": ChallengeOptions,
                     "rows": [
-                        {"option_text": "a. Membatasi permintaan HTTP ke domain eksternal tertentu menggunakan whitelist.", "is_correct": False},
-                        {"option_text": "b. Menggunakan validasi input untuk memastikan URL sesuai format yang diizinkan.", "is_correct": False},
-                        {"option_text": "c. Memblokir semua permintaan HTTP yang menggunakan protokol HTTPS.", "is_correct": True},
-                        {"option_text": "d. Menggunakan library cURL dengan konfigurasi CURLOPT_FOLLOWLOCATION diatur ke false.", "is_correct": False}
+                        {"option_text": "Membatasi permintaan HTTP ke domain eksternal tertentu menggunakan whitelist.", "is_correct": False},
+                        {"option_text": "Menggunakan validasi input untuk memastikan URL sesuai format yang diizinkan.", "is_correct": False},
+                        {"option_text": "Memblokir semua permintaan HTTP yang menggunakan protokol HTTPS.", "is_correct": True},
+                        {"option_text": "Menggunakan library cURL dengan konfigurasi CURLOPT_FOLLOWLOCATION diatur ke false.", "is_correct": False}
                     ]
                 }
             },
@@ -1625,6 +1630,7 @@ def add_content(model, attributes: dict, questions=None):
         return
     else:
         db.session.commit()
+    
 
     if filename:
         try:
@@ -1740,7 +1746,7 @@ def seed_enrollments():
 
 def seed_enrollments_modules():
     enrollments_modules = db.session.execute(
-        db.select(Enrollments.id, Modules.id)
+        db.select(Enrollments.id, Modules.id, Modules.order)
         .join(Enrollments.course)
         .join(Courses.module)
         .order_by(Enrollments.id)
@@ -1748,19 +1754,42 @@ def seed_enrollments_modules():
     ).all()
 
 
-    for enrollment, module in enrollments_modules:
+    for enrollment, module, order in enrollments_modules:
         enrollment_module = EnrollmentsModules(
             enrollment_id =  enrollment,
             module_id = module,
-            progress = 1 if module == 1 else 0
+            progress = 1 if order == 1 else 0
         )
         db.session.add(enrollment_module)
         try:
             db.session.flush()
-            print(f"Enrollment_id: {enrollment} and module: {module} seeded")
+            print(f"Enrollment_id: {enrollment} and module: {module} order: {order} seeded")
         except sqlerror:
             db.session.rollback()
-            print(f"Enrollment_id: {enrollment} and module: {module} failed to seed")
+            print(f"Enrollment_id: {enrollment} and module: {module} order: {order} failed to seed")
+        else:
+            db.session.commit()
+
+
+def seed_users_challenges():
+    users_challenges = db.session.execute(
+        db.select(EnrollmentsModules.id, ContentsChallenges.id)
+        .join(EnrollmentsModules.module)
+        .join(ContentsChallenges)
+    ).all()
+
+    for enrollment_module, challenge in users_challenges:
+        user_challenge = UsersChallenges(
+            enrollment_module_id = enrollment_module,
+            challenge_id = challenge
+        )
+        db.session.add(user_challenge)
+        try:
+            db.session.flush()
+            print(f"Enrollment_Module_id: {enrollment_module} and challenge: {challenge} seeded")
+        except sqlerror:
+            db.session.rollback()
+            print(f"Enrollment_Module_id: {enrollment_module} and challenge: {challenge} failed")
         else:
             db.session.commit()
 
@@ -1769,7 +1798,6 @@ def seed_exams():
     pass
 
 
-@click.command('seed')
 def seed_all():
     seed_users()
     seed_courses()
@@ -1777,33 +1805,39 @@ def seed_all():
     seed_contents()
     seed_enrollments()
     seed_enrollments_modules()
+    seed_users_challenges()
     seed_exams()
     db.session.close()
     click.echo('Seeded the database')
 
-@click.command('reset')
 def reset():
     db.drop_all()
     db.session.commit()
-    click.echo('All tables dropped')
+    stamp(revision='base')
+    click.echo('Dropped tables')
 
-    db.create_all()
-    click.echo('Recreated tables')
+    upgrade()
+    click.echo('Recreated all tables')
 
-# @click.command('reseed')
-# def reseed():
-#     reset()
-#     seed_all()
-#     click.echo('Re-seeded.')
+def reseed():
+    reset()
+    seed_all()
 
 
 @click.command('query')
 @click.argument('id', type=int)
 def test_query(id):
     user_uuid = db.session.scalar(db.select(Users.uuid).where(Users.id == id))
-
     course_name = "PHP"
     module_name = "Broken Access Control"
+    content_id = 5
+    enrollment_id = db.session.scalars(
+        db.select(Enrollments.id)
+        .join(Users)
+        .join(Courses)
+        .where(Users.uuid == user_uuid)
+        .where(Courses.course_name == course_name)
+    ).first()
     module_id = db.session.scalar(
         db.select(Modules.id)
         .where(Modules.module_name == module_name)
@@ -1814,24 +1848,68 @@ def test_query(id):
     )
     query = (
         db.select(Contents)
+        .join(Modules)
         .where(Contents.module_id == module_id)
+        .where(Modules.course_id == course_id)
     )
-    pagination = db.paginate(query, page=1, per_page=1, error_out=False)
-    print(pagination.items)
-    print(dir(pagination))
-    print(pagination.next)
-    print(pagination.total)
-    print(pagination.iter_pages)
-    # for name in courses:
-    #     print(f'name: {name}')
-    # for name, filename in courses:
-    #     print(f'Name: {name}, Filename: {filename}')
+    query = (
+        db.select(func.count(EnrollmentsModules.id))
+        .join(Modules, Modules.id == EnrollmentsModules.module_id)
+        .where(EnrollmentsModules.enrollment_id == enrollment_id)
+        .where(EnrollmentsModules.progress == -1)
+    )
+    query = (
+        db.select(ChallengeOptions.option_text)
+        .join(ChallengeQuestions)
+        .where(ChallengeQuestions.content_id == content_id)
+    )
+    # query = (
+    #     db.select(UsersChallenges.attempts, UsersChallenges.isComplete)
+    #     .where(UsersChallenges.challenge_id == 11)
+    # )
+    # query = (
+    #     db.select(UsersChallenges.attempts, UsersChallenges.isComplete)
+    #     .where(UsersChallenges.challenge_id == 6)
+    # )
+    # results = db.session.execute(query).first()
+    # results:Pagination = db.paginate(query, page=2, per_page=1)
+    results = db.session.scalar(query)
+    content:ContentsChallenges = db.session.scalar(
+        db.select(ChallengeOptions.id)
+        .join(ChallengeQuestions)
+        .join(ContentsChallenges)
+        .where(ContentsChallenges.id == content_id)
+    )
+    print(query)
+    # print(results.first)
+    # print(results.pages)
+    # print(results.last)
+    # print(results.total)
+    # print(type(content.question.options.pop()))
+    print(content)
+    from sqlalchemy.orm.collections import InstrumentedList
+    from typing import List
+    # for content, in results:
+    #     print(content.type)
+    #     if content.image:
+    #         print(content.image)
 
+@click.command('seed')
+def seed_command():
+    seed_all()
+
+@click.command('reset')
+def reset_command():
+    reset()
+
+@click.command('reseed')
+def reseed_command():
+    reseed()
 
 def init_seed(app):
-    app.cli.add_command(seed_all)
+    app.cli.add_command(seed_command)
+    app.cli.add_command(reset_command)
+    app.cli.add_command(reseed_command)
     app.cli.add_command(test_query)
-    app.cli.add_command(reset)
-    # app.cli.add_command(reseed)
     
 #flask seed 

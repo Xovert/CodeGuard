@@ -1,4 +1,14 @@
-from flask import Blueprint, current_app as app, render_template, url_for, session, make_response, send_file
+from flask import (
+    Blueprint, 
+    current_app as app, 
+    render_template, 
+    url_for, 
+    session,
+    make_response, 
+    send_file,
+    request,
+    abort
+)
 # from werkzeug.urls 
 from urllib.parse import unquote
 
@@ -27,28 +37,93 @@ def details(course_name):
     modules, enrollment_id = detail.get_modules(course_name)
     if enrollment_id:
         detail.update_time(enrollment_id)
+    percentage = detail.get_percentage(course_name)
 
     return render_template(
         'course/course_details.html',
         course = course,
-        modules = modules
+        modules = modules,
+        percentage = percentage
     )
 
-@courses.route('/course/<path:course_name>/module/<path:module_name>', methods=("GET",))
+@courses.route('/course/<path:course_name>/module/<path:module_name>', methods=('GET',))
 @login_required
-def contents(course_name, module_name, page=1):
+def contents(course_name, module_name):
+    page = request.args.get("page", 1, type=int)
     course_name = unquote(course_name)
     module_name = unquote(module_name)
-    pagination = detail.get_content(course_name, module_name, page)
-
+    pagination = content.get_contents(course_name, module_name, page)
+    if page == pagination.pages:
+        content.update_progress(course_name, module_name, -1)
+        content.unlock_next_module(course_name, module_name)
+    else:
+        content.update_progress(course_name, module_name, page)
+    
     return render_template(
-        "course/learning.html",
+        "course/contents.html",
         course_name=course_name,
         module_name=module_name,
         pagination = pagination
     )
 
+@courses.route("/course/<path:course_name>/module/<path:module_name>/get-attempts", methods=("GET",))
+@login_required
+def get_attempts(course_name, module_name):
+    course_name = unquote(course_name)
+    module_name = unquote(module_name)
+    content_id = request.args.get('content')
+    attempts, isComplete, selected = content.get_attempts(course_name, module_name, content_id)
+    if attempts >= 0 or isComplete:
+        data = {
+            'attempts': attempts,
+            'isComplete': isComplete,
+        }
+        if selected:
+            data['selected'] = selected
+        return data
+    abort(404)
 
+@courses.route('/course/<path:course_name>/module/<path:module_name>/check', methods=("POST",))
+@login_required
+def check_challenge(course_name, module_name):
+    course_name = unquote(course_name)
+    module_name = unquote(module_name)
+    request_data = request.json
+    if request_data["type"] == "options":
+        answer = int(request_data["answer"])
+        if content.check_attempts(course_name, module_name, option_id=answer):
+            status = content.check_option(answer)
+            if status == False:
+                content.update_attempts(course_name, module_name, option_id=answer)
+            if status == True:
+                content.update_complete(course_name, module_name, option_id=answer)
+            return {'status': status,}
+        
+    elif request_data["type"] == "input_text":
+        content_id = int(request_data['content'])
+        if content.check_attempts(course_name, module_name, content_id=content_id):
+            input_text = request_data['answer']
+            correct = content.get_correct(content_id)
+            sanitized_input, error = content.sanitize_input(input_text)
+            if error:
+                return {
+                    'status': "error",
+                    'errror': error
+                }
+            status = (sanitized_input == correct)
+            if status == False:
+                content.update_attempts(course_name, module_name, content_id=content_id)
+            if status == True:
+                content.update_complete(course_name, module_name, content_id=content_id)
+            return {
+                'status': status,
+            }
+    
+    abort(404)
+
+@courses.route('/learning')
+def learning():
+    return render_template('course/learning.html')
 
 # Temporary
 @courses.route('/challenge_option')
@@ -66,11 +141,11 @@ def examPHP():
 
 @courses.route('/challengePHP')
 def challengePHP():
-    return render_template('courses/challengePHP.html')
+    return render_template('course/challengePHP.html')
 
 @courses.route('/challengeJS')
 def challengeJS():
-    return render_template('courses/challengeJS.html')
+    return render_template('course/challengeJS.html')
 
 # @courses.route('/testcodeMirror')
 # def testcodeMirror():

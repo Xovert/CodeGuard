@@ -70,3 +70,20 @@
 </div>
 {% include "footer.html" ignore missing %}
 {% endblock %}
+
+{ if content.code %}
+<div class="code-playground">
+    <p>
+        {{ content.code }}
+    </p>
+    <span class="language-span">{{ content.module.course.course_name }}</span>
+    <button class="reset-code d-flex align-items-center">
+        <img src="{{ url_for('static', filename='assets/icon_reload.svg') }}" alt="">
+        <span>Reset Code</span>
+    </button>
+    <button class="run-code d-flex align-items-center">
+        <span>RUN</span>
+        <img src="{{ url_for('static', filename='assets/icon_run.svg') }}" alt="">
+    </button>
+</div>
+{% endif %}

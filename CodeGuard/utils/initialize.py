@@ -6,4 +6,5 @@ def init_templates(app):
     app.jinja_env.globals.update(is_authed=is_authed)
     app.jinja_env.globals.update(is_admin=is_admin)
     app.jinja_env.globals.update(Forms=Forms)
-
+    app.jinja_env.trim_blocks = True
+    app.jinja_env.lstrip_blocks = True

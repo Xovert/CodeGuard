@@ -111,6 +111,9 @@ class EnrollmentsModules(db.Model):
     enrollment: Mapped["Enrollments"] = relationship(
         back_populates='enrollment_module'
     )
+    users_challenges: Mapped[List["UsersChallenges"]] = relationship(
+        back_populates='enrollment_module', cascade='all, delete-orphan'
+    )
 
     __table_args__ = (
         UniqueConstraint('enrollment_id', 'module_id', name='uq_duplicate_progress'),
@@ -208,12 +211,37 @@ class ContentsLearning(Contents):
     }
 
 class ContentsChallenges(Contents):
-    questions: Mapped[List["ChallengeQuestions"]] = relationship(
+    question: Mapped["ChallengeQuestions"] = relationship(
         back_populates="content", cascade="all, delete-orphan"
     )
+
+    users_challenges: Mapped[List["UsersChallenges"]] = relationship(
+        back_populates='challenge', cascade='all, delete-orphan'
+    )
+
     __mapper_args__ = {
         "polymorphic_identity": "challenges",
     }
+
+class UsersChallenges(db.Model):
+    __tablename__ = "users_challenges"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    enrollment_module_id: Mapped[int] = mapped_column(ForeignKey('enrollments_modules.id'), nullable=False)
+    challenge_id: Mapped[int] = mapped_column(ForeignKey('contents.id'), nullable=False)
+    isComplete: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    attempts: Mapped[int] = mapped_column(Integer, nullable=False, default=3)
+    option_selected: Mapped[Optional[int]] = mapped_column(ForeignKey("options.id"), nullable=True, default=None)
+
+    enrollment_module: Mapped["EnrollmentsModules"] = relationship(
+        back_populates='users_challenges'
+    )
+    challenge: Mapped["ContentsChallenges"] = relationship(
+        back_populates='users_challenges'
+    )
+
+    __table_args__ = (
+        UniqueConstraint('enrollment_module_id', 'challenge_id', name='uq_challenge_users'),
+    )
 
 class Exams(db.Model):
     __tablename__ = "exams"
@@ -269,7 +297,7 @@ class ChallengeQuestions(Questions):
     }
     content_id: Mapped[int] = mapped_column(ForeignKey("contents.id"))
     content: Mapped["ContentsChallenges"] = relationship(
-        back_populates='questions'
+        back_populates='question'
     )
     options: Mapped[List["ChallengeOptions"]] = relationship(
         back_populates="question", cascade='all, delete-orphan'

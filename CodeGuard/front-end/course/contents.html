@@ -1,0 +1,149 @@
+{% macro getProgress(page) -%}
+    {%- if page > 0 -%}
+        {{ (page/pagination.total*100) | round(2) }}
+    {%- else -%}
+        {{ 0 }}
+    {%- endif -%}
+{%- endmacro %}
+{% extends 'base.html' %}
+
+{% block title %}{{ module_name }}{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/contents.css')}}">
+<!-- <link rel="stylesheet" href="{{ url_for('static',filename='css/learning.css') }}"> -->
+<!-- <link rel="stylesheet" href="{{ url_for('static',filename='css/challenge_exam.css') }}"> -->
+<link rel="stylesheet" href="{{ url_for('static',filename='css/navbar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/footer.css') }}">
+<script src="{{url_for('static', filename='js/contents.js')}}" defer></script>
+{% endblock %}
+
+{% block content %}
+
+<div id="wrapper" class="d-flex flex-column align-items-center">
+    <!-- top content -->
+    <section class="top align-self-stretched d-flex">
+        <a class="back flex-shrink-0" href="{{ url_for('courses.details', course_name=course_name|urlencode|replace('/', '%2F'), module_name=module_name|urlencode|replace('/', '%2F')) }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M7.825 13L13.425 18.6L12 20L4 12L12 4L13.425 5.4L7.825 11H20V13H7.825Z" fill="#AEAEAE" />
+            </svg>
+            <span>Back</span>
+        </a>
+
+
+        <div class="progress-wrapper container-fluid d-flex align-items-center">
+            <span class="">Progress</span>
+            <div class="progress-bar-container">
+                <div class="progress-bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"
+                style="width: {{ getProgress(pagination.page-1) }}%;"></div>
+            </div>
+        </div>
+    </section>
+    <!-- CONTENT -->
+    <section class="content-wrapper d-flex align-items-center flex-column flex-grow-1">
+        {% with content = pagination.items|first %}
+            {% if content.image  %}
+                <img class="content-img" src="{{ url_for('views.image', filename=content.image.new_filename|urlencode) }}" alt="">
+            {% endif %}
+            {% if content.type == "learning" %}
+                <p>
+                    {{content.content_body}}
+                </p>
+            {% elif content.type == "challenges" %}
+                {% with question = content.question %}
+                    {% if question %}
+                        <p>
+                            {{ question.question_text }}
+                        </p>
+                        <div class="radio-button container d-flex flex-column gap-3">
+                            {% if question.options|length > 1 %}
+                                {% for option in question.options %}
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="answer" id="opt-{{option.id}}" value="{{option.id}}">
+                                        <label class="form-check-label label-hover disable-select" for="opt-{{option.id}}">
+                                            {{option.option_text}}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <input type="text" class="animate-input" name="answer" id="input-Text">
+                            {% endif %}
+                        </div>
+                        <span id="challengeError" class="error-message disabled"></span>
+                    {% endif %}
+                {% endwith %}
+            {% endif %}
+
+
+    </section>
+    <div class="btn-wrapper d-flex gap-5 container m-5 justify-content-center">
+            {% if pagination.has_prev %}
+                <button class="col-md-2 me-md-5 button btn-previous">Previous</button>
+            {% endif %}
+            {% if content.question %}
+                <button class="col-md-2 button btn-submit active">Submit <span id="attempts"></span></button>
+                {% if pagination.has_next or (pagination.page == pagination.pages) %}
+                    <button class="col-md-2 button btn-next disabled">Next</button>
+                {% endif %}
+            {% else %}
+                {% if pagination.has_next or (pagination.page == pagination.pages) %}
+                    <button class="col-md-2 button btn-next active">Next</button>
+                {% endif %}
+            {% endif %}
+        {% endwith %}
+        <!-- kalo udah pilih jawabannya, baru jadi active (green) warnanya. add the active class pls -->
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    {% with content = pagination.items|first %}
+        const content_num = {{ content.id }};
+        const base_url = "{{ url_for('courses.contents', course_name=content.module.course.course_name|urlencode|replace('/', '%2F'), module_name=content.module.module_name|urlencode|replace('/', '%2F')) }}";
+    {% endwith %}
+{% if pagination.has_next %}
+    document.querySelector(".btn-next").addEventListener("click", () => {
+        const progressBar = document.querySelector(".progress-bar");
+    
+        const progressValue = {{ getProgress(pagination.page) }};
+
+        progressBar.style.width = progressValue + "%";
+        progressBar.setAttribute("aria-valuenow", progressValue);
+        progressBar.addEventListener("transitionend", function handleTransitionEnd() {
+            window.location.replace("{{ url_for('courses.contents', course_name=course_name|urlencode|replace('/', '%2F'), module_name=module_name|urlencode|replace('/', '%2F'), page=pagination.next_num) }}");
+            progressBar.removeEventListener("transitionend", handleTransitionEnd); // Clean up
+        });
+    });
+{% endif %}
+{% if pagination.has_prev %}
+    document.querySelector(".btn-previous").addEventListener("click", () => {
+        const progressBar = document.querySelector(".progress-bar");
+    
+        const progressValue = {{ getProgress(pagination.page-2) }};
+
+        progressBar.style.width = progressValue + "%";
+        progressBar.setAttribute("aria-valuenow", progressValue);
+        progressBar.addEventListener("transitionend", function handleTransitionEnd() {
+            window.location.replace("{{ url_for('courses.contents', course_name=course_name|urlencode|replace('/', '%2F'), module_name=module_name|urlencode|replace('/', '%2F'), page=pagination.prev_num) }}");
+            progressBar.removeEventListener("transitionend", handleTransitionEnd); // Clean up
+        });
+    });
+{% endif %}
+{% if (pagination.page == pagination.pages) %}
+    document.querySelector(".btn-next").addEventListener("click", (event) => {
+        const progressBar = document.querySelector(".progress-bar");
+
+        const progressValue = {{ getProgress(pagination.page) }};
+
+        progressBar.style.width = progressValue + "%";
+        progressBar.setAttribute("aria-valuenow", progressValue);
+        progressBar.addEventListener("transitionend", function handleTransitionEnd() {
+            window.location.replace("{{ url_for('courses.details', course_name=course_name|urlencode|replace('/', '%2F'), module_name=module_name|urlencode|replace('/', '%2F')) }}");
+            progressBar.removeEventListener("transitionend", handleTransitionEnd); // Clean up
+        });
+    });
+{% endif %}
+    
+</script>
+{% endblock %}

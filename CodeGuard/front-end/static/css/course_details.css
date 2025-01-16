@@ -67,7 +67,6 @@
 }
 
 .progress-bar{
-    width: 36%;
     height: 32px;
     background-color: var(--hot-pink);
     position: absolute;
