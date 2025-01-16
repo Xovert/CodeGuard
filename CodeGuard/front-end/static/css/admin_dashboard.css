@@ -51,7 +51,7 @@
     border-radius: 5px;
     position: absolute;
     top: 0;
-    right: -84px;
+    right: -136px;
     z-index: 2;
 }
 
@@ -65,7 +65,7 @@
     font-family: Manrope;
     font-size: 16px;
     font-weight: 400;
-    padding: 0px 16px;
+    padding: 4px 16px;
     color: var(--white);
 }
 

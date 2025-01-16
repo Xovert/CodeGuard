@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Add New Module{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/admin_course.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/navbar_footer_admin.css') }}">
+<script src="{{ url_for('static', filename='js/admin_course_content.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="content">
+    {% with form = Forms.course.NewCourseForm() %}
+    <!-- {{ url_for('admin.new_course') }} -->
+    <form action="" class="course-content d-flex flex-column" method="post" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        <div class="title">
+            <h1>Course Contents</h1>
+        </div>
+
+        <div class="module d-flex align-items-center">
+            {{ form.module.label(class="d-inline-block") }}
+            {{ form.module(id="module-name", class="d-inline-block") }}
+            <!-- <label for="module-name" class="d-inline-block">Module Name</label>
+            <input type="text" class="d-inline-block" id="module-name" placeholder="Enter the module name here..."> -->
+        </div>
+
+        <!-- LEARNING -->
+        <div class="page study">
+            <p class="d-flex accordion">Page 1
+                <button type="button" class="ms-auto icon-trash"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+                <button type="button" class="up"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                <button type="button" class="down"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
+            </p>
+            <div class="panel">
+                <div class="type">
+                    {{ form.type.label(class="d-inline-block") }}
+                    {{ form.type(id="content-type") }}
+                    <!-- <label for="content-type" class="d-inline-block">Type</label>
+                    <select name="content-type" id="content-type">
+                        <option value="Learning">Learning</option>
+                        <option value="Challenge Code">Challenge Code</option>
+                        <option value="Challenge Option">Challenge Option</option>
+                    </select> -->
+                </div>
+                <div class="learning-pic position-relative">
+                    <label for="learning-pic">Picture</label>
+                    <label for="learning-pic" class="input-file">
+                        <img src="{{ url_for('static', filename='assets/icon_upload.svg') }}" alt="">
+                        Add File
+                    </label>
+                    <span class="filename">No file chosen</span>
+                    {{ form.image(id="learning-pic", accept=".jpg, .jpeg, .png, .svg", class="input-file-invi") }}
+                    <!-- <input type="file" name="learning-pic" id="learning-pic"> -->
+                    <p class="error-message error-course-logo">Error</p>
+                    <img id="" src="#" alt="Your image" class="preview">
+                </div>
+                <div class="content-learning">
+                    {{ form.content_body.label }}
+                    {{ form.content_body(id="content-learning", rows="4") }}
+                    <!-- <label for="content-learning">Content</label>
+                    <textarea name="content-learning" id="content-learning" rows="4"
+                        placeholder="Enter learning content here..."></textarea> -->
+                </div>
+            </div>
+        </div>
+
+        <!-- error -->
+        <p id="error-message"></p>
+    
+    
+        <div class="button-wrapper d-flex justify-content-center position-relative">
+            <button type="button" class="btn d-flex add-more-page-btn"><img src="{{ url_for('static', filename='assets/icon_plus.svg') }}"
+                    alt="">Add more page</button>
+            <div class="add-page-options d-none">
+                <p id="learning-option"><button type="button">Learning</button></p>
+                <p id="challenge-code-option"><button type="button">Challenge Code</button></p>
+                <p id="challenge-option-option"><button type="button">Challenge Options</button></p>
+                <p id="exam-code-option"><button type="button">Exam Code</button></p>
+                <p id="exam-option-option"><button type="button">Exam Options</button></p>
+            </div>
+            <button type="button" class="btn" id="add-module-btn">Add Another module</button>
+            <button class="btn submit-btn" id="submit-btn" type="submit">Submit</button>
+        </div>
+    </form>
+
+</div>
+
+
+{% endwith %}
+
+{% endblock %}

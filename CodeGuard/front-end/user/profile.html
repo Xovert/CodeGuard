@@ -6,28 +6,67 @@
 <link rel="stylesheet" href="{{ url_for('static',filename='css/profile.css') }}">
 <link rel="stylesheet" href="{{ url_for('static',filename='css/navbar.css') }}">
 <link rel="stylesheet" href="{{ url_for('static',filename='css/footer.css') }}">
-<script src="{{ url_for('static', filename='js/index.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/profile.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/navbar.js') }}" defer></script>
 {% endblock %}
 
 {% block content %}
 <div class="profile-container position-relative">
-    <div class="profile-picture-wrapper position-absolute d-flex align-items-center justify-content-center">
-        <img src="https://via.placeholder.com/100" alt="Profile Picture" class="profile-picture">
-        <img src="{{ url_for('static', filename='assets/icon_editpencil.svg') }}" alt="" class="icon-pencil">
-    </div>
     <h1 class="position-absolute title">Profile Information</h1>
     
-    <!-- <h2>{{username}}</h2> -->
+    <div class="content-wrapper">
+        <div class="form-wrapper d-flex flex-column col-md-8">
+            <form action="{{ url_for('user.update') }}" class="form-profile">
+                <div class="profile-details d-flex flex-wrap">
+                    <div class="detail">
+                        <label for="fullname" class="d-block">Full Name</label>
+                        <input type="text" value="{{ fullname }}" id="fullname" name="fullname" class="d-block" required>
+                    </div>
+                    <div class="detail">
+                        <label for="username" class="d-block">Username</label>
+                        <input type="text" value="{{ username }}" id="username" name="username" class="d-block" required>
+                    </div>
+                    <div class="detail">
+                        <label for="email" class="d-block">Email</label>
+                        <input type="text" value="{{ email }}" id="email" name="email" class="d-block" required>
+                    </div>
+                    <div class="detail">
+                        <label class="d-block">Registration Date</label>
+                        <p aria-readonly="true">{{ regis_date.strftime('%d/%m/%Y') }}</p>
+                    </div>
+                </div>
+                <button type="submit" class="btn save-btn" disabled>Save Changes</button>
+            </form>
     
-    <div class="profile-details">
-        <p><span>Full name:</span> {{ fullname }}</p>
-        <p><span>Email:</span> {{ email }}</p>
-        <p><span>Registration date:</span> {{ regis_date }}</p>
-    </div>
-
-    <div class="buttons">
-        <a href="{{ url_for('user.settings') }}" class="edit-btn">Edit Profile</a>
-        <a href="{{ url_for('user.change') }}"class="password-btn">Change Password</a>
+            <form action="{{ url_for('user.update') }}" class="form-password">
+                <h1 class="change-password">Change Password</h1>
+                <div class="password-details d-flex flex-column">
+                    <div class="pw">
+                        <label for="old-pw">Old Password</label>
+                        <div class="input-wrapper position-relative">
+                            <input type="password" id="old-pw" name="old-pw" required>
+                            <img src="{{ url_for('static', filename='assets/icon_eyeclose.svg') }}" alt="" class="eye position-absolute">
+                        </div>
+                    </div>
+                    <div class="pw">
+                        <label for="new-pw">New Password</label>
+                        <div class="input-wrapper position-relative">
+                            <input type="password" id="new-pw" name="new-pw" required>
+                            <img src="{{ url_for('static', filename='assets/icon_eyeclose.svg') }}" alt="" class="eye position-absolute">
+                        </div>
+                    </div>
+                    <div class="pw">
+                        <label for="confirm-pw">Confirm Password</label>
+                        <div class="input-wrapper position-relative">
+                            <input type="password" id="confirm-pw" name="confirm-pw" required>
+                            <img src="{{ url_for('static', filename='assets/icon_eyeclose.svg') }}" alt="" class="eye position-absolute">
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ url_for('auth.forgot_password') }}" class="forgot-password d-block">Forgot password?</a>
+                <button type="submit" class="btn">Change Password</button>
+            </form>
+        </div>
     </div>
 </div>
 

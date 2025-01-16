@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from flask_uploads import UploadSet, IMAGES, configure_uploads
-from wtforms.fields import SubmitField, SelectField, TextAreaField
+from wtforms.validators import DataRequired
+from wtforms.fields import SubmitField, SelectField, TextAreaField, StringField
 
 photos = UploadSet('photos', IMAGES)
 
@@ -10,12 +11,22 @@ def init_photos(app):
 
 
 class NewCourseForm(FlaskForm):
+    module = StringField(
+        label='Module Name',
+        name='module-name',
+        validators=[
+            DataRequired(message='You need to specify the module name!')
+        ],
+        render_kw={
+            "placeholder":"Enter the module name here...",
+        }
+    )
     type = SelectField(
         label='Type',
         choices=[
             ('Learning', 'Learning'),
             ('Challenge Code', 'Challenge Code'),
-            ('Challenge Option', 'Challenge Option')
+            ('Challenge Options', 'Challenge Options')
         ]
     )
     image = FileField(
@@ -29,6 +40,9 @@ class NewCourseForm(FlaskForm):
     content_body = TextAreaField(
         label='Content',
         name="content-learning",
+        validators=[
+            DataRequired(message='You need to specify the content!')
+        ],
         render_kw={
             "placeholder":"Enter learning content here...",
         }

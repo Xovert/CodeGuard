@@ -84,10 +84,10 @@ def forgotPass():
 def testcodeMirror():
     return render_template('testcodeMirror.html')
 
-@bp.route('/changePass', methods=('GET', 'POST'))
-def changePass():
-    if request.method == "GET":
-        return render_template('changePass.html')
+# @bp.route('/changePass', methods=('GET', 'POST'))
+# def changePass():
+#     if request.method == "GET":
+#         return render_template('changePass.html')
 
     # else:
     #     oldpassword = request.form[]

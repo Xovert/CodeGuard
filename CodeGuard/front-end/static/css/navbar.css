@@ -1,6 +1,7 @@
 #navbar{
     transition: top 0.3s;
     position: sticky;
+    z-index: 99;
 }
 
 .navbar{

@@ -1,156 +1,122 @@
 body {
     background-color: var(--dark-blue);
-    /* display: flex;
-    justify-content: center;
-    align-items: center; */
     height: 100vh;
 }
 
 .profile-container {
-    /* padding: 40px 133px 112px 134px;  */
-    margin-top: 160px;
+    margin-top: 120px;
     background-color: var(--green);
-    /* border-radius: 24px; */
-    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
-    /* text-align: center;
-    align-items: center; */
-}
-
-.profile-picture-wrapper{
-    top: -75px;
-    left: 10%;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    overflow: hidden;
-}
-
-.profile-picture-wrapper::before{
-    content: ''; /* Required for pseudo-elements */
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%; /* Ensure the pseudo-element matches the shape */
-    background: linear-gradient(
-        0deg,
-        rgba(69, 69, 69, 0.40) 0%,
-        rgba(69, 69, 69, 0.40) 100%
-    );
-    opacity: 0; /* Hidden by default */
-    transition: opacity 0.3s ease; /* Smooth fade-in effect */
-    z-index: 2;
-}
-
-
-.profile-picture-wrapper:hover::before {
-    opacity: 1; /* Show the gradient on hover */
-}
-
-.profile-picture {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 3px solid var(--dark-blue);
-    transition: border-color 0.3s ease;
-    position: relative;
-    z-index: 1;
-}
-
-.profile-picture-wrapper:hover .profile-picture{
-    border-color: #007BFF;
-}
-
-.profile-picture-wrapper:hover .icon-pencil{
-    opacity: 1;
-    transition: opacity 0.3s ease;
-}
-
-.icon-pencil{
-    position: absolute;
-    z-index: 3;
-    top: calc(50% - 16px);
-    left: calc(50% - 16px);
-    opacity: 0;
 }
 
 .title{
     top: -48px;
-    left: calc(10% + 150px + 24px);
+    left: 10%;
     color: var(--white);
     font-size: 32px;
     font-family: Manrope;
     font-weight: 800;
 }
 
+.content-wrapper{
+    padding: 32px 10% 10% 10%;
+    column-gap: 60px;
+    
+}
+
+.form-wrapper{
+    row-gap: 32px;
+}
+
+.form-profile{
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--white);
+}
+
 .profile-details {
-    padding: 107px 10% 10% 10%;
+    gap: 24px 48px;
 }
 
-.profile-details p {
-    margin: 5px 0;
-    color: #333;
+.detail{
+    width: calc(50% - 24px);
+}
+
+.detail label, .pw label{
+    color: var(--white);
+    margin-bottom: 8px;
+    font-family: Poppins;
     font-size: 16px;
-}
-.profile-details p span {
-    font-weight: bold;
-}
-.buttons {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 20px;
+    font-weight: 500;
 }
 
-.buttons button,a {
-    padding: 10px 20px;
+.detail input, .pw input, .detail p{
+    padding: 8px 10px;
+    color: var(--black);
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 500;
     border: none;
     border-radius: 5px;
-    cursor: pointer;
+    width: 100%;
+    margin: 0;
+    background-color: var(--white);
+}
+
+.btn{
+    padding: 12px 24px;
+    border-radius: 10px;
+    background-color: rgba(15, 41, 47, 0.60);
+    color: white;
+    font-family: Manrope;
     font-size: 16px;
-}
-.edit-btn {
-    background-color: #4CAF50;
-    color: white;
-}
-
-.password-btn {
-    background-color: #007BFF;
-    color: white;
+    font-weight: 700;
+    margin-top: 32px;
+    border: none;
+    outline: none;
 }
 
-.save-btn{
-    background-color: #4CAF50; 
-    text-decoration: none;
-    color: white;
+.btn:hover, .btn:active, .btn:focus{
+    background-color: rgba(15, 41, 47, 0.60) !important;
+    color: var(--white) !important;
+    border: none;
+    outline: none;
 }
 
-.cancel-btn{
-    background-color: #CB2D6F; 
-    text-decoration: none;
-    color: white;
-}
-
-.buttons button:hover {
-    opacity: 0.9;
-}
-
-.input-picture{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.btn:disabled{
+    background-color: rgba(15, 41, 47, 0.60);
+    color: var(--white);
 }
 
 
-.change-password-section{
-    padding-top: 20px;
-    text-align: left;
-    margin-left: 0;
-    border-top: 2px solid black;
+/* PASSWORDS */
+.change-password{
+    color: var(--white);
+    font-family: Manrope;
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 32px ;
 }
 
-form{
-    padding-bottom: 20px;
+.password-details{
+    row-gap: 24px;
+    margin-bottom: 8px;
+}
+
+.input-wrapper{
+    width: 75%;
+}
+
+.input-wrapper img{
+    top: calc(50% - 12px);
+    right: 10px;
+}
+
+.input-wrapper img:hover{
+    cursor: pointer;
+}
+
+.forgot-password{
+    color: var(--white);
+    font-family: Manrope;
+    font-size: 16px;
+    font-weight: 700;
 }

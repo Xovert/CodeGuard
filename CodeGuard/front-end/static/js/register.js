@@ -69,9 +69,16 @@ document.getElementById("button").addEventListener("click", function (event) {
         save = false;
     }
 
+    if (!rpt_password){
+        const rptPasswordError = document.getElementById("rpt_passwordError");
+        rptPasswordError.textContent = "Re-enter your password";
+        rptPasswordError.style.display = 'block';
+        save = false;
+    }
+
     if (rpt_password !== password) {
         const passwordError = document.getElementById("rpt_passwordError");
-        passwordError.textContent = "Password mismatch";
+        passwordError.textContent = "Password does not match";
         passwordError.style.display = "block";
         save = false;
     }
