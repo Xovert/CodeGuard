@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Module{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/module_list.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/navbar_footer_admin.css') }}">
+<script src="{{ url_for('static', filename='js/module_list.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <form action="">
+        <div class="title">
+            <h1>{{ course_name }}PHP</h1>
+        </div>
+
+        <div class="module-wrapper d-flex flex-column">
+            <div class="module d-flex align-items-center">
+                <a href="#" class="a-tag flex-fill">
+                    <span class="order">#{{ order }}1</span>
+                    <span class="module-name">{{ module_name }}Broken Access Control</span>
+                </a>
+                <div class="button-icon-wrapper d-flex">
+                    <button type="button" class="icon-trash ms-auto"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+                    <button type="button" class="up"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                    <button type="button" class="down"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                </div>
+            </div>
+            <div class="module d-flex align-items-center">
+                <a href="#" class="a-tag flex-fill">
+                    <span class="order">#{{ order }}2</span>
+                    <span class="module-name">{{ module_name }}Cryptographic Failures</span>
+                </a>
+                <div class="button-icon-wrapper d-flex">
+                    <button type="button" class="icon-trash ms-auto"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+                    <button type="button" class="up"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                    <button type="button" class="down"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                </div>
+            </div>
+            <div class="module d-flex align-items-center">
+                <a href="#" class="a-tag flex-fill">
+                    <span class="order">#{{ order }}3</span>
+                    <span class="module-name">{{ module_name }}Injection</span>
+                </a>
+                <div class="button-icon-wrapper d-flex">
+                    <button type="button" class="icon-trash ms-auto"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+                    <button type="button" class="up"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                    <button type="button" class="down"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                </div>
+            </div>
+        </div>
+
+        
+    </form>
+
+
+</div>
+
+{% endblock %}

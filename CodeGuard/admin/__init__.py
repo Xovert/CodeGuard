@@ -25,6 +25,11 @@ def add_course():
 def add_module():
     return render_template('admin/new_module.html')
 
+@admin.route('/admin/course/module', methods=('GET',))
+@admin_required
+def module():
+    return render_template('admin/module_list.html')
+
 # template materials
 @admin.route('/admin/course/material_learning', methods=('GET',))
 def material_learning():
