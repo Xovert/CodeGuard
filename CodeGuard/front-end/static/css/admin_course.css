@@ -341,7 +341,7 @@ select {
     width: auto;
 }
 
-.add-more-page-btn{
+.add-more-page-btn, #add-module-btn{
     padding: 12px;
 }
 

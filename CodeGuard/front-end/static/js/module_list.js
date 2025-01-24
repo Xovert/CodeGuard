@@ -1,3 +1,4 @@
+// ======= MOVE UP + DOWN =========
 function swapOrder(element1, element2){
     const span1 = element1.querySelector('.order');
     const span2 = element2.querySelector('.order');
@@ -30,3 +31,46 @@ document.addEventListener('click', function (e){
         }
     }
 });
+
+
+
+
+
+
+// ======== CHANGES TO DOM =========
+document.addEventListener("DOMContentLoaded", () => {
+    // Select the target element to observe
+    const moduleWrapper = document.querySelector(".module-wrapper");
+    const actionButton = document.getElementById("save-changes"); // Replace with your button's ID or selector
+  
+    function getCurrentOrder() {
+        return Array.from(moduleWrapper.querySelectorAll(".module .order")).map(span => span.textContent.trim());
+    }
+
+    // Store the initial order of the modules
+    const initialOrder = getCurrentOrder();
+
+    // Function to check for changes in the structure
+    function checkOrderChanges() {
+        const currentOrder = getCurrentOrder();
+        if (JSON.stringify(currentOrder) === JSON.stringify(initialOrder)) {
+            actionButton.setAttribute("disabled", "true");
+        } else {
+            actionButton.removeAttribute("disabled");
+        }
+    }
+
+    // Create a MutationObserver to monitor structural changes
+    const observer = new MutationObserver(() => {
+        checkOrderChanges(); // Recheck structure changes when DOM mutations occur
+    });
+
+    // Start observing the module wrapper
+    observer.observe(moduleWrapper, {
+        childList: true, // Detect added/removed children
+        subtree: true,   // Detect changes within children
+    });
+
+    // Initial check to set the button state
+    checkOrderChanges();
+})
