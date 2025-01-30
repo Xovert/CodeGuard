@@ -30,6 +30,12 @@ def add_module():
 def module():
     return render_template('admin/module_list.html')
 
+@admin.route('/admin/course/confirm_changes', methods=('GET',))
+@admin_required
+def confirm_changes():
+    return render_template('admin/confirm_changes.html')
+
+
 # template materials
 @admin.route('/admin/course/material_learning', methods=('GET',))
 def material_learning():
