@@ -24,8 +24,8 @@ def upgrade():
     sa.Column('challenge_id', sa.Integer(), nullable=False),
     sa.Column('isComplete', sa.Boolean(), nullable=False),
     sa.Column('attempts', sa.Integer(), nullable=False),
-    sa.ForeignKeyConstraint(['challenge_id'], ['contents.id'], ),
-    sa.ForeignKeyConstraint(['enrollment_module_id'], ['enrollments_modules.id'], ),
+    sa.ForeignKeyConstraint(['challenge_id'], ['contents.id'], name="fk_challenge_id"),
+    sa.ForeignKeyConstraint(['enrollment_module_id'], ['enrollments_modules.id'], name="fk_enrollment_module_id"),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('enrollment_module_id', 'challenge_id', name='uq_challenge_users')
     )

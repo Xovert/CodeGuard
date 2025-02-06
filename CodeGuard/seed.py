@@ -32,9 +32,10 @@ from CodeGuard.models import (
     ContentImages,
     CourseImages,
     EnrollmentsModules,
-    UsersChallenges,
+    UsersContents,
     db
 )
+from CodeGuard.models.enums import CompletionStatus, CourseStatus
 from sqlalchemy.exc import IntegrityError as sqlerror
 
 
@@ -101,10 +102,10 @@ def seed_users():
         Users(
             uuid=uuid4(),
             role='user',
-            fullname='Sir Ian Fleming',
-            username='fl3ming_hot',
-            password=hash_pass('007b!nd'),
-            email='bond007@gmail.com',
+            fullname='Black Bird',
+            username='blackbird',
+            password=hash_pass('21blackbird'),
+            email='21blackbird@gmail.com',
             is_confirmed=False,
             confirmed_on=None,
             registration_date=datetime.now(timezone(timedelta(hours=7)))
@@ -131,7 +132,7 @@ def seed_courses():
                 course_name='PHP',
                 duration=timedelta(days=30).total_seconds(),  # in seconds
                 description='PHP is a powerful and widely-used server-side scripting language, but its popularity makes it a common target for security threats. This course, based on the OWASP Top 10 2021, focuses on secure coding practices in PHP, teaching you how to prevent vulnerabilities like SQL injection, XSS, and CSRF, and many others.',
-                status=CourseStatus.DRAFT # Assuming 1 means active,
+                status=CourseStatus.PUBLISHED # Assuming 1 means active,
             ),
             "image": "php.png"
         },
@@ -139,8 +140,8 @@ def seed_courses():
             "course": Courses(
                 course_name='JS',
                 duration=timedelta(days=30).total_seconds(),
-                description='JS Secure Coding',
-                status=CourseStatus.DRAFT
+                description='JavaScript powers modern web applications on both the client and server sides, but its ubiquity increases the risk of exploitation. This course, based on the OWASP Top 10 2021, focuses on secure coding in JavaScript, covering how to mitigate threats like XSS, CSRF, and injection attacks.',
+                status=CourseStatus.PUBLISHED
             ),
             "image": "js.png"
         },
@@ -148,19 +149,19 @@ def seed_courses():
             "course": Courses(
                 course_name='Python',
                 duration=timedelta(days=30).total_seconds(),
-                description='Hmm yes yes snake~',
+                description='Python is a versatile, high-level programming language popular for its readability and widespread use. However, that popularity also makes it a frequent target for security attacks. This course, aligned with the OWASP Top 10 2021, teaches secure coding practices in Python, helping you prevent vulnerabilities like injection, XSS, CSRF, and more.',
                 status=CourseStatus.PUBLISHED
             ),
-            "image": "nyahiru.png"
+            "image": "python.png"
         },
         {
             "course": Courses(
                 course_name='C/C++',
                 duration=timedelta(days=30).total_seconds(),
-                description='How to shoot yourself in the foot',
-                status=CourseStatus.ARCHIVED
+                description='C and C++ offer powerful low-level control and high performance, but these features can lead to critical security flaws if not handled carefully. Guided by the OWASP Top 10 2021, this course explores safe coding techniques in C/C++, helping you prevent buffer overflows, memory corruption, injection flaws, and more.',
+                status=CourseStatus.PUBLISHED
             ),
-            "image": "powerful.jpg"
+            "image": "cpp.png"
         }
         # Add more courses as needed
     ]
@@ -1730,7 +1731,8 @@ def seed_enrollments():
             course_id=course.id,
             enrollment_date=curr_time,  # Localized datetime
             progress=0,
-            last_accessed_time=curr_time.timetz() # Time only, extracted from datetime
+            last_accessed_time=curr_time.timetz(), # Time only, extracted from datetime
+            status=CompletionStatus.STARTED
         )
         db.session.add(enrollment)
         try:
@@ -1753,12 +1755,12 @@ def seed_enrollments_modules():
         .order_by(Modules.id)
     ).all()
 
-
     for enrollment, module, order in enrollments_modules:
         enrollment_module = EnrollmentsModules(
             enrollment_id =  enrollment,
             module_id = module,
-            progress = 1 if order == 1 else 0
+            progress = 1 if order == 1 else 0,
+            status = CompletionStatus.STARTED if order == 1 else CompletionStatus.NOT_STARTED
         )
         db.session.add(enrollment_module)
         try:
@@ -1771,27 +1773,29 @@ def seed_enrollments_modules():
             db.session.commit()
 
 
-def seed_users_challenges():
-    users_challenges = db.session.execute(
-        db.select(EnrollmentsModules.id, ContentsChallenges.id)
+def seed_users_contents():
+    users_contents = db.session.execute(
+        db.select(EnrollmentsModules.id, Contents.id)
         .join(EnrollmentsModules.module)
-        .join(ContentsChallenges)
+        .join(Contents)
     ).all()
-
-    for enrollment_module, challenge in users_challenges:
-        user_challenge = UsersChallenges(
+    i = 0
+    for enrollment_module, content in users_contents:
+        user_content = UsersContents(
             enrollment_module_id = enrollment_module,
-            challenge_id = challenge
+            content_id = content,
+            status = CompletionStatus.STARTED if i == 0 else None
         )
-        db.session.add(user_challenge)
+        db.session.add(user_content)
         try:
             db.session.flush()
-            print(f"Enrollment_Module_id: {enrollment_module} and challenge: {challenge} seeded")
+            print(f"Enrollment_Module_id: {enrollment_module} and challenge: {content} seeded")
         except sqlerror:
             db.session.rollback()
-            print(f"Enrollment_Module_id: {enrollment_module} and challenge: {challenge} failed")
+            print(f"Enrollment_Module_id: {enrollment_module} and challenge: {content} failed")
         else:
             db.session.commit()
+        i = i+1
 
 
 def seed_exams():
@@ -1805,7 +1809,7 @@ def seed_all():
     seed_contents()
     seed_enrollments()
     seed_enrollments_modules()
-    seed_users_challenges()
+    seed_users_contents()
     seed_exams()
     db.session.close()
     click.echo('Seeded the database')
@@ -1846,47 +1850,17 @@ def test_query(id):
         db.select(Courses.id)
         .where(Courses.course_name == course_name)
     )
-    query = (
-        db.select(Contents)
-        .join(Modules)
-        .where(Contents.module_id == module_id)
-        .where(Modules.course_id == course_id)
-    )
-    query = (
-        db.select(func.count(EnrollmentsModules.id))
-        .join(Modules, Modules.id == EnrollmentsModules.module_id)
-        .where(EnrollmentsModules.enrollment_id == enrollment_id)
-        .where(EnrollmentsModules.progress == -1)
-    )
-    query = (
-        db.select(ChallengeOptions.option_text)
-        .join(ChallengeQuestions)
-        .where(ChallengeQuestions.content_id == content_id)
-    )
-    # query = (
-    #     db.select(UsersChallenges.attempts, UsersChallenges.isComplete)
-    #     .where(UsersChallenges.challenge_id == 11)
+    # stmt = (
+    #     db.select()
     # )
-    # query = (
-    #     db.select(UsersChallenges.attempts, UsersChallenges.isComplete)
-    #     .where(UsersChallenges.challenge_id == 6)
-    # )
-    # results = db.session.execute(query).first()
-    # results:Pagination = db.paginate(query, page=2, per_page=1)
-    results = db.session.scalar(query)
-    content:ContentsChallenges = db.session.scalar(
-        db.select(ChallengeOptions.id)
-        .join(ChallengeQuestions)
-        .join(ContentsChallenges)
-        .where(ContentsChallenges.id == content_id)
-    )
-    print(query)
+    # results = db.session.scalar(query)
+    # print(query)
     # print(results.first)
     # print(results.pages)
     # print(results.last)
     # print(results.total)
     # print(type(content.question.options.pop()))
-    print(content)
+    # print(content)
     from sqlalchemy.orm.collections import InstrumentedList
     from typing import List
     # for content, in results:

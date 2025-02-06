@@ -27,7 +27,7 @@ async function fetchAttempts(content_num) {
                 setSelected(data.selected)
             }else{
                 disableInput()
-                setInput(data.selected)
+                setInput(data.answer)
             }
             document.getElementById('attempts').textContent = ''; // Update the DOM
         }
@@ -40,8 +40,10 @@ async function fetchAttempts(content_num) {
             displayNext()
             if (document.querySelector("#input-Text") === null){
                 disableRadio()
+                setSelected(data.selected)
             }else{
                 disableInput()
+                setInput(data.answer)
             }
         }else{
             document.getElementById('attempts').textContent = ''; // Update the DOM
@@ -57,8 +59,8 @@ function setBtnInputText(){
         event.preventDefault()
         const input_text = document.querySelector('#input-Text');
         
-        if (!input_text) {
-            displayError("Please select an answer.")
+        if (!input_text.value) {
+            displayError("Please input an answer.")
             return;
         }else{
             hideError()
@@ -118,6 +120,7 @@ function setBtnMultipleChoice(){
                 body: JSON.stringify({
                     type: "options",
                     answer: selectedValue,
+                    content: content_num
                 }),
             })
             

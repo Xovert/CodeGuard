@@ -72,7 +72,7 @@ class RegisterForm(FlaskForm):
             DataRequired(message='Input your password'),
             EqualTo('rpt_password', message='Passwords does not match'),
             Regexp(
-                '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,40}$',
+                r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,40}$',
                 message="Password must contain at least one uppercase, one lowercase, and one number (8-40 characters)"
             )
         ],
@@ -115,7 +115,7 @@ class ChangePass(FlaskForm):
             EqualTo('rpt_password', message='Passwords does not match'),
             # Length(min=8, max=40, message=None)
             Regexp(
-                '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,40}$',
+                r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,40}$',
                 message="Password must contain at least one uppercase, one lowercase, and one number (8-40 characters)"
             )
 

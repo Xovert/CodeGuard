@@ -23,7 +23,7 @@
 <div id="wrapper" class="d-flex flex-column align-items-center">
     <!-- top content -->
     <section class="top align-self-stretched d-flex">
-        <a class="back flex-shrink-0" href="{{ url_for('courses.details', course_name=course_name|urlencode|replace('/', '%2F'), module_name=module_name|urlencode|replace('/', '%2F')) }}">
+        <a class="back flex-shrink-0" href="{{ url_for('courses.details', course_name=course_name|urlencode|replace('/', '%2F')) }}">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M7.825 13L13.425 18.6L12 20L4 12L12 4L13.425 5.4L7.825 11H20V13H7.825Z" fill="#AEAEAE" />
             </svg>
@@ -100,7 +100,7 @@
 <script>
     {% with content = pagination.items|first %}
         const content_num = {{ content.id }};
-        const base_url = "{{ url_for('courses.contents', course_name=content.module.course.course_name|urlencode|replace('/', '%2F'), module_name=content.module.module_name|urlencode|replace('/', '%2F')) }}";
+        const base_url = "{{ url_for('courses.contents', course_name=course_name|urlencode|replace('/', '%2F'), module_name=module_name|urlencode|replace('/', '%2F')) }}";
     {% endwith %}
 {% if pagination.has_next %}
     document.querySelector(".btn-next").addEventListener("click", () => {
@@ -111,7 +111,7 @@
         progressBar.style.width = progressValue + "%";
         progressBar.setAttribute("aria-valuenow", progressValue);
         progressBar.addEventListener("transitionend", function handleTransitionEnd() {
-            window.location.replace("{{ url_for('courses.contents', course_name=course_name|urlencode|replace('/', '%2F'), module_name=module_name|urlencode|replace('/', '%2F'), page=pagination.next_num) }}");
+            window.location.replace("{{ url_for('courses.next', course_name=course_name|urlencode|replace('/', '%2F'), module_name=module_name|urlencode|replace('/', '%2F')) }}");
             progressBar.removeEventListener("transitionend", handleTransitionEnd); // Clean up
         });
     });
@@ -125,7 +125,7 @@
         progressBar.style.width = progressValue + "%";
         progressBar.setAttribute("aria-valuenow", progressValue);
         progressBar.addEventListener("transitionend", function handleTransitionEnd() {
-            window.location.replace("{{ url_for('courses.contents', course_name=course_name|urlencode|replace('/', '%2F'), module_name=module_name|urlencode|replace('/', '%2F'), page=pagination.prev_num) }}");
+            window.location.replace("{{ url_for('courses.prev', course_name=course_name|urlencode|replace('/', '%2F'), module_name=module_name|urlencode|replace('/', '%2F')) }}");
             progressBar.removeEventListener("transitionend", handleTransitionEnd); // Clean up
         });
     });
@@ -139,7 +139,7 @@
         progressBar.style.width = progressValue + "%";
         progressBar.setAttribute("aria-valuenow", progressValue);
         progressBar.addEventListener("transitionend", function handleTransitionEnd() {
-            window.location.replace("{{ url_for('courses.details', course_name=course_name|urlencode|replace('/', '%2F'), module_name=module_name|urlencode|replace('/', '%2F')) }}");
+            window.location.replace("{{ url_for('courses.next', course_name=course_name|urlencode|replace('/', '%2F'), module_name=module_name|urlencode|replace('/', '%2F')) }}");
             progressBar.removeEventListener("transitionend", handleTransitionEnd); // Clean up
         });
     });

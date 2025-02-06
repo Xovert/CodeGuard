@@ -222,13 +222,11 @@ def logout():
 
 @auth.before_app_request
 def load_logged_in_user():
-    uid = session.get('uuid')
-
-    if uid is None:
-        g.user = None
+    current_user = get_current_user()
+    if current_user is None:
+        g.user_id = None
     else:
-        g.user = Users.query.filter_by(uuid=Users.uuid).first()
-
+        g.user_id = current_user.id
 
 @auth.after_app_request
 def after_request(response):

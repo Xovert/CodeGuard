@@ -37,17 +37,21 @@
                 <div class="progress-bar rounded-pill" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: {{percentage}}%;">
                 </div>
             </div>
+            {% else %}
+            <!-- ENROLL BUTTON -->
+             <a href="{{ url_for('courses.enroll', course_name=course.course_name|urlencode|replace('/', '%2F')) }}" class="href">
+                 <button type="button" id="enroll-btn">Enroll Now!</button>
+             </a>
             {% endif %}
 
-            <!-- ENROLL BUTTON -->
-            <button type="button" id="enroll-btn">Enroll Now!</button>
 
             <!-- LESSON -->
             <div class="lesson-wrapper d-flex flex-column">
-                {% for module_name, order, progress in modules %}
-                    {% if progress < 0 %}
+                {% for module_name, order, progress, status in modules %}
+                    {% if status == CompletionStatus.COMPLETE %}
                     <!-- lesson done -->
-                        <div class="lesson learning" style="cursor: default;">
+                    <div class="lesson learning">
+                        <a href="{{ url_for('courses.contents', course_name=course.course_name|urlencode|replace('/', '%2F'), module_name=module_name|urlencode|replace('/', '%2F'), page=progress|urlencode|replace('/', '%2F')) }}">
                             <div class="lesson-name">
                                 <span>#{{ order }}</span>
                                 <span>{{ module_name }}</span>
@@ -55,8 +59,9 @@
                             <div class="icon d-flex align-items-center justify-content-center">
                                 <img src="{{ url_for('static', filename='assets/icon_checkmark.svg')}}" alt="">
                             </div>
-                        </div>
-                    {% elif progress > 0 %}
+                        </a>
+                    </div>
+                    {% elif status == CompletionStatus.STARTED %}
                         <!-- lesson unlocked -->
                         <div class="lesson learning">
                             <a href="{{ url_for('courses.contents', course_name=course.course_name|urlencode|replace('/', '%2F'), module_name=module_name|urlencode|replace('/', '%2F'), page=progress|urlencode|replace('/', '%2F')) }}">
@@ -71,7 +76,7 @@
                         </div>
                     {% else %}
                         <!-- lesson locked -->
-                            <div class="lesson learning locked">
+                            <div class="lesson learning locked" style="user-select:none;">
                                 <div class="lesson-name">
                                     <span>#{{ order }}</span>
                                     <span>{{ module_name }}</span>

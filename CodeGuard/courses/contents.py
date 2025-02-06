@@ -1,4 +1,4 @@
-from flask import session, current_app as app
+from flask import g
 from sqlalchemy import func
 from sqlalchemy.orm import joinedload
 
@@ -15,63 +15,111 @@ from CodeGuard.models import (
     EnrollmentsModules,
     Options,
     ChallengeOptions,
-    UsersChallenges
+    UsersContents
 )
+from CodeGuard.models.enums import CompletionStatus
 from CodeGuard.courses import courses
 from CodeGuard import courses as course
 from CodeGuard.utils.user import get_uuid
 from datetime import datetime, timezone, timedelta
 from urllib.parse import quote
 
-
-def get_module_id(module_name):
+def get_status(id):
     return db.session.scalar(
-        db.select(Modules.id)
-        .where(Modules.module_name == module_name)
+        db.select(UsersContents.status)
+        .where(UsersContents.enrollment_module_id == g.enrollment_module_id)
+        .where(UsersContents.content_id == id)
     )
 
 
-def get_course_id(course_name):
+def get_progress():
     return db.session.scalar(
-        db.select(Courses.id)
-        .where(Courses.course_name == course_name)
+        db.select(EnrollmentsModules.progress)
+        .where(EnrollmentsModules.module_id == g.module_id)
+        .where(EnrollmentsModules.enrollment_id == g.enrollment_id)
     )
 
-def get_challenge_id(option_id):
+
+def update_progress(page):
+    enrollment_module = db.session.scalar(
+        db.select(EnrollmentsModules)
+        .where(EnrollmentsModules.id == g.enrollment_module_id)
+    )
+    enrollment_module.progress = page
+
+    try:
+        db.session.commit()
+    except Exception as e:
+        print(f'Error: {e}')
+        db.session.rollback()
+    return
+
+
+def get_content_status(page):
+    if page <= 0:
+        return UsersContents(status=CompletionStatus.COMPLETE)
     return db.session.scalar(
-        db.select(ChallengeQuestions.content_id)
-        .join(Options)
-        .where(Options.id == option_id)
+        db.select(UsersContents)
+        .join(Contents)
+        .where(UsersContents.enrollment_module_id == g.enrollment_module_id)
+        .where(Contents.order == page)
     )
 
-def get_contents(course_name, module_name, page):
-    module_id = get_module_id(module_name)
-    course_id = get_course_id(course_name)
+
+def get_contents(page):
+    if page < 0: 
+        return None
     query = (
         db.select(Contents)
-        .join(Modules)
-        .where(Contents.module_id == module_id)
-        .where(Modules.course_id == course_id)
+        .join(UsersContents)
+        .where(UsersContents.enrollment_module_id == g.enrollment_module_id)
         .order_by(Contents.order.asc())
     )
     pagination = db.paginate(query, page=page, per_page=1, error_out=False)
     return pagination
 
-def get_enrollment_module_id(course_name, module_name):
-    user_uuid = get_uuid()
-    course_id = get_course_id(course_name)
-    module_id = get_module_id(module_name)
-    return db.session.scalar(
-        db.select(EnrollmentsModules.id)
-        .where(EnrollmentsModules.module_id == module_id)
-        .where(EnrollmentsModules.enrollment_id.in_(
-            db.select(Enrollments.id)
-            .join(Courses)
-            .join(Users)
-            .where(Users.uuid == user_uuid)
-            .where(Courses.id == course_id)
-        ))
+
+def get_user_content(content_id):
+    users_contents = db.session.scalar(
+        db.select(UsersContents)
+        .where(UsersContents.enrollment_module_id == g.enrollment_module_id)
+        .where(UsersContents.content_id == content_id)
     )
+    return users_contents
+
+
+def set_status(content: UsersContents, status:CompletionStatus=None):
+    content.status = status if status else content.status.next_status
+    try:
+        db.session.commit()
+    except Exception as e:
+        print(f"Error {e}")
+        db.session.rollback()
+
+    
+def check() -> CompletionStatus:
+    enrollment_module = db.session.scalar(
+        db.select(EnrollmentsModules)
+        .where(EnrollmentsModules.id == g.enrollment_module_id)
+    )
+    if enrollment_module.status == CompletionStatus.COMPLETE:
+        return None
+
+    users_contents = enrollment_module.users_contents
+    for user_content in users_contents:
+        if user_content.status != CompletionStatus.COMPLETE:
+            return None
+        
+    enrollment_module.status = CompletionStatus.COMPLETE
+
+    try:
+        db.session.commit()
+    except Exception as e:
+        print(f'Fails for whatever reason: {e}')
+        db.session.rollback()
+
+    return CompletionStatus.COMPLETE
+
 
 def check_option(option_id):
     option = db.session.scalar(
@@ -80,6 +128,7 @@ def check_option(option_id):
     )
     return bool(option)
 
+
 def get_correct(content_id) -> str:
     return db.session.scalar(
         db.select(ChallengeOptions.option_text)
@@ -87,141 +136,14 @@ def get_correct(content_id) -> str:
         .where(ChallengeQuestions.content_id == content_id)
     )
 
-def get_attempts(course_name, module_name, content_id) -> tuple | None:
-    enrollment_module_id = get_enrollment_module_id(course_name, module_name)
-    results = db.session.execute(
-        db.select(UsersChallenges.attempts, UsersChallenges.isComplete, UsersChallenges.option_selected)
-        .where(UsersChallenges.enrollment_module_id == enrollment_module_id)
-        .where(UsersChallenges.challenge_id == content_id)
-    ).first()
-    if results[2]:
-        options = db.session.scalar(
-            db.select(func.count(ChallengeOptions.id))
-            .join(ChallengeQuestions)
-            .where(ChallengeQuestions.id.in_(
-                db.select(ChallengeOptions.question_id)
-                .where(ChallengeOptions.id == results[2])
-            ))
-        )
-        if options == 1:
-            option_text = db.session.scalar(
-                db.select(ChallengeOptions.option_text)
-                .where(ChallengeOptions.id == results[2])
-            )
-            results = (results[0], results[1], option_text)
-    print(results)
-    return results
 
-def check_attempts(course_name, module_name, option_id=None, content_id=None):
-    if option_id:
-        challenge_id = get_challenge_id(option_id)
-    if content_id:
-        challenge_id = content_id
-    enrollment_module_id = get_enrollment_module_id(course_name, module_name)
-    attempts = db.session.scalar(
-        db.select(UsersChallenges.attempts)
-        .where(UsersChallenges.enrollment_module_id == enrollment_module_id)
-        .where(UsersChallenges.challenge_id == challenge_id)
-    )
-    return bool(attempts > 0)
-
-def update_attempts(course_name, module_name, option_id=None, content_id=None):
-    if option_id:
-        challenge_id = get_challenge_id(option_id)
-    if content_id:
-        challenge_id = content_id
-    enrollment_module_id = get_enrollment_module_id(course_name, module_name)
-    userchallenge = db.session.scalar(
-        db.select(UsersChallenges)
-        .where(UsersChallenges.enrollment_module_id == enrollment_module_id)
-        .where(UsersChallenges.challenge_id == challenge_id)
-    )
-    userchallenge.attempts -= 1
+def update_user_content(user_content: UsersContents):
     try:
         db.session.commit()
     except Exception as e:
         print(e)
         db.session.rollback()
 
-def get_option(content_id):
-    return db.session.scalar(
-        db.select(ChallengeOptions.id)
-        .join(ChallengeQuestions)
-        .join(ContentsChallenges)
-        .where(ContentsChallenges.id == content_id)
-    )
-    
-
-def update_complete(course_name, module_name, option_id=None, content_id=None):
-    if option_id:
-        challenge_id = get_challenge_id(option_id)
-    if content_id:
-        challenge_id = content_id
-    enrollment_module_id = get_enrollment_module_id(course_name, module_name)
-    userchallenge = db.session.scalar(
-        db.select(UsersChallenges)
-        .where(UsersChallenges.enrollment_module_id == enrollment_module_id)
-        .where(UsersChallenges.challenge_id == challenge_id)
-    )
-    userchallenge.isComplete = True
-    if content_id:
-        userchallenge.option_selected = get_option(content_id)
-    if option_id:
-        userchallenge.option_selected = option_id
-    try:
-        db.session.commit()
-    except Exception as e:
-        print(e)
-        db.session.rollback()
-
-def update_progress(course_name, module_name, page):
-    module_id = get_module_id(module_name)
-    enrollment_id = course.detail.get_enrollment_id(get_uuid(), course_name)
-    enrollment_module = db.session.scalars(
-        db.select(EnrollmentsModules)
-        .join(Enrollments)
-        .join(Modules)
-        .where(Modules.id == module_id)
-        .where(Enrollments.id == enrollment_id)
-    ).first()
-    
-    if page == -1:
-        enrollment_module.progress = -1
-    elif page > enrollment_module.progress:
-        enrollment_module.progress += 1
-    elif page < enrollment_module.progress:
-        enrollment_module.progress -= 1
-    else:
-        return
-    
-    try:
-        db.session.commit()
-    except Exception as e:
-        print(f'Error: {e}')
-        db.session.rollback()
-    return
-
-def unlock_next_module(course_name, module_name):
-    enrollment_id = course.detail.get_enrollment_id(get_uuid(), course_name)
-    order = db.session.scalar(
-        db.select(Modules.order)
-        .where(Modules.module_name == module_name)
-    )
-    next_module = db.session.scalars(
-        db.select(EnrollmentsModules)
-        .join(Modules)
-        .where(EnrollmentsModules.enrollment_id == enrollment_id)
-        .where(Modules.id.in_(
-            db.select(Modules.id)
-            .where(Modules.order == order+1)
-        ))
-    ).first()
-    next_module.progress = 1
-    try:
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        print(f'Error: {e}')
 
 def sanitize_input(input_text):
     input_text = input_text.strip()
