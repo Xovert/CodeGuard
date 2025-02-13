@@ -15,3 +15,26 @@ document.querySelectorAll('.more').forEach(more => {
         });
     });
 });
+
+// melebihi container
+document.addEventListener("DOMContentLoaded", () => {
+    const courses = document.querySelectorAll(".course");
+
+    courses.forEach((course) => {
+        const moreButton = course.querySelector(".more");
+        const option = course.querySelector(".option");
+
+        moreButton.addEventListener("click", () => {
+            // Get the container and element boundaries
+            const container = course.closest(".course-wrapper").getBoundingClientRect();
+            const optionBounds = option.getBoundingClientRect();
+
+            // Check if the `.option` element overflows the container on the right
+            if (optionBounds.right > container.right) {
+                option.classList.add("overflow-left"); // Move to the left
+            } else {
+                option.classList.remove("overflow-left"); // Keep the default position
+            }
+        });
+    });
+});

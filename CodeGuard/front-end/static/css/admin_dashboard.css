@@ -16,10 +16,29 @@
     font-weight: 700;
 }
 
-.course-wrapper{
-    gap: 32px;
+h3{
+    font-family: Manrope;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.scroll-wrapper{
     overflow-y: scroll;
     height: calc(100vh - 180px);
+    gap: 24px;
+}
+
+.wrap{
+    padding-bottom: 32px;
+}
+
+.wrap:not(:last-child) {
+    border-bottom: 1px solid black;
+}
+
+.course-wrapper{
+    gap: 32px;
 }
 
 .course{
@@ -32,10 +51,15 @@
     position: relative;
 }
 
+.course:hover .more{
+    display: block;
+}
+
 .more{
     position: absolute;
     top: 5px;
     right: 5px;
+    display: none;
 }
 
 .more:hover rect{
@@ -53,6 +77,13 @@
     top: 0;
     right: -165px;
     z-index: 2;
+    transform-origin: top right;
+}
+
+.option.overflow-left {
+    right: auto; /* Reset right positioning */
+    left: -165px; /* Move to the left */
+    transform-origin: top left;
 }
 
 .option ul{
@@ -111,4 +142,11 @@
 
 .a-tag{
     text-decoration: none;
+}
+
+.no-course{
+    color: var(--black);
+    font-size: 16px;
+    font-family: Poppins;
+    font-weight: 400;
 }

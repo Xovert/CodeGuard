@@ -11,46 +11,6 @@ document.addEventListener("input", function (event) {
 });
 
 
-// ======= SAVE CHANGES BUTTON DISABLED ========
-document.addEventListener("DOMContentLoaded", () => {
-    const form = document.querySelector("form.course-details");
-    const submitBtn = document.getElementById("submit-btn");
-    const initialValues = {};
-
-    // Store initial values of the form fields
-    Array.from(form.elements).forEach((field) => {
-        if (field.type !== "submit" && field.type !== "button") {
-            initialValues[field.name] = field.value;
-        }
-    });
-
-    // Function to check if any field value has changed
-    const checkChanges = () => {
-        let isChanged = false;
-
-        Array.from(form.elements).forEach((field) => {
-            if (field.type !== "submit" && field.type !== "button") {
-                if (initialValues[field.name] !== field.value) {
-                    isChanged = true;
-                }
-            }
-        });
-
-        // Enable or disable the submit button
-        submitBtn.disabled = !isChanged;
-    };
-
-    // Add event listeners to detect changes in form fields
-    Array.from(form.elements).forEach((field) => {
-        if (field.type !== "submit" && field.type !== "button") {
-            field.addEventListener("input", checkChanges);
-            field.addEventListener("change", checkChanges);
-        }
-    });
-});
-
-
-
 // ======= FILENAME CHANGES ====== + filename validation + PREVIEW
 var save = true;
 
@@ -64,10 +24,6 @@ var errorCourseLogo = document.getElementById('error-course-logo');
 let file = fileInput.files[0];
 const preview = document.getElementById("preview");
 const filename = document.getElementById("filename").textContent.trim();
-
-if (!file && preview && (filename != "No file chosen")) {
-    preview.style.display = "block";
-}
 
 fileInput.addEventListener('change', () => {
     const file = fileInput.files[0]
@@ -139,11 +95,15 @@ document.getElementById("submit-btn").addEventListener("click", function (event)
     // get values
     const title = document.getElementById("course-title").value.trim();
     const desc = document.getElementById("desc").value.trim();
-    const visibility = document.getElementById("visibility").value.trim();
+    // const visibility = document.getElementById("visibility").value.trim();
 
     const errorTitle = document.getElementById("error-title");
     const errorDesc = document.getElementById("error-desc");
-    const errorVisibility = document.getElementById("error-visibility");
+    // const errorVisibility = document.getElementById("error-visibility");
+
+
+    // regex
+    // const namePattern = /^[a-zA-Z0-9 ,.!?/'"()-]+$/;
 
     // no empty validation
     if (!title){
@@ -152,11 +112,11 @@ document.getElementById("submit-btn").addEventListener("click", function (event)
         save = false;
     }
 
-    // if (fileInput.files.length === 0){
-    //     errorCourseLogo.textContent = "Course image cannot be empty!";
-    //     errorCourseLogo.style.display = "block";
-    //     save = false;
-    // }
+    if (fileInput.files.length === 0){
+        errorCourseLogo.textContent = "Course image cannot be empty!";
+        errorCourseLogo.style.display = "block";
+        save = false;
+    }
 
     if (!desc){
         errorDesc.textContent = "Description cannot be empty!";
@@ -164,20 +124,18 @@ document.getElementById("submit-btn").addEventListener("click", function (event)
         save = false;
     }
 
-    if (!visibility){
-        errorVisibility.textContent = "Please choose the course visibility!";
-        errorVisibility.style.display = "block";
-        save = false;
-    }
+    // if (!visibility){
+    //     errorVisibility.textContent = "Please choose the course visibility!";
+    //     errorVisibility.style.display = "block";
+    //     save = false;
+    // }
 
-    // visibility sanitation
-    const allowedVisibility = ['draft', 'archived', 'published'];
-    if (!allowedVisibility.includes(visibility)) {
-        errorVisibility.textContent = "Invalid value";
-        errorVisibility.style.display = 'block';
-        save = false;
-    }
-
+    // // visibility sanitation
+    // const allowedVisibility = ['public', 'private'];
+    // if (!allowedVisibility.includes(visibility)) {
+    //     errorVisibility.textContent = "Invalid value";
+    //     save = false;
+    // }
 
     // submit if passes the validation
     if (save === true){

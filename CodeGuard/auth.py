@@ -186,7 +186,6 @@ def change_password(token):
         error = None
         if form.validate_on_submit():
             new_pw = form.password.data
-            print(new_pw)
 
             uuid = confirm_token(token)
             if uuid:

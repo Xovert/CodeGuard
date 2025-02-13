@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Add New Course{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/admin_course.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/navbar_footer_admin.css') }}">
+<script src="{{ url_for('static', filename='js/admin_course_detail.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <form action="{{ url_for('admin.description', course_name=form.title.data) }}" class="course-details d-flex flex-column form" method="POST" enctype="multipart/form-data">
+        {{ form.csrf_token() }}
+        <div class="title">
+            <h1>Course Details</h1>
+        </div>
+        <div class="detail">
+            {{ form.title.label }}
+            {{ form.title }}
+            <p class="error-message" id="error-title"></p>
+        </div>
+        <div class="detail position-relative">
+            {{ form.logo.label }}
+            <label for="{{ form.logo.id }}" class="input-file">
+                <img src="{{ url_for('static', filename='assets/icon_upload.svg') }}" alt="">
+                Add File
+            </label>
+            {{ form.logo(accept=".jpg, .jpeg, .png") }}
+            <span class="filename" id="filename">
+                {% if original_filename %}
+                {{ original_filename }}
+                {% else %}
+                No file chosen
+                {% endif %}
+            </span>
+            <img id="preview" src="{% if original_filename %}{{ url_for('views.image', filename=new_filename) }}{% endif %}" alt="Your image" class="preview">
+            <p class="notice">If no file is chosen as the course logo, no changes will be made to the course logo.</p>
+            <p class="error-message" id="error-course-logo">Error</p>
+        </div>
+        <div class="detail">
+            {{ form.description.label }}
+            {{ form.description }}
+            <p class="error-message" id="error-desc"></p>
+        </div>
+        <div class="detail">
+            {{ form.visibility.label }}
+            <!-- {{ form.visibility }} -->
+            <select name="{{ form.visibility.name }}" id="{{ form.visibility.id }}">
+                {% for value, label in form.visibility.choices %}
+                {% if ((form.visibility.data == 'published' or form.visibility.data == 'archived') and value == 'draft') %}
+                <option value="{{ value }}" disabled>{{ label }}</option>
+                {% elif form.visibility.data == 'draft' and value == 'archived' %}
+                <option value="{{ value }}" disabled>{{ label }}</option>
+                {% elif form.visibility.data == value %}
+                <option value="{{ value }}" selected>{{ label }}</option>
+                {% else %}
+                <option value="{{ value }}">{{ label }}</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+
+            <p class="error-message" id="error-visibility"></p>
+        </div>
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn" id="submit-btn" disabled>Save Changes</button>
+            <a href="{{ url_for('admin.modules', course_name=form.title.data|urlencode|replace('/', '%2F')) }}" class="a-tag"><button type="button" class="btn">Edit Modules</button></a>
+        </div>
+    </form>
+    <!-- get the data, save it in the DB, and then redirect to admin_course_content.html ( ada di admin_course_content() ) -->
+</div>
+
+{% endblock %}

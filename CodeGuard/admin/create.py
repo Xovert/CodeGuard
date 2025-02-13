@@ -2,12 +2,12 @@ from flask import current_app as app
 from flask import render_template, url_for, Blueprint 
 from flask import request, session, redirect, abort, flash
 from datetime import datetime, timedelta
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError as sqlerror
+from werkzeug.datastructures.file_storage import FileStorage
+import mimetypes
 
-from CodeGuard.utils.decorators import admin_required
-from CodeGuard.admin import admin
 from CodeGuard.utils.files import upload_file
-from CodeGuard.forms.course import NewCourseForm
+from CodeGuard.forms.course import NewModuleForm
 from CodeGuard.models import (
     db,
     Courses,
@@ -15,34 +15,53 @@ from CodeGuard.models import (
     Contents
 )
 
-@admin.route('/admin/create/new', methods=("POST",))
-@admin_required
-def new_course():
-    form = NewCourseForm()
+def new_course(name, file: FileStorage, description):
+    status = CourseStatus.DRAFT
+    course = Courses(
+        course_name=name,
+        duration=timedelta(days=30).total_seconds(),
+        description=description,
+        status=status
+    )
+    db.session.add(course)
 
-    if form.validate_on_submit():
-        content_type = form.type.data
-        image = form.image.data
-        content_body = form.content_body.data
-        course_name = form.course_name.data
-        description = form.description.data
-
-        course = Courses(
-            course_name = course_name,
-            duration = timedelta(days=30).total_seconds(),
-            description = description,
-            status = CourseStatus.DRAFT
-        )
-        db.session.add(course)
+    try:
+        db.session.flush()
         try:
-            db.session.flush()
-            upload_file(file=image, usage='course', id=course.id)
-        except IntegrityError:
-            db.session.rollback()
-        else:
-            db.session.commit()
+            upload_image(
+                file=file,
+                ref_id=course.id,
+                # filename=file.filename, 
+                usage="course"
+            )
+        except FileNotFoundError as e:
+            print(f"An error occcured while uploading course image:\n\t {e}")
+    except sqlerror:
+        print(f'An error has occured when adding the course')
+        db.session.rollback()
+    else:
+        db.session.commit()
 
-        return redirect(url_for('admin.dashboard'))
-    
-    #     uploads(file)
-    abort(404)
+    return
+
+def upload_image(file: FileStorage, ref_id, usage=None):
+    filename = file.filename
+    file_stream = file.stream
+    mime_type, _ = mimetypes.guess_type(filename)
+    if mime_type is None:
+        # Default to binary stream if MIME type cannot be determined
+        mime_type = 'application/octet-stream'
+
+    file_storage = FileStorage(
+        stream=file_stream,
+        filename=filename,
+        content_type=mime_type
+    )
+
+    upload_file(
+        file=file_storage,
+        id=ref_id,
+        usage=usage,
+    )
+
+    return

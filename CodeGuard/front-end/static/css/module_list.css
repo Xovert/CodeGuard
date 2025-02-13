@@ -63,7 +63,7 @@
     margin-top: 24px;
 }
 
-.btn{
+.button{
     border-radius: 10px;
     border: 2px solid var(--black);
     font-family: Poppins;
@@ -71,9 +71,33 @@
     font-weight: 500;
     background-color: transparent;
     padding: 12px;
+    text-decoration: none;
+    color: var(--black);
 }
 
-.btn:hover{
+.button:hover{
     border: 2px solid var(--black);
     box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.16), 0px 3px 6px 0px rgba(0, 0, 0, 0.23);
 }
+
+.button:disabled {
+    pointer-events: none; /* Disable hover and other interactions */
+    opacity: 0.5; /* Optional: visually indicate the button is disabled */
+}
+
+.button:disabled:hover {
+    box-shadow: none; /* Remove hover effect for disabled buttons */
+}
+
+.no-course{
+    font-size: 16px;
+    font-family: Poppins;
+    font-weight: 400;
+    color: var(--black);
+}
+
+/* @media (prefers-reduced-motion: reduce) {
+    .fade {
+        transition: opacity .15s;
+    }
+} */

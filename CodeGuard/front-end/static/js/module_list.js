@@ -35,151 +35,25 @@ document.addEventListener('click', function (e){
 
 
 // ======== DELETE ========
-// function showErrorModal(message, yesText, noText) {
-//     // Get the modal element and the message container
-//     const modalElement = document.getElementById('Error');
-//     const messageElement = document.getElementById('message');
-//     const yes = document.getElementById('yes');
-//     const no = document.getElementById('no');
+document.addEventListener("DOMContentLoaded", function () {
+    // Select all the trash buttons
+    const trashButtons = document.querySelectorAll(".icon-trash");
 
-//     // Update the message dynamically
-//     messageElement.textContent = message;
-//     yes.textContent = yesText;
-//     no.textContent = noText;
+    // Add a click event listener to each trash button
+    trashButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+            // Find the parent .module element of the clicked button
+            const moduleElement = button.closest(".module");
 
-//     // Use Bootstrap's modal API to show the modal
-//     const errorModal = new bootstrap.Modal(modalElement);
-//     errorModal.show();
-// }
+            // Get the module name from the .module-name element inside the module
+            const moduleName = moduleElement.querySelector(".module-name").textContent.trim();
 
-// document.addEventListener('DOMContentLoaded', () => {
-//     document.querySelectorAll('.icon-trash').forEach(button => {
-//         button.addEventListener('click', () => {
-//             // Customize the error message based on the clicked button or context
-//             const moduleName = button.closest('.module')?.querySelector('.module-name')?.textContent.trim();
-//             const message = moduleName
-//                 ? `Are you sure you want to delete "${moduleName}"?`
-//                 : 'Are you sure you want to delete this item?';
-
-//             // Show the modal with the custom message
-//             showErrorModal(message, "Yes", "No");
-//         });
-//     }); 
-// })
-
-function loadModalContent() {
-    // Create the XMLHttpRequest object
-    var xhttp = new XMLHttpRequest();
-
-    // Define the callback for when the request completes
-    xhttp.onreadystatechange = function () {
-        if (this.readyState === 4 && this.status === 200) {
-            // Insert the fetched modal content into the modal container
-            const modalContainer = document.getElementById("modal-container");
-
-            if (modalContainer) {
-                modalContainer.innerHTML = this.responseText;
-
-                // Get the dynamically loaded modal
-                const modalElement = document.getElementById("Error");
-
-                // Ensure the modal element exists
-                if (modalElement) {
-                    // Initialize the modal using Bootstrap's modal API
-                    const errorModal = new bootstrap.Modal(modalElement);
-
-                    // Show the modal
-                    errorModal.show();
-                } else {
-                    console.error("Modal element not found after loading content.");
-                }
-            } else {
-                console.error("Modal container not found.");
-            }
-        }
-    };
-
-    // Send the GET request to fetch the modal content
-    xhttp.open("GET", "confirm_changes", true); // Update the path to your modal.html file
-    xhttp.send();
-}
-
-// Attach an event listener to the .icon-trash button
-document.querySelectorAll(".icon-trash").forEach(button => {
-    button.addEventListener("click", function () {
-        loadModalContent();
+            // Update the modal's message with the module name
+            const messageElement = document.getElementById("message");
+            messageElement.innerHTML = `Are you sure you want to delete <strong>${moduleName}</strong> module?`;
+        });
     });
 });
-
-// document.addEventListener('DOMContentLoaded', () => {
-//     // Load the modal HTML dynamically
-//     function loadModal(callback) {
-//         fetch('/admin/course/confirm_changes') // Adjust this path to the location of your modal.html
-//             .then(response => {
-//                 if (!response.ok) {
-//                     throw new Error('Failed to load modal');
-//                 }
-//                 return response.text();
-//             })
-//             // PROBLEM HERE
-//             .then(html => {
-//                 // Append the modal to the body if it doesn't already exist
-//                 const tempDiv = document.createElement('div');
-//                 tempDiv.innerHTML = html;
-//                 const modalElement = tempDiv.querySelector('#Error');
-//                 if (modalElement) {
-//                     // Check if the modal already exists in the DOM
-//                     if (!document.body.contains(modalElement)) {
-//                         // Find the `.content` element
-//                         const contentElement = document.querySelector('.content');
-
-//                         if (contentElement) {
-//                             // Insert the modal before the `.content` element
-//                             document.body.insertBefore(modalElement, contentElement);
-//                         } else {
-//                             // Fallback: Append to the body if `.content` is not found
-//                             document.body.appendChild(modalElement);
-//                         }
-//                     }
-//                 } else {
-//                     console.error('Modal element not found in the fetched HTML.');
-//                 }
-
-//                 if (callback) callback();
-//             })
-//             .catch(error => console.error(error));
-//             // PROBLEM HERE
-//     }
-
-//     // Function to show the modal with a custom message
-//     function showErrorModal(message) {
-//         const modalElement = document.getElementById('Error');
-//         const messageElement = modalElement.querySelector('#message');
-
-//         // Update the message dynamically
-//         messageElement.textContent = message;
-
-//         // Use Bootstrap's modal API to show the modal
-//         const errorModal = new bootstrap.Modal(modalElement);
-//         errorModal.show();
-//     }
-
-//     // Add click event listeners to all .icon-trash buttons
-//     document.querySelectorAll('.icon-trash').forEach(button => {
-//         button.addEventListener('click', () => {
-//             const moduleName = button.closest('.module')?.querySelector('.module-name')?.textContent.trim();
-//             const message = moduleName
-//                 ? `Are you sure you want to delete "${moduleName}"?`
-//                 : 'Are you sure you want to delete this item?';
-
-//             // Load the modal and then show it with the message
-//             loadModal(() => {
-//                 showErrorModal(message);
-//             });
-//         });
-//     });
-// });
-
 
 
 
