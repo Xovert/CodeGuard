@@ -1,0 +1,30 @@
+[server]
+SECRET_KEY = 
+SECURITY_PASSWORD_SALT = 
+SESSION_COOKIE_SECURE = false
+SESSION_COOKIE_HTTPONLY = true
+PERMANENT_SESSION_LIFETIME = 604800
+DATABASE_URL = mysql+pymysql://codeguard:codeguard@127.0.0.1:7306/CodeGuard?charset=utf8mb4
+
+[email]
+MAIL_DEFAULT_SENDER = noreply@codeguard.id
+MAIL_SERVER = smtp.gmail.com
+MAIL_PORT = 456
+MAIL_USE_TLS = false
+MAIL_USE_SSL = true
+MAIL_DEBUG = false
+MAIL_USERNAME = devcguard@gmail.com
+MAIL_PASSWORD = ikmz dghx yjqe cial
+
+[uploads]
+UPLOADED_PHOTOS_DEST = uploads
+UPLOAD_PROVIDER = minio
+AWS_S3_ENDPOINT_URL = http://127.0.0.1:9000
+AWS_S3_BUCKET = codeguard
+AWS_ACCESS_KEY_ID = minioadmin
+AWS_SECRET_ACCESS_KEY = minioadmin
+AWS_S3_REGION = us-east-1
+
+[semgrep]
+SEMGREP_APP_TOKEN = 2a749583386f06e68ba6a754ce773af03e0a55044567342a703802fdd9c9645b
+SEMGREP_PATH = semgrep_rules

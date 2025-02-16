@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb:11.6
+    container_name: mariadb
+    restart: always  # Changed from 'unless-stopped' to 'always'
+    environment:
+      MYSQL_ROOT_PASSWORD: codeguard
+      MYSQL_DATABASE: CodeGuard
+      MYSQL_USER: codeguard
+      MYSQL_PASSWORD: codeguard
+    ports:
+      - "7306:3306"  # Host Port : Container Port
+    volumes:
+      - ./.data/mariadb:/var/lib/mysql  # Host Directory : Container Directory
+
+  minio:
+    image: minio/minio:RELEASE.2024-12-18T13-15-44Z
+    container_name: minio
+    restart: always  # Changed from 'unless-stopped' to 'always'
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"  # MinIO Server
+      - "9001:9001"  # MinIO Console (Optional)
+    volumes:
+      - ./.data/minio:/data  # Host Directory : Container Directory
+    command: server /data --console-address ":9001"
+
+# No need to define external volumes since we're using host directories
