@@ -141,7 +141,7 @@ def update_user_content(user_content: UsersContents):
     try:
         db.session.commit()
     except Exception as e:
-        print(e)
+        print(f'error: {e}')
         db.session.rollback()
 
 

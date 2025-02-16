@@ -14,8 +14,8 @@ def create_app(config="CodeGuard.config", test_config=None, instance_path=None):
     app.config.from_mapping(
         SECRET_KEY='devtesthings',
         DATABASE=os.path.join(app.instance_path, 'imgwebapp.sqlite'),
-        UPLOADED_PHOTOS_DEST='uploads',
         MAX_CONTENT_LENGTH = 1024 * 1024,
+        UPLOADED_PHOTOS_DEST='uploads',
         PERMANENT_SESSION_LIFETIME = timedelta(days=2),
         SECURITY_PASSWORD_SALT = '474e09ff10b75e34dc1745b1890339f2ee93355b892266590adac68ad84849bc',
         MAIL_DEFAULT_SENDER = "",
@@ -30,11 +30,11 @@ def create_app(config="CodeGuard.config", test_config=None, instance_path=None):
         AWS_S3_BUCKET = "codeguard",
         AWS_ACCESS_KEY_ID = "minioadmin",
         AWS_SECRET_ACCESS_KEY = "minioadmin",
-        # AWS_ACCESS_KEY_ID = "glldyWG5W9t7Sl14n7h5",
-        # AWS_SECRET_ACCESS_KEY = "TXTW6Iu5Dasir7qVCIHtuko9c6lhwIKZ4ivtg5Xv",
         AWS_S3_REGION = "us-east-1",
         UPLOAD_PROVIDER = "minio",
         SQLALCHEMY_DATABASE_URI = "mysql+pymysql://codeguard:codeguard@127.0.0.1:7306/CodeGuard?charset=utf8mb4",
+        SEMGREP_PATH = 'semgrep_rules',
+        SEMGREP_APP_TOKEN = ''
     )
 
     if test_config is None:
@@ -48,11 +48,12 @@ def create_app(config="CodeGuard.config", test_config=None, instance_path=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-    
+
     try:
         os.makedirs(os.path.join(app.instance_path, app.config['UPLOADED_PHOTOS_DEST']))
     except OSError:
         pass
+
 
     with app.app_context():
         # Database
@@ -85,21 +86,5 @@ def create_app(config="CodeGuard.config", test_config=None, instance_path=None):
         
         app.register_blueprint(admin)
 
-
-        # from . import auth
-        # auth.bcrypt.init_app(app)
-        # app.register_blueprint(auth.bp)
-        # app.add_url_rule('/', endpoint='index')
-        # app.add_url_rule('/register', endpoint='register')
-
-        # from . import image
-        # image.init_uploads(app)
-        # # configure_uploads(app,image.photos)
-        # app.register_blueprint(image.bp)
-        # app.add_url_rule('/gallery', endpoint='gallery')
-        
-        # from . import course
-        # app.register_blueprint(course.bp)
-        # app.add_url_rule('/learning', endpoint='learning')
         
     return app

@@ -6,11 +6,15 @@ from mimetypes import guess_type
 from CodeGuard.utils.user import is_authed
 from CodeGuard.utils.files import get_file
 from CodeGuard.utils.decorators import login_required
+from CodeGuard.utils.exam import check_exam
 
 views = Blueprint('views', __name__, template_folder='front-end')
 
 @views.route('/')
 def index():
+    url = check_exam()
+    if url != None:
+        return redirect(url)
     return render_template('index.html')
 
 
@@ -23,7 +27,5 @@ def image(filename):
     
     abort(404)
 
-# @views.route('/login', methods=('GET',))
-# def login():
-#     return render_template('login.html')
+
 

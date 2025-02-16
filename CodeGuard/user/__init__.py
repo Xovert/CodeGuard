@@ -3,6 +3,7 @@ from flask import redirect, url_for
 
 from CodeGuard.utils.user import get_current_user
 from CodeGuard.utils.decorators import login_required
+from CodeGuard.utils.exam import check_exam
 
 user = Blueprint('user', __name__, template_folder='front-end')
 
@@ -27,3 +28,10 @@ def update():
     # redirect(url_for('change_pass.html'))
 # intended: utk GET change_pass
 # DOES NOT NEED THIS ANYMORE
+
+
+@user.before_request
+def check():
+    url = check_exam()
+    if url != None:
+        return redirect(url)

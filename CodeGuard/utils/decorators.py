@@ -1,6 +1,6 @@
 import functools
 
-from flask import abort, request, redirect, url_for
+from flask import abort, request, redirect, url_for, g
 from CodeGuard.utils.user import is_authed, is_admin
 
 
@@ -24,3 +24,14 @@ def admin_required(view):
         else:
             abort(404)
     return admin_required_wrapper
+
+def exams_unlocked(view):
+
+    @functools.wraps(view)
+    def exams_unlocked_wrapper(*args, **kwargs):
+        if g.modulesComplete:
+            return view(*args, **kwargs)
+        else:
+            abort(404)
+    return exams_unlocked_wrapper
+

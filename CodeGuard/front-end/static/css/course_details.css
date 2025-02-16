@@ -80,6 +80,8 @@
     font-weight: 600;
     position: absolute;
     z-index: 10;
+
+    user-select: none;
 }
 
 /* ENROLL BUTTON */
@@ -100,6 +102,7 @@
 /* LESSON */
 .lesson-wrapper{
     row-gap: 24px;
+    user-select: none;
 }
 
 .lesson{
@@ -133,6 +136,7 @@
 
 .exam{
     background-color: var(--dark-magenta);
+    user-select: none;
 }
 
 .lesson-name{

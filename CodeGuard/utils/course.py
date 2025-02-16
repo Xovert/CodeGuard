@@ -14,6 +14,7 @@ from CodeGuard.models import (
     UsersContents
 )
 
+
 def get_enrollment_id(course_id, user_id):
     if course_id is None or user_id is None:
         return None
@@ -56,3 +57,22 @@ def get_enrollment_module_id(enrollment_id, module_id):
         .where(EnrollmentsModules.module_id == module_id)
         .where(EnrollmentsModules.enrollment_id == enrollment_id)
     )
+
+def modules_complete(enrollment_id, status) -> bool:
+    enrollment_modules = db.session.execute(
+        db.select(EnrollmentsModules)
+        .where(EnrollmentsModules.enrollment_id == enrollment_id)
+        .where(EnrollmentsModules.status != status)
+    ).scalars().all()
+    return False if enrollment_modules else True
+
+def course_complete(enrollment_id, status):
+    enrollment_status = db.session.scalar(
+        db.select(Enrollments.status)
+        .where(Enrollments.id == enrollment_id)
+    )
+
+    if enrollment_status == status:
+        return True
+    else:
+        return False

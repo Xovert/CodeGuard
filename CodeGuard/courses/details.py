@@ -11,6 +11,7 @@ from CodeGuard.models import (
     EnrollmentsModules,
     Contents,
     UsersContents,
+    Exams
 )
 from CodeGuard.models.enums import CompletionStatus, CourseStatus
 from datetime import datetime, timezone, timedelta
@@ -127,14 +128,25 @@ def get_percentage():
         )
         .where(Modules.course_id == g.course_id)
     )
-
+    
     row = db.session.execute(stmt).one()
     total_modules = row.total_modules
     finished = row.finished if row.finished else 0
 
+    enrollment: Enrollments = db.session.scalar(
+        db.select(Enrollments)
+        .where(Enrollments.id == g.enrollment_id)
+    )
+
+    if enrollment.exam:
+        total_modules += 1
+
     if total_modules == 0:
         return 0
-
+    
+    if g.courseComplete:
+        return 100
+    
     return math.ceil((finished / total_modules) * 100)
 
 def enroll_course():
@@ -149,6 +161,17 @@ def enroll_course():
         progress=0,
         last_accessed_time=curr_time.timetz() # Time only, extracted from datetime
     )
+    course = db.session.scalar(
+        db.select(Courses)
+        .where(Courses.id == g.course_id)
+    )
+
+    import random
+    exams:Exams = course.exams
+    if exams:
+        exam: Exams = random.choice(exams)
+        enrollment.exam_id = exam.id
+
     db.session.add(enrollment)
     try:
         db.session.flush()
@@ -170,7 +193,6 @@ def enroll_course():
         print("No Modules")
         return
 
-    print(modules)
     enrollments_modules = [
         {
             "enrollment_id": g.enrollment_id,
@@ -233,3 +255,10 @@ def enroll_course():
         db.session.commit()
     
     return error
+
+def get_exam():
+    return db.session.scalar(
+        db.select(Exams)
+        .join(Enrollments)
+        .where(Enrollments.id == g.enrollment_id)
+    )

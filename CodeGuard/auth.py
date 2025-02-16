@@ -11,6 +11,7 @@ from CodeGuard.models import db, Users
 from CodeGuard.utils.user import is_authed, is_admin, login_session, logout_session, get_current_user
 from CodeGuard.utils.email import generate_token, confirm_token, send_email
 from CodeGuard.utils.decorators import login_required
+from CodeGuard.utils.exam import check_exam
 
 bcrypt = Bcrypt()
 
@@ -161,7 +162,7 @@ def forgot_password():
             if user:
                 uuid = str(user.uuid)
                 token = generate_token(uuid)
-                print(token)
+                
                 change_url = url_for('auth.change_password', token=token, _external=True)
                 html = render_template("change_pass_email.html", url=change_url, fullname=user.fullname)
                 subject = "Reset Your Password"
@@ -232,4 +233,8 @@ def after_request(response):
     response.headers.add('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0')
     return response
 
-
+@auth.before_request
+def check():
+    url = check_exam()
+    if url != None:
+        return redirect(url)

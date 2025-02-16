@@ -15,10 +15,12 @@ from flask import (
 # from werkzeug.urls 
 from urllib.parse import unquote, quote_plus
 
-from CodeGuard.utils.decorators import login_required
+from CodeGuard.utils.decorators import login_required, exams_unlocked
 from CodeGuard.utils.files import get_file
+from CodeGuard.utils.exam import check_exam
 
 courses = Blueprint('courses', __name__, template_folder='front-end')
+from CodeGuard.courses import exam
 from CodeGuard.courses import catalogue
 from CodeGuard.courses import details as detail
 from CodeGuard.courses import contents as content
@@ -28,8 +30,11 @@ from CodeGuard.utils.course import (
     get_course_id_from_name,
     get_enrollment_id,
     get_enrollment_module_id,
-    get_module_id_from_name
+    get_module_id_from_name,
+    modules_complete,
+    course_complete
 )
+from CodeGuard.utils.security import generate_token
 
 
 @courses.route('/dashboard', methods=('GET',))
@@ -52,13 +57,27 @@ def details(**kwargs):
     course = detail.get_course_fields()
     modules = detail.get_modules()
     percentage = detail.get_percentage()
+    exam = detail.get_exam()
     detail.update_time()
-    # print(modules)
+    link_url = None
+    if not g.courseComplete:
+        if g.modulesComplete:
+            token = generate_token()
+            link_url = url_for('courses.exam', course_name=kwargs.get('course_name', None), token=token, _external=True)
+    
+    if g.courseComplete:
+        link_url = url_for('courses.exam', course_name=kwargs.get('course_name', None), _external=True)
+
+        
     return render_template(
         'course/course_details.html',
         course = course,
         modules = modules,
-        percentage = percentage
+        percentage = percentage,
+        exam = True if exam else False,
+        modulesComplete = g.modulesComplete,
+        courseComplete = g.courseComplete,
+        exam_url = link_url
     )
 
 @courses.route('/course/<path:course_name>/enroll', methods=('GET',))
@@ -81,7 +100,6 @@ def next(course_name, module_name):
     
     if content.check() == CompletionStatus.COMPLETE:
         next_module = detail.get_next_module()
-        print(next_module)
         detail.unlock_module(next_module)
 
     if not next:
@@ -211,31 +229,6 @@ def check_challenge(**kwargs):
 
     abort(404)
 
-@courses.route('/learning')
-def learning():
-    return render_template('course/learning.html')
-
-# Temporary
-@courses.route('/challenge_option')
-def challenge_option():
-    return render_template('course/challenge_option.html')
-
-@courses.route('/exam')
-def exam():
-    return render_template('exam.html')
-
-@courses.route('/exam/PHP')
-def examPHP():
-    return render_template('exam_PHP.html')
-
-
-@courses.route('/challengePHP')
-def challengePHP():
-    return render_template('course/challengePHP.html')
-
-@courses.route('/challengeJS')
-def challengeJS():
-    return render_template('course/challengeJS.html')
 
 @courses.before_request
 def load_datas():
@@ -251,7 +244,8 @@ def load_datas():
     g.module_id = get_module_id_from_name(module_name)
     g.enrollment_id = get_enrollment_id(g.course_id, g.user_id)
     g.enrollment_module_id = get_enrollment_module_id(g.enrollment_id, g.module_id)
-
-# @courses.route('/testcodeMirror')
-# def testcodeMirror():
-#     return render_template('testcodeMirror.html')
+    g.modulesComplete = modules_complete(g.enrollment_id, CompletionStatus.COMPLETE)
+    g.courseComplete = course_complete(g.enrollment_id, CompletionStatus.COMPLETE)
+    url = check_exam()
+    if url != None:
+        return redirect(url)

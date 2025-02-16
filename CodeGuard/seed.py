@@ -1734,6 +1734,12 @@ def seed_enrollments():
             last_accessed_time=curr_time.timetz(), # Time only, extracted from datetime
             status=CompletionStatus.STARTED
         )
+
+        exams = course.exams
+        if exams:
+            exam: Exams = random.choice(exams)
+            enrollment.exam_id = exam.id
+
         db.session.add(enrollment)
         try:
             db.session.flush()
@@ -1799,18 +1805,118 @@ def seed_users_contents():
 
 
 def seed_exams():
-    pass
+    php_course_id = db.session.scalar(
+        db.select(Courses.id)
+        .where(Courses.course_name == "PHP")
+    )
 
+    exam: Exams = Exams(
+        duration=timedelta(hours=2),
+        course_id = php_course_id,
+        todo = 5,
+        questions = [ExamQuestions(
+            question_text = "Pada kodingan yang menampilkan login page berikut terdapat beberapa kerentanan, temukan dan perbaiki kerentanan tersebut.",
+            code = """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="./style/style.css">
+</head>
+
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="loginForm" action="login.php" method="POST">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="login-btn">Login</button>
+            <p class="error-message" id="errorMessage"></p>
+        </form>
+    </div>
+
+    <?php
+    session_start();
+    // Todo : Implement security headers to protect against clickjacking attacks and XSS (A05:2021 – Security Misconfiguration)
+    header ("X-XSS-Protection: 0");
+    header("Access-Control-Allow-Origin: *");
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Todo : Make a secure password when connecting to a database ! (A07:2021 – Identification and Authentication Failures)
+    $conn = new mysqli('localhost', 'root', '', 'fuln');
+    
+    if ($conn->connect_error) {
+        die('Connection failed: ' . $conn->connect_error);
+    }
+
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    // Todo : Implement prepare statements to prevent SQL Injection! (A03:2021 – Injection)
+    $result = mysql_query("SELECT * FROM users WHERE username = '$username' AND password = '$password'");
+    
+    // Todo : Fix the broken rate-limiting mechanism that temporarily blocks user login after 5 attempts! (A07:2021 – Identification and Authentication Failures)
+    $lockout_time= 900;
+    $max_attempts = 5;
+
+    if (!isset($_SESSION['login_attempts'])) {
+        $_SESSION['login_attempts'] = 5;
+        $_SESSION['last_attempt_time'] = time();
+    }
+
+    if ($_SESSION['login_attempts'] >= $max_attempts) {
+        if (time() - $_SESSION['last_attempt_time'] < $lockout_time) {
+            die("Too many failed login attempts. Try again later :)");
+        }
+    }
+    
+    if ($result->num_rows > 0) {
+        header('Location: flag.php?username=' . urlencode(htmlspecialchars($username)));
+        $_SESSION['login_attempts'] = 0;
+        exit();
+    } else {
+        // Todo : make sure the page is not vulnerable to XSS! (A03:2021 – Injection)
+        echo "<pre>Login for " . $_POST['username'] . " is invalid!</pre>";
+        $_SESSION['login_attempts']++;
+        error_log("unsucessfull login for $username with password $password!");
+    }
+
+    $conn->close();
+    }
+    ?>
+
+</body>
+</html>
+""",
+        )],
+    )
+
+    db.session.add(exam)
+    try:
+        db.session.commit()
+    except sqlerror:
+        db.session.rollback()
+        print(f'An error occured: {sqlerror}')
+
+    print("Exams Seeded")
 
 def seed_all():
     seed_users()
     seed_courses()
     seed_modules()
     seed_contents()
+    seed_exams()
     seed_enrollments()
     seed_enrollments_modules()
     seed_users_contents()
-    seed_exams()
     db.session.close()
     click.echo('Seeded the database')
 
@@ -1842,31 +1948,21 @@ def test_query(id):
         .where(Users.uuid == user_uuid)
         .where(Courses.course_name == course_name)
     ).first()
-    module_id = db.session.scalar(
-        db.select(Modules.id)
-        .where(Modules.module_name == module_name)
-    )
-    course_id = db.session.scalar(
-        db.select(Courses.id)
-        .where(Courses.course_name == course_name)
-    )
-    # stmt = (
-    #     db.select()
+    # module_id = db.session.scalar(
+    #     db.select(Modules.id)
+    #     .where(Modules.module_name == module_name)
     # )
-    # results = db.session.scalar(query)
-    # print(query)
-    # print(results.first)
-    # print(results.pages)
-    # print(results.last)
-    # print(results.total)
-    # print(type(content.question.options.pop()))
-    # print(content)
-    from sqlalchemy.orm.collections import InstrumentedList
-    from typing import List
-    # for content, in results:
-    #     print(content.type)
-    #     if content.image:
-    #         print(content.image)
+    # course_id = db.session.scalar(
+    #     db.select(Courses.id)
+    #     .where(Courses.course_name == course_name)
+    # )
+    result = db.session.execute(
+        db.select(Exams.label("exam"), Enrollments)
+        .join(Enrollments)
+        .where(Enrollments.id == enrollment_id)
+    ).first()
+    print(result)
+    print(result.exam)
 
 @click.command('seed')
 def seed_command():

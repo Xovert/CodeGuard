@@ -1,0 +1,19 @@
+rules:
+  - id: insecure-http-headers
+    languages:
+      - php
+    pattern-either:
+      - pattern: |
+          header("X-XSS-Protection: 0")
+      - pattern: |
+          header("X-Frame-Options: SAMEORIGIN")
+      - pattern: |
+          header("X-Frame-Options: ALLOW-FROM *")
+      - pattern: |
+          header("Strict-Transport-Security: 0")
+    message: >
+      Insecure HTTP header detected. Review your headers to follow best
+      practices.
+    metadata:
+      type: codeguard.insecure
+    severity: LOW

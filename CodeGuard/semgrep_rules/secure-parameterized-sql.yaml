@@ -1,0 +1,20 @@
+rules:
+  - id: secure-parameterized-sql
+    languages:
+      - php
+    severity: LOW
+    message: |
+      Congratulations! You made a secure SQL query in PHP!
+    metadata:
+      type: codeguard.secure
+    pattern-either:
+      - pattern: |
+          $X = "...";
+          $Y = $Z->prepare($X);
+      - pattern: |
+          $X = "... WHERE ... = :param";
+          $Y = $Z->prepare($X);
+      - pattern: |
+          $Y = $Z->prepare(...);
+      - pattern: |
+          $X = "... WHERE ... = ?";

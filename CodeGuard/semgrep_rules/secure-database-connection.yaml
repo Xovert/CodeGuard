@@ -1,0 +1,24 @@
+rules:
+  - id: secure-database-connection
+    languages:
+      - php
+    patterns:
+      - pattern-either:
+          - pattern: |
+              $X = new $F('...', '...', '...', '...');
+          - pattern: |
+              $X = $F('...', '...', '...', '...');
+      - pattern-not: |
+          $X = new $F('...', '...', null, '...');
+      - pattern-not: |
+          $X = new $F('...', '...', '', '...');
+      - pattern-not: |
+          $X = $F('...', '...', '', '...');
+      - pattern-not: |
+          $X = $F('...', '...', null, '...');
+    message: |
+      Congratulations! You just made a secure database connection detected!
+    metadata:
+      type: codeguard.secure
+      
+    severity: LOW

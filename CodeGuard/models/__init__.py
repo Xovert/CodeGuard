@@ -1,6 +1,6 @@
 from flask import current_app as app
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Optional, List
 from sqlalchemy import (
     Boolean, 
@@ -23,7 +23,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import column_property, validates, sessionmaker
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from CodeGuard.models.enums import CourseStatus, CompletionStatus
+from CodeGuard.models.enums import CourseStatus, CompletionStatus, Severity
 
 db = SQLAlchemy()
 
@@ -41,7 +41,7 @@ class Users(db.Model):
     confirmed_on: Mapped[datetime] = mapped_column(DateTime, nullable=True, default=None)
     registration_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
 
-    enrollment: Mapped[List["Enrollments"]] = relationship(
+    enrollments: Mapped[List["Enrollments"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
 
@@ -53,14 +53,14 @@ class Courses(db.Model):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     course_name: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
-    duration: Mapped[float] = mapped_column(Float, nullable=False)
+    duration: Mapped[int] = mapped_column(Integer, nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
     status: Mapped[CourseStatus] = mapped_column(Enum(CourseStatus),nullable=True, default=CourseStatus.DRAFT)
 
     module: Mapped[List["Modules"]] = relationship(
         back_populates="course", cascade="all, delete-orphan"
     )
-    enrollment: Mapped[List["Enrollments"]] = relationship(
+    enrollments: Mapped[List["Enrollments"]] = relationship(
         back_populates="course", cascade="all, delete-orphan"
     )
     exams: Mapped[List["Exams"]] = relationship(
@@ -82,11 +82,19 @@ class Enrollments(db.Model):
     progress: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     last_accessed_time: Mapped[datetime.time] = mapped_column(Time, nullable=False)
     status: Mapped[CompletionStatus] = mapped_column(Enum(CompletionStatus), nullable=False, default=CompletionStatus.NOT_STARTED)
+    exam_id: Mapped[Optional[int]] = mapped_column(ForeignKey("exams.id", ondelete='CASCADE'), nullable=True, default=None)
+    score: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
-    user: Mapped["Users"] = relationship(back_populates="enrollment")
-    course: Mapped["Courses"] = relationship(back_populates="enrollment")
+    user: Mapped["Users"] = relationship(back_populates="enrollments")
+    course: Mapped["Courses"] = relationship(back_populates="enrollments")
     enrollments_modules: Mapped[List["EnrollmentsModules"]] = relationship(
         back_populates="enrollment", cascade="all, delete-orphan"
+    )
+    exam: Mapped["Exams"] = relationship(
+        back_populates="enrollments"
+    )
+    exams_results: Mapped[List['ExamsResults']] = relationship(
+        back_populates="enrollment", cascade='all, delete-orphan'
     )
 
     __table_args__ = (
@@ -216,8 +224,9 @@ class Exams(db.Model):
     __tablename__ = "exams"
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    duration: Mapped[float] = mapped_column(Float, nullable=False)
+    _duration: Mapped[int] = mapped_column(Integer, nullable=False)
     course_id: Mapped[int] = mapped_column(ForeignKey("courses.id"), nullable=False)
+    todo: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
     questions: Mapped[List["ExamQuestions"]] = relationship(
         back_populates='content', cascade='all, delete-orphan'
@@ -225,9 +234,53 @@ class Exams(db.Model):
     course: Mapped["Courses"] = relationship(
         back_populates="exams"
     )
+    enrollments: Mapped[List["Enrollments"]] = relationship(
+        back_populates="exam"
+    )
+    exams_results: Mapped[List["ExamsResults"]] = relationship(
+        back_populates="exam", cascade='all, delete-orphan'
+    )
+    
+    @hybrid_property
+    def duration(self) -> timedelta:
+        return timedelta(seconds=self._duration)
+    
+    @duration.inplace.setter
+    def _duration_setter(self, value: timedelta | int) -> None:
+        if isinstance(value, timedelta):
+            self._duration = value.total_seconds()
+        else:
+            self._duration = value
+
+    @duration.inplace.expression
+    @classmethod
+    def _duration_expression(cls):
+        return cls._duration
 
     def __repr__(self):
         return f'Exams: duration:{self.duration}'
+    
+class ExamsResults(db.Model):
+    __tablename__ = "exams_results"
+    
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    enrollment_id: Mapped[int] = mapped_column(ForeignKey('enrollments.id'), nullable=False)
+    exam_id: Mapped[int] = mapped_column(ForeignKey('exams.id'), nullable=False)
+    check_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True, default=None)
+    lines: Mapped[Optional[str]] = mapped_column(Text, nullable=True, default=None)
+    message: Mapped[Optional[str]] = mapped_column(Text, nullable=True, default=None)
+    severity: Mapped[Severity] = mapped_column(Enum(Severity), nullable=True, default=None)
+
+    enrollment: Mapped["Enrollments"] = relationship(
+        back_populates="exams_results"
+    )
+    exam: Mapped["Exams"] = relationship(
+        back_populates="exams_results"
+    )
+
+
+    def __repr__(self):
+        return f'exam_id: {self.exam_id}, enrollment_id: {self.enrollment_id}, check_id: {self.check_id}'
 
 
 class Questions(db.Model):
@@ -264,7 +317,7 @@ class ChallengeQuestions(Questions):
     __mapper_args__ = {
         "polymorphic_identity": "challenge",
     }
-    content_id: Mapped[int] = mapped_column(ForeignKey("contents.id"))
+    content_id: Mapped[Optional[int]] = mapped_column(ForeignKey("contents.id"), nullable=True)
     content: Mapped["ContentsChallenges"] = relationship(
         back_populates='question'
     )

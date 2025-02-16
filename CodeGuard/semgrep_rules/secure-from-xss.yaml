@@ -1,0 +1,18 @@
+rules:
+  - id: secure-from-xss
+    languages:
+      - php
+    severity: LOW
+    message: |
+      Congratulations! You are secured from XSS attacks!
+    metadata:
+      type: codeguard.secure
+    patterns:
+      - pattern-inside: |
+          htmlspecialchars(...)
+      - pattern-either:
+          - pattern: $_GET
+          - pattern: $_REQUEST
+          - pattern: $_POST
+          - pattern: $_COOKIE
+          - pattern: $_FILES

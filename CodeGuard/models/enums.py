@@ -18,3 +18,27 @@ class CompletionStatus(enum.Enum):
             self.COMPLETE: self.COMPLETE,
         }[self]
 
+class Severity(enum.Enum):
+    LOW = "LOW"
+    MEDIUM = "MEDIUM"
+    HIGH = "HIGH"
+    CRITICAL = "CRITICAL"
+    ERROR = "ERROR"
+
+    @classmethod
+    def from_str(cls, value):
+        if value == "":
+            return cls.ERROR
+     
+        mapping = {
+            "INFO": cls.LOW,   
+            "WARNING": cls.MEDIUM, 
+            "ERROR": cls.HIGH      
+        }
+        if value in mapping:
+            return mapping[value]
+
+        try:
+            return cls(value)
+        except ValueError:
+            raise ValueError(f"Invalid severity value: {value}")
