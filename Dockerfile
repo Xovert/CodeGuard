@@ -35,7 +35,8 @@ RUN useradd \
     --shell /bin/bash \
     -u 1001 \
     codeguard \
-    && chown -R 1001:1001 /opt/CodeGuard \
+    && mkdir -p /opt/CodeGuard/instance \
+    && chown -R 1001:1001 /opt/CodeGuard/instance /opt/CodeGuard \
     && chmod +x /opt/CodeGuard/entrypoint.sh
 
 COPY --chown=1001:1001 --from=build /opt/venv /opt/venv

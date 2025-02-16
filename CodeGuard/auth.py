@@ -79,6 +79,7 @@ def register():
                 flash(error)
                 db.session.rollback()
                 return redirect(url_for('auth.register'))
+
             
             token = generate_token(email)
             confirm_url = url_for('auth.verify', token=token, _external=True)

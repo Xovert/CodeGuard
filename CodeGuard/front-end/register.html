@@ -21,7 +21,7 @@
                     <p>Already have an account? Log in <a href="{{url_for('auth.login')}}">here</a></p>
                 </div>
                 {% with form = Forms.auth.RegisterForm() %}
-                <form action="" class="d-flex flex-column" method="POST">
+		<form action="{{ url_for("auth.register") }}" class="d-flex flex-column" method="POST">
                     {{ form.csrf_token() }}
                     <div>
                         {{ form.email.label(class="form-label") }}
@@ -48,7 +48,7 @@
                         {{ form.rpt_password(class="form-control",id="rpt_password") }}
                         <span id="rpt_passwordError" class="error-message"></span>
                     </div>
-                    <button id="button" class="btn rounded-pill">Create an account</button>
+                    <button type="submit" id="button" class="btn rounded-pill">Create an account</button>
                 </form>
                 {% endwith %}
             </div> 

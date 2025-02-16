@@ -7,12 +7,14 @@ WORKER_TEMP_DIR=${WORKER_TEMP_DIR:-/dev/shm}
 SECRET_KEY=${SECRET_KEY:-}
 SECURITY_PASSWORD_SALT=${SECURITY_PASSWORD_SALT:-}
 
-if [ -z "$SECRET_KEY" ]; then
-    SECRET_KEY=$(head -c 64 /dev/urandom | base64 | tr -d '\n')
+if [ ! -f '.secret_key' ] && [ -z "$SECRET_KEY" ]; then
+    head -c 64 /dev/urandom > .secret_key
+    chmod 600 .secret_key
 fi
 
-if [ -z "$SECURITY_PASSWORD_SALT" ]; then
-    SECURITY_PASSWORD_SALT=$(head -c 64 /dev/urandom | base64 | tr -d '\n')
+if [ ! -f '.security_salt' ] && [ -z "$SECURITY_PASSWORD_SALT" ]; then
+    head -c 64 /dev/urandom > .security_salt
+    chmod 600 .security_salt
 fi
 
 # Initialize database
@@ -21,8 +23,10 @@ flask db upgrade
 flask seed
 
 # Start CTFd
-exec gunicorn 'CodeGuard:create_app()' \
-    --bind '0.0.0.0:8000' \
-    --workers $WORKERS \
-    --worker-tmp-dir "$WORKER_TEMP_DIR" \
-    --worker-class "$WORKER_CLASS"
+#exec gunicorn 'CodeGuard:create_app()' \
+#    --bind '0.0.0.0:5000' \
+#    --workers $WORKERS \
+#    --worker-tmp-dir "$WORKER_TEMP_DIR" \
+#    --worker-class "$WORKER_CLASS"
+
+exec flask run -h 0.0.0.0 -p 5000 --debug

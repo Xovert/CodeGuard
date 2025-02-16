@@ -52,6 +52,42 @@ def empty_str_cast(value, default=None):
         return default
     return value
 
+def get_secret_key():
+    try:
+        with open(".secret_key", "rb") as secret:
+            secret_key = secret.read()
+    except OSError:
+        secret_key = None
+
+    if not secret_key:
+        secret_key = os.urandom(64)
+        try:
+            with open(".secret_key", "wb") as secret:
+                secret.write(secret_key)
+                secret.flush()
+        except OSError:
+            pass
+
+    return secret_key
+
+def get_security_password_salt():
+    try:
+        with open(".security_salt", "rb") as salt:
+            security_salt = salt.read()
+    except OSError:
+        security_salt = None
+
+    if not security_salt:
+        security_salt = os.urandom(64)
+        try:
+            with open(".security_salt", "wb") as secret:
+                secret.write(security_salt)
+                secret.flush()
+        except OSError:
+            pass
+    
+    return security_salt
+
 
 config_ini = configparser.ConfigParser(interpolation=EnvInterpolation())
 config_ini.optionxform = str
@@ -61,9 +97,9 @@ config_ini.read(path)
 
 class ProductionConfig(object):
     # Server
-    SECRET_KEY: str = empty_str_cast(config_ini["server"]["SECRET_KEY"])
+    SECRET_KEY: str = empty_str_cast(config_ini["server"]["SECRET_KEY"]) or get_secret_key()
 
-    SECURITY_PASSWORD_SALT: str = empty_str_cast(config_ini["server"]["SECURITY_PASSWORD_SALT"])
+    SECURITY_PASSWORD_SALT: str = empty_str_cast(config_ini["server"]["SECURITY_PASSWORD_SALT"]) or get_security_password_salt()
 
     # Cookie
     SESSION_COOKIE_SECURE: bool = process_boolean_str(config_ini["server"]["SESSION_COOKIE_SECURE"]) or False
