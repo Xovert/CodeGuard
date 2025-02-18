@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block title %}Add New Module{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/admin_course.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/navbar_footer_admin.css') }}">
+<script src="{{ url_for('static', filename='js/new_course_content.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="content">
+    {% with form = Forms.course.NewModuleForm() %}
+    <!-- {{ url_for('admin.add_module') }} -->
+    <form action="" class="course-content d-flex flex-column" method="post" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        <div class="title">
+            <h1>New Module for "{{ course_name }}"</h1>
+        </div>
+        <span class="warning-msg">Please beware that once you leave this form without submitting, you will need to re-enter all of the fields. We recommend you to submit the form as it is and edit it later.</span>
+        <div class="module d-flex align-items-center">
+            {{ form.module.label(class="d-inline-block") }}
+            {{ form.module(id="module-name", class="d-inline-block") }}
+            <!-- <label for="module-name" class="d-inline-block">Module Name</label>
+            <input type="text" class="d-inline-block" id="module-name" placeholder="Enter the module name here..."> -->
+        </div>
+
+        <!-- LEARNING -->
+        <div class="page study">
+            <p class="d-flex accordion">Page 1
+                <button type="button" class="ms-auto icon-trash"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+                <button type="button" class="up"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                <button type="button" class="down"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
+            </p>
+            <div class="panel">
+                <div class="type">
+                    <div class="type">
+                        <label class="d-inline-block">Type</label>
+                        <span class="content-type d-inline-block">Learning</span>
+                    </div>
+                </div>
+                <div class="learning-pic position-relative">
+                    <label for="{{ form.learning[0].image.id }}">Picture</label>
+                    <label for="{{ form.learning[0].image.id }}" class="input-file">
+                        <img src="{{ url_for('static', filename='assets/icon_upload.svg') }}" alt="">
+                        Add File
+                    </label>
+                    <span class="filename">No file chosen</span>
+                    <input type="file" id="{{ form.learning[0].image.id }}" name="{{ form.learning[0].image.name }}" class="input-file-invi" required>
+                    <p class="error-message error-course-logo">Error</p>
+                    <img id="" src="#" alt="Your image" class="preview">
+                </div>
+                <div class="content-learning">
+                    <label for="{{ form.learning[0].content_body.id }}">Content</label>
+                    <textarea name="{{ form.learning[0].content_body.name }}" id="{{ form.learning[0].content_body.id }}" rows="4" placeholder="Enter learning content here..." required></textarea>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CHALLENGE CODE -->
+        <div class="page study">
+            <p class="d-flex accordion">Page 2
+                <button type="button" class="ms-auto icon-trash"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+                <button type="button" class="up"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                <button type="button" class="down"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
+            </p>
+            <div class="panel">
+                <div class="type">
+                    <label class="d-inline-block">Type</label>
+                    <span class="content-type d-inline-block">Challenge Code</span>
+                </div>
+                <div class="question">
+                    <label for="{{ form.challenge_code[0].question_code.question.id }}">Question</label>
+                    <textarea id="{{ form.challenge_code[0].question_code.question.id }}" rows="2" placeholder="Enter challenge question here..." required></textarea>
+                </div>
+                <div class="code">
+                    <label for="{{ form.challenge_code[0].question_code.code.id }}">Code</label>
+                    <div class="code-playground">
+                        <textarea class="code-area" id="{{ form.challenge_code[0].question_code.code.id }}" rows="10"
+                            placeholder="Enter challenge code here..." required></textarea>
+                        <span class="language-span">PHP</span>
+                        <button class="run-code d-flex align-items-center">
+                            <span>RUN</span>
+                            <img src="{{ url_for('static', filename='assets/icon_run.svg') }}" alt="">
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CHALLENGE OPTION -->
+        <div class="page study">
+            <p class="d-flex accordion">Page 3
+                <button type="button" class="ms-auto icon-trash"><img
+                        src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+                <button type="button" class="up"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}"
+                        alt=""></button>
+                <button type="button" class="down"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}"
+                        alt=""></button>
+                <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
+            </p>
+            <div class="panel">
+                <div class="type">
+                    <label class="d-inline-block">Type</label>
+                    <span class="content-type d-inline-block">Challenge Option</span>
+                </div>
+                <div class="question">
+                    <label for="{{ form.challenge_options[0].question_code.question.id }}">Question</label>
+                    <textarea id="{{ form.challenge_options[0].question_code.question.id }}" rows="2" placeholder="Enter challenge question here..." required></textarea>
+                    <!-- <label for="option-question-3">Question</label>
+                    <textarea id="option-question-3" rows="2" placeholder="Enter challenge question here..."
+                        required></textarea> -->
+                </div>
+                <div class="code">
+                    <label for="{{ form.challenge_options[0].question_code.code.id }}">Code</label>
+                    <div class="code-playground">
+                        <textarea class="code-area" id="{{ form.challenge_options[0].question_code.code.id }}" rows="10" placeholder="Enter challenge code here..."
+                            required></textarea>
+                        <span class="language-span">PHP</span>
+                        <button class="run-code d-flex align-items-center">
+                            <span>RUN</span>
+                            <img src="{{ url_for('static', filename='assets/icon_run.svg') }}" alt="">
+                        </button>
+                    </div>
+                </div>
+                <div class="option">
+                    {{ form.challenge_options[0].options.label }}
+                    {% for subfield in form.challenge_options[0].options %}
+                    {% for value, label in subfield.choices %}
+                    <div class="radio-option">
+                        <input type="radio" id="challenge_options-0-options-options-{{ loop.index }}" name="{{ subfield.name }}" value="{{ value }}">
+                        <label for="{{ id }}" contenteditable="true">{{ label }}</label>
+                        <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
+                    </div>
+                    {% endfor %}
+                    {% endfor %}
+                    <button type="button" class="add-option-btn"><img
+                            src="{{ url_for('static', filename='assets/icon_add_circle.svg') }}" alt="">Add Option</button>
+                </div>
+            </div>
+        </div>
+        <!-- error -->
+        <p id="error-message"></p>
+    
+    
+        <div class="button-wrapper d-flex justify-content-center position-relative">
+            <button type="button" class="btn d-flex add-more-page-btn"><img src="{{ url_for('static', filename='assets/icon_plus.svg') }}"
+                    alt="">Add more page</button>
+            <div class="add-page-options d-none">
+                <p id="learning-option"><button type="button">Learning</button></p>
+                <p id="challenge-code-option"><button type="button">Challenge Code</button></p>
+                <p id="challenge-option-option"><button type="button">Challenge Options</button></p>
+                <p id="exam-code-option"><button type="button">Exam Code</button></p>
+                <p id="exam-option-option"><button type="button">Exam Options</button></p>
+            </div>
+            <button type="button" class="btn" id="add-module-btn">Add Another module</button>
+            <button class="btn submit-btn" id="submit-btn" type="submit">Submit</button>
+        </div>
+    </form>
+
+</div>
+
+
+{% endwith %}
+
+{% endblock %}

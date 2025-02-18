@@ -1,0 +1,250 @@
+#wrapper{
+    min-height: 75vh;
+}
+
+/* TOP */
+.top{
+    width: 100%;
+    padding: 24px 30px 30px;
+}
+
+.back{
+    text-decoration: none;
+    margin-right: 24px;
+}
+
+.back svg{
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+}
+
+.back span{
+    user-select: none;
+    text-decoration: none;
+    color: #AEAEAE;
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 400;
+    margin-left: 5px;
+}
+
+.progress-wrapper span{
+    user-select: none;
+    color: var(--black);
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 400;
+    margin-right: 32px;
+}
+
+.progress-bar-container{
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background-color: var(--gray);
+}
+
+.progress-bar{
+    height: 8px;
+    border-radius: 5px;
+    background-color: var(--green);
+    transition: width 0.3s ease;
+} 
+
+
+/* CONTENT */
+.content-wrapper{
+    padding: 0px 18%;
+}
+
+.content-wrapper img{
+    width: 300px;
+}
+
+.content-wrapper p{
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 400;
+    text-align: left;
+    margin-top: 24px;
+    margin-bottom: 64px;
+}
+
+/* Button */
+.button{
+    font-size: 16px;
+    font-family: Manrope;
+    font-weight: 700;
+
+    border-radius: 10px;
+    border: none;
+    user-select: none;
+    padding: 12px 0px;
+
+    color: var(--White, #FFF);
+}
+
+.button:hover{
+    transform: scale(1.05);
+    transition: 0.3s ease;
+}
+
+.btn-previous{
+    background-color: var(--dark-blue);
+}
+
+.btn-next{
+    background-color: var(--gray);
+}
+
+.btn-next:hover{
+    background-color: var(--green);
+}
+
+.btn-submit {
+    background-color: var(--orange);
+}
+
+.active{
+    display: block;
+}
+
+.disabled{
+    display: none;
+}
+
+
+
+/* IMAGES */
+.content-img {
+    object-fit: contain;
+    min-width: 100%;
+    max-height: 300px;
+}
+
+.disable-select{
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+
+/* RADIO */
+.form-check-label{
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 400;
+    color: rgba(70, 70, 70, 0.6);
+    cursor: pointer;
+    /* margin-left: 8px; */
+}
+
+.label-hover:hover{
+    color: var(--black);
+}
+
+.form-check-input:checked{
+    color: var(--black);
+    background-color: var(--black);
+}
+
+.form-check-input:checked + .form-check-label{
+    color: var(--black);
+}
+
+.error-message {
+    color: red;
+}
+
+/* Input Text Answer */
+.animate-input, .animate-input:focus{
+    outline: none;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 3px;
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.animate-input{
+    border-color: var(--green);
+}
+
+.animate-input:focus{
+    background-color: #f8f8f8;
+    border-color: #f8f8f8 #f8f8f8 var(--green);
+}
+
+/* CODE CHALLENGE IS GAYYYYY */
+.editor-container{
+    display: flex;
+    flex-direction: column;
+    background-color: #263238;
+    color: white;
+    width: 1000px; 
+    position: "relative";
+    padding-bottom: 20px;
+}
+
+.exam-editor-container{
+    display: flex;
+    flex-direction: column;
+    background-color: #263238;
+    color: white;
+    width: 1000px; 
+    position: "relative";
+    padding-bottom: 20px;
+}
+
+#php{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    color: white;
+    text-shadow: 0px 0px 10px #37A2FF,
+    0px 0px 20px #37A2FF,
+    0px 0px 30px #37A2FF,
+    0px 0px 50px #37A2FF;
+    font: Manrope;
+    font-weight: bold;
+}
+
+#javascript{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    color: white;
+    text-shadow: 0px 0px 10px yellow,
+    0px 0px 20px yellow,
+    0px 0px 30px yellow,
+    0px 0px 50px yellow;
+    font: Manrope;
+    font-weight: bold;
+}
+
+#run{
+    display: flex;
+    height: 55px;
+    width: auto;
+}
+
+.reset{
+    display: flex;
+    justify-content:flex-start;
+    align-items: center;
+    text-align: center;
+    color: #37A2FF;
+    font: Manrope;
+    font-weight: bold;
+    width: 60px;
+    height: auto;
+    background-color:#263238 ;
+}
+
+
+

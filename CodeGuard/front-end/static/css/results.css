@@ -1,0 +1,100 @@
+.content{
+    min-height: 100vh;
+    padding: 64px 10%;
+}
+
+h2, span, p{
+    margin: 0px;
+    font-family: Poppins;
+}
+
+.title{
+    margin-bottom: 32px;
+}
+
+.title h1{
+    font-size: 40px;
+    font-weight: 600;
+}
+
+.results{
+    gap: 24px;
+}
+
+.results-title{
+    border-bottom: 1px solid var(--black);
+}
+
+.results-title h2{
+    font-size: 32px;
+    font-weight: 500;
+}
+
+.all-correct{
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.accordion{
+    display: flex;
+    flex-direction: column;
+    row-gap: 16px;
+}
+
+.accordion-item{
+    border: 1px solid black !important;
+    border-radius: 10px !important;
+}
+
+.accordion-collapse {
+    border-top: 1px solid black !important;
+    border-radius: 0 0 10px 10px;
+}
+
+.result-button{
+    background-color: rgba(255, 0, 0, 0.15);
+    font-size: 20px;
+    font-weight: 500;
+    font-family: Poppins;
+}
+
+.accordion-button{
+    border-radius: 10px 10px 0px 0px !important;
+}
+
+.collapsed{
+    border-radius: 10px !important;
+}
+
+.result-button:not(.collapsed){
+    background-color: rgba(255, 0, 0, 0.15);
+}
+
+.result-button:focus{
+    box-shadow: 0 0 0 0.25rem rgba(255, 0, 0, 0.15)
+}
+
+.accordion-collapse{
+    background-color: rgba(255, 0, 0, 0.15);
+}
+
+.panel{
+    row-gap: 8px;
+}
+
+.detail{
+    font-size: 16px;
+    font-weight: 400;
+}
+
+.detail span:first-child{
+    width: 90px;
+}
+
+.detail span:not(:last-child){
+    font-weight: 500;
+}
+
+.remove-select{
+    user-select: none;
+}

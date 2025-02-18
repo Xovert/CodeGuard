@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}Module{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/module_list.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/navbar_footer_admin.css') }}">
+<script src="{{ url_for('static', filename='js/module_list.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+<!-- MODAL -->
+<div class="modal fade" id="delete" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="DeletionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body d-flex flex-column justify-content-center align-items-center">
+                <p class="mt-3 text-center" id="message">Are you sure you want to delete {{ module_name }} module?</p>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="button" class="btn btn-success" id="yes">Yes</button>
+                <button type="button" class="btn btn-secondary" id="no" data-bs-dismiss="modal" data-mdb-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div id="modal-container"></div>
+<div class="content">
+    <form action="">
+        <div class="title">
+            <h1>{{ course_name }}</h1>
+        </div>
+
+        <div class="module-wrapper d-flex flex-column">
+            {% for module_name, order in modules %}
+            <div class="module d-flex align-items-center">
+                <a href="#" class="a-tag flex-fill">
+                    <span class="order">#{{ order }}</span>
+                    <span class="module-name">{{ module_name }}</span>
+                </a>
+                <div class="button-icon-wrapper d-flex">
+                    <button type="button" class="icon-trash ms-auto" data-bs-toggle="modal" data-bs-target="#delete"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+                    <button type="button" class="up"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                    <button type="button" class="down"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                </div>
+            </div>
+            {% endfor %}            
+        </div>
+
+        <!-- if there is module -->
+        {% if  modules %}
+        <div class="button-wrapper d-flex justify-content-center">
+            <button type="button" class="button" id="save-changes" disabled>Save Changes</button>
+            <a href="{{ url_for('admin.add_module', course_name=course_name|urlencode|replace('/', '%2F')) }}" class="button">Add New Module</a>
+        </div>
+
+        <!-- no module -->
+        {% else %}
+        <p class="no-course">There is no module in this course.</p>
+        <div class="button-wrapper d-flex justify-content-center">
+            <a href="{{ url_for('admin.add_module', course_name=course_name|urlencode|replace('/', '%2F')) }}" class="button">Add New Module</a>
+        </div>
+        {% endif %}
+        
+    </form>
+
+
+</div>
+
+{% endblock %}

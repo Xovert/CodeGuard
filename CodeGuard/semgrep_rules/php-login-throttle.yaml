@@ -1,0 +1,14 @@
+rules:
+  - id: php-login-throttle
+    pattern: |
+      
+      if (!isset($_SESSION['login_attempts'])) {
+          $_SESSION['login_attempts'] = 0;
+          $_SESSION['last_attempt_time'] = time();
+      }
+    message: Login throttling detected!
+    metadata:
+      type: codeguard.secure
+    severity: LOW
+    languages:
+      - php

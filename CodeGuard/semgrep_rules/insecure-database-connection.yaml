@@ -1,0 +1,19 @@
+rules:
+  - id: insecure-database-connection
+    languages:
+      - php
+    pattern-either:
+      - pattern: |
+          $X = new $F('...', '...', '', '...');
+      - pattern: |
+          $X = new $F('...', '...', null, '...');
+      - pattern: |
+          $X = $F('...', '...', '', '...');
+      - pattern: |
+          $X = $F('...', '...', null, '...');
+    message: >
+      Insecure database connection detected. Avoid using weak or default
+      credentials such as 'root' with an empty password.
+    metadata:
+      type: codeguard.insecure
+    severity: LOW

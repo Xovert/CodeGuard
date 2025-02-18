@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ course_name }}{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/course_details.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/navbar.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/footer.css') }}">
+<script src="{{ url_for('static', filename='js/course_details.js') }}" defer></script>
+<script src="{{ url_for('static', filename='js/navbar.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+
+<!-- CONTENT -->
+
+<div class="modal fade" id="Exam" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="DeletionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body d-flex flex-column justify-content-center align-items-center">
+                <svg class="mt-3" xmlns="http://www.w3.org/2000/svg" height="50" width="50" viewBox="0 0 512 512"><path fill="#FFD43B" d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480H40c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24V296c0 13.3 10.7 24 24 24s24-10.7 24-24V184c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z" /></svg>
+                <p class="mt-3 text-center">You're about to take the final exam of this course. This exam is going to take 1-2 hours to finish. You cannot pause or stop the timer during the exam.</p>
+            </div>
+            <p class="text-center">Are you sure you want to continue?</p>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Not yet.</button>
+                <button type="submit" class="btn btn-primary btn-confirm">Yes, I'm ready!</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="content">
+    <div class="background"></div>
+    <div class="wrapper-outside">
+        <div class="wrapper-inside">
+            <!-- COURSE TITLE -->
+            <div class="title-wrapper d-flex flex-row">
+                <div class="course-img">
+                    <img src="{{ url_for('views.image', filename=course.new_filename) }}" alt="">
+                </div>
+                <div class="course-details">
+                    <h1 class="course-title">{{ course.course_name }}</h1>
+                    <p class="course-desc">
+                        {{ course.description }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- PROGRESS BAR -->
+            {% if percentage > -1 %}
+            <div class="progress-bar-wrapper rounded-pill d-flex align-items-center justify-content-center">
+                <span class="">{{percentage}}%</span>
+                <div class="progress-bar rounded-pill" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: {{percentage}}%;">
+                </div>
+            </div>
+            {% else %}
+            <!-- ENROLL BUTTON -->
+             <a href="{{ url_for('courses.enroll', course_name=course.course_name|urlencode|replace('/', '%2F')) }}" class="href">
+                 <button type="button" id="enroll-btn">Enroll Now!</button>
+             </a>
+            {% endif %}
+
+
+            <!-- LESSON -->
+            <div class="lesson-wrapper d-flex flex-column">
+                {% for module_name, order, progress, status in modules %}
+                    {% if status == CompletionStatus.COMPLETE %}
+                    <!-- lesson done -->
+                    <div class="lesson learning">
+                        <a href="{{ url_for('courses.contents', course_name=course.course_name|urlencode|replace('/', '%2F'), module_name=module_name|urlencode|replace('/', '%2F'), page=progress|urlencode|replace('/', '%2F')) }}">
+                            <div class="lesson-name">
+                                <span>#{{ order }}</span>
+                                <span>{{ module_name }}</span>
+                            </div>
+                            <div class="icon d-flex align-items-center justify-content-center">
+                                <img src="{{ url_for('static', filename='assets/icon_checkmark.svg')}}" alt="">
+                            </div>
+                        </a>
+                    </div>
+                    {% elif status == CompletionStatus.STARTED %}
+                        <!-- lesson unlocked -->
+                        <div class="lesson learning">
+                            <a href="{{ url_for('courses.contents', course_name=course.course_name|urlencode|replace('/', '%2F'), module_name=module_name|urlencode|replace('/', '%2F'), page=progress|urlencode|replace('/', '%2F')) }}">
+                                <div class="lesson-name">
+                                    <span>#{{ order }}</span>
+                                    <span>{{ module_name }}</span>
+                                </div>
+                                <div class="icon d-flex align-items-center justify-content-center">
+                                    <img src="{{ url_for('static', filename='assets/icon_unlocked.svg') }}" alt="">
+                                </div>
+                            </a>
+                        </div>
+                    {% else %}
+                        <!-- lesson locked -->
+                            <div class="lesson learning locked" style="user-select:none;">
+                                <div class="lesson-name">
+                                    <span>#{{ order }}</span>
+                                    <span>{{ module_name }}</span>
+                                </div>
+                                <div class="icon d-flex align-items-center justify-content-center">
+                                    <img src="{{ url_for('static', filename='assets/icon_locked.svg') }}" alt="">
+                                </div>
+                            </div>
+                    {% endif %}
+                {% endfor %}
+                {% if exam %}
+                    {% if courseComplete %}
+                        <div class="lesson exam">
+                            <a href="{{ exam_url }}" class="href">
+                                <div class="lesson-name">
+                                    <span>Take Exam (Exam Done)</span>
+                                </div>
+                                <div class="icon d-flex align-items-center justify-content-center">
+                                    <img src="{{ url_for('static', filename='assets/icon_checkmark.svg')}}" alt="">
+                                </div>
+                            </a>
+                        </div>
+                    {% elif modulesComplete %}
+                        <div class="lesson exam">
+                            <div type="button" data-bs-toggle="modal" data-bs-target="#Exam" data-record-path="{{ exam_url }}">
+                                <div class="lesson-name">
+                                    <span>Take Exam (Exam Unlocked)</span>
+                                </div>
+                                <div class="icon d-flex align-items-center justify-content-center">
+                                    <img src="{{ url_for('static', filename='assets/icon_unlocked.svg') }}" alt="">
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="lesson exam locked">
+                            <div class="lesson-name">
+                                <span>Take Exam (Exam Locked)</span>
+                            </div>
+                            <div class="icon d-flex align-items-center justify-content-center">
+                                <img src="{{ url_for('static', filename='assets/icon_locked.svg') }}" alt="">
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

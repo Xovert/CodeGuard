@@ -1,0 +1,81 @@
+services:
+  codeguard:
+    build: .
+    user: root
+    restart: always
+    container_name: codeguard
+    environment:
+      DATABASE_URL: mysql+pymysql://codeguard:codeguard@db/CodeGuard?charset=utf8mb4
+      AWS_S3_ENDPOINT_URL: http://minio:9000
+      AWS_S3_BUCKET: codeguard
+      AWS_ACCESS_KEY_ID: minioadmin
+      AWS_SECRET_ACCESS_KEY: minioadmin
+      AWS_S3_REGION: us-east-1
+    volumes:
+      - ./.data/instance:/opt/CodeGuard/instance
+      - .:/opt/CTFd:ro
+    depends_on:
+      - db
+      - minio
+      - postfix
+    networks:
+      default:
+      internal:
+
+  nginx:
+    image: nginx:stable
+    restart: always
+    container_name: nginx
+    volumes:
+      - ./conf/http.conf:/etc/nginx/nginx.conf:ro
+      - ./.data/log/nginx:/var/log/nginx
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - codeguard
+
+  db:
+    image: mariadb:11.6
+    container_name: mariadb
+    restart: always  # Changed from 'unless-stopped' to 'always'
+    environment:
+      MARIADB_ROOT_PASSWORD: codeguard
+      MARIADB_DATABASE: CodeGuard
+      MARIADB_USER: codeguard
+      MARIADB_PASSWORD: codeguard
+      MARIADB_AUTO_UPGRADE: 1
+    volumes:
+      - ./.data/mariadb:/var/lib/mysql  # Host Directory : Container Directory
+    networks:
+      internal:
+    command: [mariadbd, --character-set-server=utf8mb4, --collation-server=utf8mb4_unicode_ci, --wait_timeout=28800, --log-warnings=0]
+
+  minio:
+    image: minio/minio:RELEASE.2024-12-18T13-15-44Z
+    container_name: minio
+    restart: always  # Changed from 'unless-stopped' to 'always'
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    networks:
+      internal:
+    volumes:
+      - ./.data/minio:/data  # Host Directory : Container Directory
+    command: server /data 
+
+  postfix:
+    build:
+      context: ./postfix
+      dockerfile: Dockerfile
+    container_name: postfix
+    restart: always
+    networks:
+      default:
+      internal:
+
+# No need to define external volumes since we're using host directories
+networks:
+    default:
+    internal:
+        internal: true

@@ -1,0 +1,32 @@
+{% extends 'base-no-bars.html' %}
+
+{% block title %}Forgot Password{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/forgot_change_pass.css') }}">
+<!-- <script src="{{ url_for('static', filename='js/index.js') }}" defer></script> -->
+{% endblock %}
+
+{% block content %}
+<div class="content d-flex flex-column justify-content-center align-items-center">
+    <div class="logo">
+        <img src="{{ url_for('static', filename='assets/LogoCodeGuard.svg') }}" alt="">
+    </div>
+    {% with form = Forms.auth.ChangePass() %}
+    <form action="{{ url_for('auth.change_password', token=token) }}" method="POST" class="form">
+        {{ form.csrf_token() }}
+        <h1>Reset Your Password</h1>
+        <p>Enter your new password below and confirm it to reset your account password.</p>
+
+        <div class="input-wrapper d-flex flex-column">
+            {{ form.password(id="password") }}
+            
+            {{ form.rpt_password(id="rpt-password") }}
+        </div>
+        <button type="submit" class="basic-button">
+            Reset Password
+        </button>
+    </form>
+    {% endwith %}
+</div>
+{% endblock %}

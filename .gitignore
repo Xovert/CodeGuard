@@ -7,8 +7,13 @@ instance/
 
 .pytest_cache/
 .coverage
+.data/
 htmlcov/
 
 dist/
 build/
 *.egg-info/
+
+node_modules/
+.secret_key
+.security_salt

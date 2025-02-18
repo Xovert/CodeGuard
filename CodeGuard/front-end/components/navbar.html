@@ -1,0 +1,91 @@
+<!-- NAVBAR -->
+    {% if is_authed() %}
+        {% if is_admin() %}
+        <nav class="sidebar">
+            <div class="logo">
+                <a href="{{ url_for('admin.dashboard') }}">
+                    <img src="{{ url_for('static', filename='assets/LogoCodeGuard.svg') }}"/>
+                </a>
+            </div>
+        
+            <!-- side panel -->
+            <div class="menu">
+                <ul class="d-flex flex-column">
+                    <li>
+                        <img src="{{ url_for('static', filename='assets/icon_home.svg') }}" alt="" fill="red">
+                        <a href="{{ url_for('admin.dashboard') }}">Dashboard</a>
+                    </li>
+                    <li>
+                        <img src="{{ url_for('static', filename='assets/icon_add_circle.svg') }}" alt="">
+                        <a href="{{ url_for('admin.add_course') }}">Add New Course</a>
+                    </li>
+                    <li>
+                        <img src="{{ url_for('static', filename='assets/icon_logout.svg') }}" alt="">
+                        <a href="{{ url_for('auth.logout') }}">Log Out</a>
+                    </li>
+                </ul>
+            </div>
+        
+            <p>Welcome, {{username}} </p>
+        </nav>
+        {% else %}
+        <nav id="navbar" class="sidebar navbar navbar-expand-lg">
+            <div class="container-fluid navbar-wrapper">
+                <a class="navbar-brand" href="{{ url_for('courses.dashboard') }}">
+                    <img src="{{ url_for('static',filename='assets/LogoCodeGuard.svg') }}" alt="">
+                </a>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav d-flex flex-row">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('courses.dashboard') }}">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('user.profile') }}">Profile</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <div class="navbar-nav d-flex flex-row ms-auto">
+                        <li class="sign-up nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.logout') }}">Log Out</a>
+                        </li>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        {% endif %}
+    {% else %}
+    <nav id="navbar" class="sidebar navbar navbar-expand-lg">
+        <div class="container-fluid navbar-wrapper">
+            <a class="navbar-brand" href="{{ url_for('views.index') }}">
+                <img src="{{ url_for('static',filename='assets/LogoCodeGuard.svg') }}" alt="">
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav d-flex flex-row">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('views.index') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#courses">Courses</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact-us">Contact Us</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <div class="navbar-nav d-flex flex-row ms-auto">
+                    <li class="nav-item login">
+                        <a class="nav-link" href="{{ url_for('auth.login') }}">Log In</a>
+                    </li>
+                    <li class="sign-up nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.register') }}">Sign Up</a>
+                    </li>
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% endif %}

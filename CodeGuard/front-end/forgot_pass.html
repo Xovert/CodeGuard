@@ -1,0 +1,31 @@
+{% extends 'base-no-bars.html' %}
+
+{% block title %}Forgot Password{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/forgot_change_pass.css') }}">
+{% endblock %}
+
+{% block content %}
+
+
+<!-- ACTION ITU NTR SEND THE EMAIL? -->
+<div class="content d-flex flex-column justify-content-center align-items-center">
+    <div class="logo">
+        <img src="{{ url_for('static', filename='assets/LogoCodeGuard.svg') }}" alt="">
+    </div>
+    {% with form = Forms.auth.ForgotForm() %}
+    <form action="{{ url_for('auth.forgot_password') }}" method="POST" class="form">
+        {{ form.csrf_token() }}
+        <h1>Reset Your Password</h1>
+        <p>Enter your email address below, and we’ll send you a link to reset your password.</p>
+        <div class="input-wrapper">
+            {{ form.email(id="email") }}
+        </div>
+        <button type="submit" class="basic-button">
+            Send Email
+        </button>
+    </form>
+    {% endwith %}
+</div>
+{% endblock %}

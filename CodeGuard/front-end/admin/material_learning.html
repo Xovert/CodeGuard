@@ -1,0 +1,31 @@
+<!-- LEARNING -->
+<div class="page study">
+    <p class="d-flex accordion">New Page
+        <button type="button" class="ms-auto icon-trash"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+        <button type="button" class="up"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+        <button type="button" class="down"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+        <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
+    </p>
+    <div class="panel">
+        <div class="type">
+            <label class="d-inline-block">Type</label>
+            <span class="content-type d-inline-block">Learning</span>
+        </div>
+        <div class="learning-pic position-relative">
+            <label for="learning-pic_1">Picture</label>
+            <label for="learning-pic_1" class="input-file">
+                <img src="{{ url_for('static', filename='assets/icon_upload.svg') }}" alt="">
+                Add File
+            </label>
+            <span class="filename">No file chosen</span>
+            <input type="file" id="learning-pic_1" class="input-file-invi" accept=".jpg, .jpeg, .png, .svg" required>
+            <p class="error-message error-course-logo">Error</p>
+            <img id="" src="#" alt="Your image" class="preview">
+        </div>
+        <div class="content-learning">
+            <label for="content-learning-1">Content</label>
+            <textarea id="content-learning-1" rows="4"
+                placeholder="Enter learning content here..." required></textarea>
+        </div>
+    </div>
+</div>

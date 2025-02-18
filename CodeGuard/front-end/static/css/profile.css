@@ -1,0 +1,122 @@
+body {
+    background-color: var(--dark-blue);
+    height: 100vh;
+}
+
+.profile-container {
+    margin-top: 120px;
+    background-color: var(--green);
+}
+
+.title{
+    top: -48px;
+    left: 10%;
+    color: var(--white);
+    font-size: 32px;
+    font-family: Manrope;
+    font-weight: 800;
+}
+
+.content-wrapper{
+    padding: 32px 10% 10% 10%;
+    column-gap: 60px;
+    
+}
+
+.form-wrapper{
+    row-gap: 32px;
+}
+
+.form-profile{
+    padding-bottom: 48px;
+    border-bottom: 1px solid var(--white);
+}
+
+.profile-details {
+    gap: 24px 48px;
+}
+
+.detail{
+    width: calc(50% - 24px);
+}
+
+.detail label, .pw label{
+    color: var(--white);
+    margin-bottom: 8px;
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.detail input, .pw input, .detail p{
+    padding: 8px 10px;
+    color: var(--black);
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 5px;
+    width: 100%;
+    margin: 0;
+    background-color: var(--white);
+}
+
+.btn{
+    padding: 12px 24px;
+    border-radius: 10px;
+    background-color: rgba(15, 41, 47, 0.60);
+    color: white;
+    font-family: Manrope;
+    font-size: 16px;
+    font-weight: 700;
+    margin-top: 32px;
+    border: none;
+    outline: none;
+}
+
+.btn:hover, .btn:active, .btn:focus{
+    background-color: rgba(15, 41, 47, 0.60) !important;
+    color: var(--white) !important;
+    border: none;
+    outline: none;
+}
+
+.btn:disabled{
+    background-color: rgba(15, 41, 47, 0.60);
+    color: var(--white);
+}
+
+
+/* PASSWORDS */
+.change-password{
+    color: var(--white);
+    font-family: Manrope;
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 32px ;
+}
+
+.password-details{
+    row-gap: 24px;
+    margin-bottom: 8px;
+}
+
+.input-wrapper{
+    width: 75%;
+}
+
+.input-wrapper img{
+    top: calc(50% - 12px);
+    right: 10px;
+}
+
+.input-wrapper img:hover{
+    cursor: pointer;
+}
+
+.forgot-password{
+    color: var(--white);
+    font-family: Manrope;
+    font-size: 16px;
+    font-weight: 700;
+}

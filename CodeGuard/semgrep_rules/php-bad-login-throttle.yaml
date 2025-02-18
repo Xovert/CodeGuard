@@ -1,0 +1,20 @@
+rules:
+  - id: php-bad-login-throttle
+    patterns:
+      - pattern: |
+          if (!isset($_SESSION['login_attempts'])) {
+              $_SESSION['login_attempts'] = $V;
+              $_SESSION['last_attempt_time'] = time();
+          }
+      - pattern-not: |
+          if (!isset($_SESSION['login_attempts'])) {
+              $_SESSION['login_attempts'] = 0;
+              $_SESSION['last_attempt_time'] = time();
+          }
+
+    message: fix the login throttle!
+    metadata:
+      type: codeguard.insecure
+    severity: MEDIUM
+    languages:
+      - php

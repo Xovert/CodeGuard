@@ -1,0 +1,35 @@
+rules:
+  - id: secure-http-headers
+    languages:
+      - php
+    pattern-either:
+      - pattern: |
+          header("X-XSS-Protection: 1");
+          header("X-Frame-Options: DENY");
+      - pattern: |
+          header("X-XSS-Protection: 1; mode=block");
+          header("X-Frame-Options: DENY");
+      - pattern: |
+          header("X-XSS-Protection: 1; mode=block");
+          header("X-Frame-Options: SAMEORIGIN");
+      - pattern: |
+          header("X-XSS-Protection: 1");
+          header("X-Frame-Options: SAMEORIGIN");
+      - pattern: |
+          header("X-Frame-Options: DENY");
+          header("X-XSS-Protection: 1");
+      - pattern: |
+          header("X-Frame-Options: DENY");
+          header("X-XSS-Protection: 1; mode=block");
+      - pattern: |
+          header("X-Frame-Options: SAMEORIGIN");
+          header("X-XSS-Protection: 1");
+      - pattern: |
+          header("X-Frame-Options: SAMEORIGIN");
+          header("X-XSS-Protection: 1; mode=block");
+    message: |
+      Congratulations! You just made your HTTP headers secure from Clickjacking and XSS !
+    metadata:
+      type: codeguard.secure
+
+    severity: LOW

@@ -1,0 +1,103 @@
+.content{
+    height: calc(100vh - 48px);
+    padding: 32px 64px 32px 344px;
+    overflow-y: scroll;
+}
+
+.title{
+    border-bottom: 1px solid black;
+    margin-bottom: 24px;
+}
+
+.title h1{
+    font-family: Manrope;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0px;
+}
+
+.module-wrapper{
+    gap: 16px;
+}
+
+.module{
+    /* padding: 8px 12px; */
+    background-color: var(--medium-light-green);
+    border-radius: 10px;
+    border: 1px solid rgba(15, 41, 47, 0.50);
+    text-decoration: none;
+    color: var(--black);
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 500;
+    column-gap: 4px;
+}
+
+.module span:first-child{
+    margin-right: 12px;
+}
+
+.module button{
+    border: none;
+    background-color: transparent;
+    padding: 0px;
+}
+
+.up img{
+    rotate: 180deg;
+}
+
+.a-tag{
+    text-decoration: none;
+    color: var(--black);
+    padding: 8px 0px 8px 12px;
+}
+
+.button-icon-wrapper{
+    column-gap: 4px;
+    padding: 8px 12px 8px 0px;
+}
+
+.button-wrapper{
+    column-gap: 32px;
+    margin-top: 24px;
+}
+
+.button{
+    border-radius: 10px;
+    border: 2px solid var(--black);
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 500;
+    background-color: transparent;
+    padding: 12px;
+    text-decoration: none;
+    color: var(--black);
+}
+
+.button:hover{
+    border: 2px solid var(--black);
+    box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.16), 0px 3px 6px 0px rgba(0, 0, 0, 0.23);
+}
+
+.button:disabled {
+    pointer-events: none; /* Disable hover and other interactions */
+    opacity: 0.5; /* Optional: visually indicate the button is disabled */
+}
+
+.button:disabled:hover {
+    box-shadow: none; /* Remove hover effect for disabled buttons */
+}
+
+.no-course{
+    font-size: 16px;
+    font-family: Poppins;
+    font-weight: 400;
+    color: var(--black);
+}
+
+/* @media (prefers-reduced-motion: reduce) {
+    .fade {
+        transition: opacity .15s;
+    }
+} */
