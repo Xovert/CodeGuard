@@ -7,6 +7,7 @@ from CodeGuard.models import (
     Users,
     CourseImages,
 )
+from CodeGuard.models.enums import CourseStatus
 
 
 def get_catalogue():
@@ -19,6 +20,7 @@ def get_catalogue():
             .join(Users)
             .where(Users.id == g.user_id)
         ))
+        .where(Courses.status == CourseStatus.PUBLISHED)
     ).all()
     return courses
 

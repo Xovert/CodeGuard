@@ -100,7 +100,8 @@ def next(course_name, module_name):
     
     if content.check() == CompletionStatus.COMPLETE:
         next_module = detail.get_next_module()
-        detail.unlock_module(next_module)
+        if next_module:
+            detail.unlock_module(next_module)
 
     if not next:
         return redirect(url_for(

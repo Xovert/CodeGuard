@@ -11,13 +11,13 @@ services:
       AWS_ACCESS_KEY_ID: minioadmin
       AWS_SECRET_ACCESS_KEY: minioadmin
       AWS_S3_REGION: us-east-1
+      SESSION_COOKIE_SECURE: true
     volumes:
       - ./.data/instance:/opt/CodeGuard/instance
-      - .:/opt/CTFd:ro
+      - .:/opt/CodeGuard:ro
     depends_on:
       - db
       - minio
-      - postfix
     networks:
       default:
       internal:
@@ -29,6 +29,7 @@ services:
     volumes:
       - ./conf/http.conf:/etc/nginx/nginx.conf:ro
       - ./.data/log/nginx:/var/log/nginx
+      - /etc/letsencrypt:/etc/letsencrypt:ro
     ports:
       - 80:80
       - 443:443
@@ -63,16 +64,6 @@ services:
     volumes:
       - ./.data/minio:/data  # Host Directory : Container Directory
     command: server /data 
-
-  postfix:
-    build:
-      context: ./postfix
-      dockerfile: Dockerfile
-    container_name: postfix
-    restart: always
-    networks:
-      default:
-      internal:
 
 # No need to define external volumes since we're using host directories
 networks:

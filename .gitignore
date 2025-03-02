@@ -17,3 +17,4 @@ build/
 node_modules/
 .secret_key
 .security_salt
+config.ini
