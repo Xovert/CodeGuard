@@ -23,9 +23,8 @@ flask db upgrade
 flask seed
 
 # Start CTFd
-exec gunicorn 'CodeGuard:create_app()' \
+exec gunicorn "CodeGuard:create_app()" \
     --bind '0.0.0.0:5000' \
     --workers $WORKERS \
     --worker-tmp-dir "$WORKER_TEMP_DIR" \
-    --worker-class "$WORKER_CLASS"
-
+    --worker-class "$WORKER_CLASS" \

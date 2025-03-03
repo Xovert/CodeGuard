@@ -8,14 +8,10 @@ from flask_migrate import upgrade
 from datetime import timedelta
 from flask_mail import Mail
 
-def create_app(config="CodeGuard.config.config", test_config=None, instance_path=None):
+def create_app(config="CodeGuard.config.production", instance_path=None):
     # create and config the app
     app = Flask(__name__, instance_relative_config=True, instance_path=instance_path, static_folder='front-end/static')
-    
-    if test_config is not None:
-        app.config.from_object(test_config)
-    else:
-        app.config.from_object(config)
+    app.config.from_object(config)
 
     try:
         os.makedirs(app.instance_path)

@@ -8,7 +8,7 @@ from werkzeug.datastructures.file_storage import FileStorage
 from sqlalchemy.exc import IntegrityError as sqlerror
 from freezegun import freeze_time
 from sqlalchemy.orm import joinedload, lazyload, selectinload
-from flask_migrate import upgrade, migrate, downgrade, stamp
+from flask_migrate import upgrade, migrate, downgrade, stamp, current
 from flask_sqlalchemy.pagination import Pagination
 from sqlalchemy import func
 
@@ -1964,9 +1964,23 @@ def test_query(id):
     print(result)
     print(result.exam)
 
+def is_seeded() -> bool:
+    admin_exists = db.session.scalar(
+        db.select(Users)
+        .where(Users.id == 1)
+        .where(Users.username == 'admin')
+    )
+    if admin_exists:
+        return True
+    else:
+        return False
+
 @click.command('seed')
 def seed_command():
-    seed_all()
+    if not is_seeded():
+        seed_all()
+        return;
+    print('Database already seeded!')
 
 @click.command('reset')
 def reset_command():

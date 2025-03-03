@@ -14,7 +14,7 @@ services:
       SESSION_COOKIE_SECURE: true
     volumes:
       - ./.data/instance:/opt/CodeGuard/instance
-      - .:/opt/CodeGuard:ro
+      - .:/opt/CodeGuard:rw
     depends_on:
       - db
       - minio

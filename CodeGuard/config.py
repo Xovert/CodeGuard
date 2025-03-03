@@ -181,5 +181,5 @@ class DevelopmentConfig(object):
     SEMGREP_APP_TOKEN = ""
     SEMGREP_PATH = os.path.join(pathlib.Path().resolve(), 'semgrep_rules')
 
-config = ProductionConfig()
-devconfig = DevelopmentConfig()
+production = ProductionConfig()
+development = DevelopmentConfig()
