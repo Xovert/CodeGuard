@@ -368,32 +368,34 @@ def detail_module(course_name, module_name):
         # course = detail.get_course(course_name)
         module_id = detail.get_module_id(module_name)
         contents = detail.get_contents(module_id)
-        print(f"Contents: {contents}")
+        # print(f"Contents: {contents}")
 
         form = ModuleForm()
         form.module.data = module_name
         for i, data in enumerate(contents):
             # form.learning[0].order = content.order
-            print("masuk for")
-            print(f"Data: {data}")
+            # print("masuk for")
+            # print(f"Data: {data}")
             # (Contents: module_id:20 order=1 type=learning, '27d693ec-6c6d-4176-98f3-c8db2fcf0e5a-010.png', '010.png')
             # print(content["order"])
             content = data[0]
             if content.type == "learning":
                 # print(content.order)
-                print("learning detected")
-                print(i, content.order, content.type, content.content_body)
+                # print("learning detected")
+                # print(i, content.order, content.type, content.content_body)
                 # 0 1 learning testing learning content
+                form.content[i].content_id.data = content.id
                 form.content[i].order.data = content.order
                 form.content[i].content_type.data = content.type
                 form.content[i].content_body.data = content.content_body
                 form.content[i].new_filename.data = data[1]
                 form.content[i].original_filename.data = data[2]
-                print("update learning done")
+                # print("update learning done")
             elif content.type == 'challenges':
-                print("challenge detected")
+                # print("challenge detected")
                 challenge_data = detail.get_challenge_data(content.id)
-                print(f"Challenge data: {challenge_data}")
+                # print(f"Challenge data: {challenge_data}")
+                form.content[i].content_id.data = content.id
                 form.content[i].order.data = content.order
                 form.content[i].content_type.data = content.type
                 form.content[i].question.data = challenge_data.question_text
@@ -402,7 +404,7 @@ def detail_module(course_name, module_name):
                 form.content[i].original_filename.data = data[2]
 
                 options = detail.get_options(challenge_data.id)
-                print(f"Options: {options}")
+                # print(f"Options: {options}")
                 # Options: [('op1', False), ('op2', False), ('op3', False), ('op5 skip op 4 (ini bener)', True)]
                 for j, (option_text, is_correct) in enumerate(options):
                     form.content[i].choices[j].choices.data = option_text
@@ -435,9 +437,13 @@ def detail_module(course_name, module_name):
             module_name = form.module.data
 
             # get all existing contents
-            contents = detail.get_contents
-            
+            module_id = detail.get_module_id(module_name)
+            contents = detail.get_contents(module_id)
+            # contents ada [1] = Contents, [2] = new_filename, [3] = original_filename
+            print(contents)
+    
             # loop over each content in the form
+
         return redirect(url_for(
             'admin.modules',  
             course_name=course_name

@@ -393,6 +393,11 @@ class ExistingContentForm(Form):
         validators=[DataRequired()]
     )
     content_type = StringField()
+    content_id = HiddenField(
+        # validators=[
+        #     DataRequired(message="Please specify the content id!")
+        # ]
+    )
     image = FileField(
         label='Picture',
         validators=[

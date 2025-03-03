@@ -630,6 +630,12 @@ function randomizeLearningId(container, randID) {
         contentTextarea.id = contentTextarea.name = `${baseID}-content_body`; // Update the textarea ID
         contentLabel.setAttribute('for', `${baseID}-content_body`); // Update the label's 'for' attribute
     }
+
+    // content_id
+    const contentId = container.querySelector('.content-id');
+    if (contentId){
+        contentId.id = contentId.name = `${baseID}-content_id`
+    }
 }
 
 function randomizeChallengeCodeId(container, randID){
@@ -666,6 +672,12 @@ function randomizeChallengeCodeId(container, randID){
         // const randomID = `challenge_code-${randID}-code`;
         codeTextarea.id = codeTextarea.name = `${baseID}-code`; // Update the textarea ID
         codeLabel.setAttribute('for', `${baseID}-code`); // Update the label's 'for' attribute
+    }
+
+    // content_id
+    const contentId = container.querySelector('.content-id');
+    if (contentId){
+        contentId.id = contentId.name = `${baseID}-content_id`
     }
 }
 
@@ -748,6 +760,11 @@ function randomizeChallengeOptionId(container, randID){
         counter++; // Increment counter
     });
 
+    // content_id
+    const contentId = container.querySelector('.content-id');
+    if (contentId){
+        contentId.id = contentId.name = `${baseID}-content_id`
+    }
 }
 
 function randomizeExamCodeId(container, randID) {
@@ -795,6 +812,12 @@ function randomizeExamCodeId(container, randID) {
         codeTextarea.setAttribute("id", `${baseID}-code`);
         codeTextarea.setAttribute("name", `${baseID}-code`);
         codeLabel.setAttribute("for", `${baseID}-code`);
+    }
+
+    // content_id
+    const contentId = container.querySelector('.content-id');
+    if (contentId){
+        contentId.id = contentId.name = `${baseID}-content_id`
     }
 }
 
@@ -877,6 +900,12 @@ function randomizeExamOptionId(container, randID){
 
         counter++; // Increment counter
     });
+
+    // content_id
+    const contentId = container.querySelector('.content-id');
+    if (contentId){
+        contentId.id = contentId.name = `${baseID}-content_id`
+    }
 }
 
 // document.getElementById("submit-btn").addEventListener("click", function (event) {

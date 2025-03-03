@@ -62,6 +62,7 @@
                     <label for="{{ content.content_body.id }}">Content</label>
                     <textarea name="{{ content.content_body.name }}" id="{{ content.content_body.id }}" rows="4" placeholder="Enter learning content here..." required>{{ content.content_body.data }}</textarea>
                 </div>
+                <input type="hidden" id="{{ content.content_id.id }}" name="{{ content.content_id.name }}" value="{{ content.content_id.data }}" class="content_id">
             </div>
         </div>
 
@@ -127,31 +128,10 @@
                     </div>
                     {% endif %}
                     {% endfor %}
-                    <!-- <label for="{{ content.options.id }}">Options</label>
-                    <div class="radio-option">
-                        <input type="radio" id="option-3-1" name="option-3" value="Option 1" required>
-                        <label for="option-3-1">
-                            <input type="text" id="challenge_options-0-choices-0-choices" name="challenge_options-0-choices-0-choices" value="Option 1" required>
-                        </label>
-                        <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
-                    </div>
-                    <div class="radio-option">
-                        <input type="radio" id="option-3-2" name="option-3" value="Option 2" required>
-                        <label for="option-3-2">
-                            <input type="text" id="challenge_options-0-choices-1-choices" name="challenge_options-0-choices-1-choices" value="Option 2" required>
-                        </label>
-                        <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
-                    </div>
-                    <div class="radio-option">
-                        <input type="radio" id="option-3-3" name="option-3" value="Option 3" required>
-                        <label for="option-3-3">
-                            <input type="text" id="challenge_options-0-choices-2-choices" name="challenge_options-0-choices-2-choices" value="Option 3" required>
-                        </label>
-                        <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
-                    </div> -->
                     <button type="button" class="add-option-btn"><img src="{{ url_for('static', filename='assets/icon_add_circle.svg') }}"
                             alt="">Add Option</button>
                 </div>
+                <input type="hidden" id="{{ content.content_id.id }}" name="{{ content.content_id.name }}" value="{{ content.content_id.data }}" class="content-id">
             </div>
         </div>
         {% endif %}
