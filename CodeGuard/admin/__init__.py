@@ -441,8 +441,31 @@ def detail_module(course_name, module_name):
             contents = detail.get_contents(module_id)
             # contents ada [1] = Contents, [2] = new_filename, [3] = original_filename
             print(contents)
+
+            existing_id = [content[0].id for content in contents]
+            # for content in contents:
+            print(existing_id)
     
             # loop over each content in the form
+            for i, subform in enumerate(form.content):
+                id = subform.content_id.data
+
+                # if ketemu nih, course yg udah ada
+                if id in existing_id:
+                    # existing_content = [item for item in contents if item[0].type == "learning"]
+                    # id (X)
+                    # type! if content_body ada, then type is learning, update content body
+                    # if ada options, then type is challenges, update question, code, options (correct), and choices
+                    if subform.content_body.data:
+                        content_type = "learning"
+                        content_body = subform.content_body.data
+                    
+                    elif subform.options.data:
+                        content_type = "challenges"
+                        question_text = subform.question.data
+                        code = subform.code.data
+                        # update options?
+
 
         return redirect(url_for(
             'admin.modules',  
