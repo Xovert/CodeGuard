@@ -7,6 +7,7 @@
         <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
     </p>
     <div class="panel">
+        <input type="hidden" id="exam_options-0-order" name="exam_options-0-order" value="3" class="hidden">
         <div class="d-flex type-timer-wrapper">
             <div class="type">
                 <label class="d-inline-block">Type</label>
@@ -14,7 +15,7 @@
             </div>
             <div class="timer">
                 <label class="d-inline-block" for="exam-option-timer-2">Timer</label>
-                <input type="time" step="2" id="exam-option-timer-2" required>
+                <input type="time" step="1" id="exam-option-timer-2" required>
             </div>
         </div>
         <div class="question">
@@ -37,17 +38,23 @@
             <label>Options</label>
             <div class="radio-option">
                 <input type="radio" id="exam-option-2-1" name="exam-option-2" value="Option 1" required>
-                <label for="exam-option-2-1" contenteditable="true">Enter Option 1</label>
+                <label for="exam-option-2-1">
+                    <input type="text" id="exam_options-0-choices-0-choices" name="exam_options-0-choices-0-choices" value="Option 1" required>
+                </label>
                 <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
             </div>
             <div class="radio-option">
-                <input type="radio" id="exam-option-2-2" name="exam-option-2" value="Option 2">
-                <label for="exam-option-2-2" contenteditable="true">Enter Option 2</label>
+                <input type="radio" id="exam-option-2-2" name="exam-option-2" value="Option 2" required>
+                <label for="exam-option-2-2">
+                    <input type="text" id="exam_options-0-choices-1-choices" name="exam_options-0-choices-1-choices" value="Option 2" required>
+                </label>
                 <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
             </div>
             <div class="radio-option">
-                <input type="radio" id="exam-option-2-3" name="exam-option-2" value="Option 3">
-                <label for="exam-option-2-3" contenteditable="true">Enter Option 3</label>
+                <input type="radio" id="exam-option-2-3" name="exam-option-2" value="Option 3" required>
+                <label for="exam-option-2-3">
+                    <input type="text" id="exam_options-0-choices-2-choices" name="exam_options-0-choices-2-choices" value="Option 3" required>
+                </label>
                 <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
             </div>
             <button type="button" class="add-option-btn"><img src="{{ url_for('static', filename='assets/icon_add_circle.svg') }}"

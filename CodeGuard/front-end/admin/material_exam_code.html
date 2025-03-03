@@ -7,6 +7,7 @@
         <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
     </p>
     <div class="panel">
+        <input type="hidden" id="exam_code-0-order" name="exam_code-0-order" value="3" class="hidden">
         <div class="d-flex type-timer-wrapper">
             <div class="type">
                 <label class="d-inline-block">Type</label>
@@ -14,7 +15,7 @@
             </div>
             <div class="timer">
                 <label class="d-inline-block" for="exam-code-timer-1">Timer</label>
-                <input type="time" step="2" id="exam-code-timer-1" required>
+                <input type="time" step="1" id="exam-code-timer-1" required>
             </div>
         </div>
         <div class="question">
@@ -25,7 +26,7 @@
             <label for="exam-code-area-1">Code</label>
             <div class="code-playground">
                 <textarea class="code-area" id="exam-code-area-1" rows="10"
-                    placeholder="Enter challenge code here..." required></textarea>
+                    placeholder="Enter challenge code here..."></textarea>
                 <span class="language-span">PHP</span>
                 <button class="run-code d-flex align-items-center">
                     <span>RUN</span>

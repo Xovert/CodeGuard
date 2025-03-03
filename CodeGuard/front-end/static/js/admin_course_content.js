@@ -495,7 +495,7 @@ optionsContainer.addEventListener('click', async function (e) {
             
             if(order){
                 order.value = allPageCount + 1;
-                console.log(`${order.value}`)
+                console.log(`order value = ${order.value}`)
             }
             // BELUM SELESAIIIIII
 
@@ -553,15 +553,16 @@ optionsContainer.addEventListener('click', async function (e) {
 function generateID(type) {
     // return Date.now();
     const pages = document.querySelectorAll(".page");
+    console.log(`Pages: ${pages.length}`)
 
     let maxIndex = 0;
     let avail = false;
 
     pages.forEach(page => {
         const span = page.querySelector(".type > span"); // Get the span inside .type
-
-        // Check if it has 'Learning' type
-        if (span && span.textContent.trim().toLowerCase() === type) {
+        
+        if (span) {
+            console.log("masuk if span true")
             avail = true;
             const panel = page.querySelector(".panel"); // Select the .panel inside the page
             const secondChild = panel.children[2]; // second child, tidak terhitung hidden
@@ -569,10 +570,10 @@ function generateID(type) {
 
             if (inputLabel) {
                 const forAttribute = inputLabel.getAttribute("for");
-                console.log(forAttribute)
+                console.log(`for attr: ${forAttribute}`)
                 const parts = forAttribute.split("-");
                 const index = parseInt(parts[1], 10);
-
+                console.log(`index: ${index}`)
                 if (index > maxIndex) {
                     maxIndex = index; // Update max index
                     console.log(`max index now = ${maxIndex}`)
@@ -583,10 +584,10 @@ function generateID(type) {
 
     if(!avail){
         console.log("gaada, not avail")
-        console.log(maxIndex);
+        console.log(`max index, not avail: ${maxIndex}`);
         return maxIndex;
     }
-    console.log(maxIndex + 1)
+    console.log(`max index: ${maxIndex + 1}`)
     return maxIndex + 1;
 }
 
@@ -603,30 +604,31 @@ function randomizeLearningId(container, randID) {
     //     typeInput.id = randomID; // Update the input ID
     //     typeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
     // }
+    const baseID = `content-${randID}`;
 
     // order
     const order = container.querySelector('.hidden');
     if (order){
-        const randomID = `learning-${randID}-order`;
-        order.id = order.name = randomID;
+        // const randomID = `learning-${randID}-order`;
+        order.id = order.name = `${baseID}-order`;
     }
 
     // pic
     const learningPicInput = container.querySelector('.learning-pic > input');
     const learningPicLabels = container.querySelectorAll('.learning-pic > label');
     if (learningPicInput && learningPicLabels.length > 0) {
-        const randomID = `learning-${randID}-image`;
-        learningPicInput.id = learningPicInput.name = randomID; // Update the input ID
-        learningPicLabels.forEach(label => label.setAttribute('for', randomID));
+        // const randomID = `learning-${randID}-image`;
+        learningPicInput.id = learningPicInput.name = `${baseID}-image`; // Update the input ID
+        learningPicLabels.forEach(label => label.setAttribute('for', `${baseID}-image`));
     }
 
     // content learning
     const contentTextarea = container.querySelector('.content-learning > textarea');
     const contentLabel = container.querySelector('.content-learning > label');
     if (contentTextarea && contentLabel) {
-        const randomID = `learning-${randID}-content_body`;
-        contentTextarea.id = contentTextarea.name = randomID; // Update the textarea ID
-        contentLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
+        // const randomID = `learning-${randID}-content_body`;
+        contentTextarea.id = contentTextarea.name = `${baseID}-content_body`; // Update the textarea ID
+        contentLabel.setAttribute('for', `${baseID}-content_body`); // Update the label's 'for' attribute
     }
 }
 
@@ -639,30 +641,31 @@ function randomizeChallengeCodeId(container, randID){
     //     typeInput.id = randomID; // Update the input ID
     //     typeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
     // }
+    const baseID = `content-${randID}`;
     
     // order
     const order = container.querySelector('.hidden');
     if (order){
-        const randomID = `challenge_code-${randID}-order`;
-        order.id = order.name = randomID;
+        // const randomID = `challenge_code-${randID}-order`;
+        order.id = order.name = `${baseID}-order`;
     }
 
     // question
     const questionTextarea = container.querySelector('.question > textarea');
     const questionLabel = container.querySelector('.question > label');
     if (questionTextarea && questionLabel) {
-        const randomID = `challenge_code-${randID}-question`;
-        questionTextarea.id = questionTextarea.name = randomID; // Update the textarea ID
-        questionLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
+        // const randomID = `challenge_code-${randID}-question`;
+        questionTextarea.id = questionTextarea.name = `${baseID}-question`; // Update the textarea ID
+        questionLabel.setAttribute('for', `${baseID}-question`); // Update the label's 'for' attribute
     }
 
     // code area
     const codeTextarea = container.querySelector('.code-playground > textarea');
     const codeLabel = container.querySelector('.code > label');
     if (codeTextarea && codeLabel) {
-        const randomID = `challenge_code-${randID}-code`;
-        codeTextarea.id = codeTextarea.name = randomID; // Update the textarea ID
-        codeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
+        // const randomID = `challenge_code-${randID}-code`;
+        codeTextarea.id = codeTextarea.name = `${baseID}-code`; // Update the textarea ID
+        codeLabel.setAttribute('for', `${baseID}-code`); // Update the label's 'for' attribute
     }
 }
 
@@ -675,46 +678,47 @@ function randomizeChallengeOptionId(container, randID){
     //     typeInput.id = randomID; // Update the input ID
     //     typeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
     // }
+    const baseID = `content-${randID}`;
 
     // order
     const order = container.querySelector('.hidden');
     if (order){
-        const randomID = `challenge_options-${randID}-order`;
-        order.id = order.name = randomID;
+        // const randomID = `challenge_options-${randID}-order`;
+        order.id = order.name = `${baseID}-order`;
     }
 
     // image
     const challengePicInput = container.querySelector('.challenge-pic > input');
     const challengePicLabels = container.querySelectorAll('.challenge-pic > label');
     if (challengePicInput && challengePicLabels.length > 0){
-        const randomID = `challenge_options-${randID}-image`;
-        challengePicInput.id = challengePicInput.name = randomID;
-        challengePicLabels.forEach(label => label.setAttribute('for', randomID));
+        // const randomID = `challenge_options-${randID}-image`;
+        challengePicInput.id = challengePicInput.name = `${baseID}-image`;
+        challengePicLabels.forEach(label => label.setAttribute('for', `${baseID}-image`));
     }
 
     // question
     const questionTextarea = container.querySelector('.question > textarea');
     const questionLabel = container.querySelector('.question > label');
     if (questionTextarea && questionLabel) {
-        const randomID = `challenge_options-${randID}-question`
-        questionTextarea.id = questionTextarea.name = randomID; // Update the textarea ID
-        questionLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
+        // const randomID = `challenge_options-${randID}-question`
+        questionTextarea.id = questionTextarea.name = `${baseID}-question`; // Update the textarea ID
+        questionLabel.setAttribute('for', `${baseID}-question`); // Update the label's 'for' attribute
     }
 
     // code area
     const codeTextarea = container.querySelector('.code-playground > textarea');
     const codeLabel = container.querySelector('.code > label');
     if (codeTextarea && codeLabel) {
-        const randomID = `challenge_options-${randID}-code`;
-        codeTextarea.id = codeTextarea.name = randomID; // Update the textarea ID
-        codeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
+        // const randomID = `challenge_options-${randID}-code`;
+        codeTextarea.id = codeTextarea.name = `${baseID}-code`; // Update the textarea ID
+        codeLabel.setAttribute('for', `${baseID}-code`); // Update the label's 'for' attribute
     }
 
     // option
     const optionsContainer = container.querySelector('.option');
-    const randomID = `challenge_options-${randID}`;
-    const optionID = `${randomID}-options`;
-    const hiddenID = `${randomID}-choices`
+    // const randomID = `challenge_options-${randID}`;
+    const optionID = `${baseID}-options`;
+    const hiddenID = `${baseID}-choices`
     
     const optionsLabel = optionsContainer.querySelector("label");
     optionsLabel.setAttribute('for', optionID)
@@ -754,42 +758,43 @@ function randomizeExamCodeId(container, randID) {
     //     typeInput.setAttribute("id", newTypeID);
     //     typeLabel.setAttribute("for", newTypeID);
     // }
+    const baseID = `content-${randID}`;
 
     // order
     const order = container.querySelector('.hidden');
     if (order){
-        const randomID = `exam_code-${randID}-order`;
-        order.id = order.name = randomID;
+        // const randomID = `exam_code-${randID}-order`;
+        order.id = order.name = `${baseID}-order`;
     }
 
     // Randomize .timer > input and label
     const timerInput = container.querySelector(".timer > input");
     const timerLabel = container.querySelector(".timer > label");
     if (timerInput && timerLabel) {
-        const newTimerID = `exam_code-${randID}-timer`;
-        timerInput.setAttribute("id", newTimerID);
-        timerInput.setAttribute("name", newTimerID);
-        timerLabel.setAttribute("for", newTimerID);
+        // const newTimerID = `exam_code-${randID}-timer`;
+        timerInput.setAttribute("id", `${baseID}-timer`);
+        timerInput.setAttribute("name", `${baseID}-timer`);
+        timerLabel.setAttribute("for", `${baseID}-timer`);
     }
 
     // Randomize .question > textarea and label
     const questionTextarea = container.querySelector(".question > textarea");
     const questionLabel = container.querySelector(".question > label");
     if (questionTextarea && questionLabel) {
-        const newQuestionID = `exam_code-${randID}-question`;
-        questionTextarea.setAttribute("id", newQuestionID);
-        questionTextarea.setAttribute("name", newQuestionID);
-        questionLabel.setAttribute("for", newQuestionID);
+        // const newQuestionID = `exam_code-${randID}-question`;
+        questionTextarea.setAttribute("id", `${baseID}-question`);
+        questionTextarea.setAttribute("name", `${baseID}-question`);
+        questionLabel.setAttribute("for", `${baseID}-question`);
     }
 
     // Randomize .code-playground > textarea and .code > label
     const codeTextarea = container.querySelector(".code-playground > textarea");
     const codeLabel = container.querySelector(".code > label");
     if (codeTextarea && codeLabel) {
-        const newCodeID = `exam_code-${randID}-code`;
-        codeTextarea.setAttribute("id", newCodeID);
-        codeTextarea.setAttribute("name", newCodeID);
-        codeLabel.setAttribute("for", newCodeID);
+        // const newCodeID = `exam_code-${randID}-code`;
+        codeTextarea.setAttribute("id", `${baseID}-code`);
+        codeTextarea.setAttribute("name", `${baseID}-code`);
+        codeLabel.setAttribute("for", `${baseID}-code`);
     }
 }
 
@@ -801,12 +806,13 @@ function randomizeExamOptionId(container, randID){
     //     typeInput.setAttribute("id", newTypeID);
     //     typeLabel.setAttribute("for", newTypeID);
     // }
+    const baseID = `content-${randID}`;
 
     // order
     const order = container.querySelector('.hidden');
     if (order){
-        const randomID = `exam_options-${randID}-order`;
-        order.id = order.name = randomID;
+        // const randomID = `exam_options-${randID}-order`;
+        order.id = order.name = `${baseID}-order`;
     }
 
     // Randomize .timer > input and label
@@ -814,9 +820,9 @@ function randomizeExamOptionId(container, randID){
     const timerLabel = container.querySelector(".timer > label");
     if (timerInput && timerLabel) {
         const newTimerID = `exam_options-${randID}-timer`;
-        timerInput.setAttribute("id", newTimerID);
-        timerInput.setAttribute("name", newTimerID);
-        timerLabel.setAttribute("for", newTimerID);
+        timerInput.setAttribute("id", `${baseID}-timer`);
+        timerInput.setAttribute("name", `${baseID}-timer`);
+        timerLabel.setAttribute("for", `${baseID}-timer`);
     }
 
     // Randomize .question > textarea and label
@@ -824,25 +830,25 @@ function randomizeExamOptionId(container, randID){
     const questionLabel = container.querySelector(".question > label");
     if (questionTextarea && questionLabel) {
         const newQuestionID = `exam_options-${randID}-question`;
-        questionTextarea.setAttribute("id", newQuestionID);
-        questionTextarea.setAttribute("name", newQuestionID);
-        questionLabel.setAttribute("for", newQuestionID);
+        questionTextarea.setAttribute("id", `${baseID}-question`);
+        questionTextarea.setAttribute("name", `${baseID}-question`);
+        questionLabel.setAttribute("for", `${baseID}-question`);
     }
 
     // Randomize .code-playground > textarea and .code > label
     const codeTextarea = container.querySelector(".code-playground > textarea");
     const codeLabel = container.querySelector(".code > label");
     if (codeTextarea && codeLabel) {
-        const newCodeID = `exam_options-${randID}-code`;
-        codeTextarea.setAttribute("id", newCodeID);
-        codeTextarea.setAttribute("name", newCodeID);
-        codeLabel.setAttribute("for", newCodeID);
+        // const newCodeID = `exam_options-${randID}-code`;
+        codeTextarea.setAttribute("id", `${baseID}-code`);
+        codeTextarea.setAttribute("name", `${baseID}-code`);
+        codeLabel.setAttribute("for", `${baseID}-code`);
     }
 
     const optionsContainer = container.querySelector('.option');
-    const randomID = `exam_options-${randID}`;
-    const optionID = `${randomID}-options`;
-    const hiddenID = `${randomID}-choices`;
+    // const randomID = `exam_options-${randID}`;
+    const optionID = `${baseID}-options`;
+    const hiddenID = `${baseID}-choices`;
 
     const optionsLabel = optionsContainer.querySelector("label");
     optionsLabel.setAttribute('for', optionID)

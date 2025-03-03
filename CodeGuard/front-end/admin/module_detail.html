@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Module{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/admin_course.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/navbar_footer_admin.css') }}">
+<script src="{{ url_for('static', filename='js/admin_course_content.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+<!-- NOT DONE -->
+<div class="content">
+    <form action="{{ url_for('admin.detail_module', course_name=course_name, module_name=form.module.data) }}" class="course-content d-flex flex-column" method="post" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        <div class="title" data-course-name="{{ course_name }}">
+            <h1>Module for "{{ course_name }}"</h1>
+        </div>
+        <span class="warning-msg">Please beware that once you leave this form without submitting, you will need to re-enter all of the fields. We recommend you to submit the form as it is and edit it later.</span>
+        <div class="module d-flex align-items-center">
+            {{ form.module.label(class="d-inline-block") }}
+            {{ form.module(id="module-name", class="d-inline-block") }}
+            <!-- <label for="module-name" class="d-inline-block">Module Name</label>
+            <input type="text" class="d-inline-block" id="module-name" placeholder="Enter the module name here..."> -->
+        </div>
+
+        <!-- LEARNING -->
+        <!-- ENUMERATEE -->
+        {% for content in form.content %}
+        {% if content.content_type.data == "learning" %}
+        <div class="page study">
+            <p class="d-flex accordion">Page {{ content.order.data }}
+                <button type="button" class="ms-auto icon-trash"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+                <button type="button" class="up"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                <button type="button" class="down"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+                <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
+            </p>
+            <div class="panel">
+                <input type="hidden" id="{{ content.order.id }}" name="{{ content.order.name }}" value="{{ content.order.data }}" class="hidden">
+                <div class="type">
+                    <label class="d-inline-block">Type</label>
+                    <span class="content-type d-inline-block">Learning</span>
+                </div>
+                <div class="learning-pic position-relative">
+                    <label for="{{ content.image.id }}">Picture</label>
+                    <label for="{{ content.image.id }}" class="input-file">
+                        <img src="{{ url_for('static', filename='assets/icon_upload.svg') }}" alt="">
+                        Add File
+                    </label>
+                    <span class="filename">
+                        {% if content.original_filename.data %}
+                        {{ content.original_filename.data }}
+                        {% else %}
+                        No file chosen
+                        {% endif %}
+                    </span>
+                    <input type="file" id="{{ content.image.id }}" name="{{ content.image.name }}" class="input-file-invi">
+                    <p class="error-message error-course-logo">Error</p>
+                    <img id="" src="{% if content.original_filename.data %}{{ url_for('views.image', filename=content.new_filename.data) }}{% endif %}" alt="Your image" class="preview">
+                </div>
+                <div class="content-learning">
+                    <label for="{{ content.content_body.id }}">Content</label>
+                    <textarea name="{{ content.content_body.name }}" id="{{ content.content_body.id }}" rows="4" placeholder="Enter learning content here..." required>{{ content.content_body.data }}</textarea>
+                </div>
+            </div>
+        </div>
+
+        {% elif content.content_type.data == "challenges" %}
+        <div class="page study">
+            <p class="d-flex accordion">Page {{ content.order.data }}
+                <button type="button" class="ms-auto icon-trash"><img
+                        src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+                <button type="button" class="up"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}"
+                        alt=""></button>
+                <button type="button" class="down"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}"
+                        alt=""></button>
+                <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
+            </p>
+            <div class="panel">
+                <input type="hidden" id="{{ content.order.id }}" name="{{ content.order.name }}" value="{{ content.order.data }}" class="hidden">
+                <div class="type">
+                    <label class="d-inline-block">Type</label>
+                    <span class="content-type d-inline-block">Challenge Option</span>
+                </div>
+                <div class="challenge-pic position-relative">
+                    <label for="{{ content.image.id }}">Picture</label>
+                    <label for="{{ content.image.id }}" class="input-file">
+                        <img src="{{ url_for('static', filename='assets/icon_upload.svg') }}" alt="">
+                        Add File
+                    </label>
+                    <span class="filename">
+                        {% if content.original_filename.data %}
+                        {{ content.original_filename.data }}
+                        {% else %}
+                        No file chosen
+                        {% endif %}
+                    </span>
+                    <input type="file" id="{{ content.image.id }}" name="{{ content.image.name }}" class="input-file-invi">
+                    <p class="error-message error-course-logo">Error</p>
+                    <img id="" src="{% if content.original_filename.data %}{{ url_for('views.image', filename=content.new_filename.data) }}{% endif %}" alt="Your image" class="preview">
+                </div>
+                <div class="question">
+                    <label for="{{ content.question.id }}">Question</label>
+                    <textarea name="{{ content.question.name }}" id="{{ content.question.id }}" rows="2" placeholder="Enter challenge question here...">{{ content.question.data }}</textarea>
+                </div>
+                <div class="code">
+                    <label for="{{ content.code.id }}">Code</label>
+                    <div class="code-playground">
+                        <textarea class="code-area" id="{{ content.code.id }}" name="{{ content.code.name }}" rows="10" placeholder="Enter challenge code here...">{{ content.code.data }}</textarea>
+                        <span class="language-span">PHP</span>
+                        <button class="run-code d-flex align-items-center">
+                            <span>RUN</span>
+                            <img src="{{ url_for('static', filename='assets/icon_run.svg') }}" alt="">
+                        </button>
+                    </div>
+                </div>
+                <div class="option">
+                    <label for="{{ content.options.id }}">Options</label>
+                    {% for choices in content.choices %}
+                    {% if choices.choices.data  %}
+                    <div class="radio-option">
+                        <input type="radio" id="{{ content.options.id }}-{{ loop.index0 }}" name="{{ content.options.name }}" value="{{ choices.choices.data }}" required {% if choices.choices.data == content.correct.data %} checked {% endif %}>
+                        <label for="{{ content.options.id }}-{{ loop.index0 }}">
+                            <input type="text" id="{{ choices.choices.id }}" name="{{ choices.choices.name }}" value="{{ choices.choices.data }}" required>
+                        </label>
+                        <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                    <!-- <label for="{{ content.options.id }}">Options</label>
+                    <div class="radio-option">
+                        <input type="radio" id="option-3-1" name="option-3" value="Option 1" required>
+                        <label for="option-3-1">
+                            <input type="text" id="challenge_options-0-choices-0-choices" name="challenge_options-0-choices-0-choices" value="Option 1" required>
+                        </label>
+                        <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="option-3-2" name="option-3" value="Option 2" required>
+                        <label for="option-3-2">
+                            <input type="text" id="challenge_options-0-choices-1-choices" name="challenge_options-0-choices-1-choices" value="Option 2" required>
+                        </label>
+                        <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="option-3-3" name="option-3" value="Option 3" required>
+                        <label for="option-3-3">
+                            <input type="text" id="challenge_options-0-choices-2-choices" name="challenge_options-0-choices-2-choices" value="Option 3" required>
+                        </label>
+                        <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
+                    </div> -->
+                    <button type="button" class="add-option-btn"><img src="{{ url_for('static', filename='assets/icon_add_circle.svg') }}"
+                            alt="">Add Option</button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        
+        <p id="error-message"></p>
+    
+    
+        <div class="button-wrapper d-flex justify-content-center position-relative">
+            <button type="button" class="btn d-flex add-more-page-btn"><img src="{{ url_for('static', filename='assets/icon_plus.svg') }}"
+                    alt="">Add more page</button>
+            <div class="add-page-options d-none">
+                <p id="learning-option"><button type="button">Learning</button></p>
+                <p id="challenge-code-option"><button type="button">Challenge Code</button></p>
+                <p id="challenge-option-option"><button type="button">Challenge Options</button></p>
+                <p id="exam-code-option"><button type="button">Exam Code</button></p>
+                <p id="exam-option-option"><button type="button">Exam Options</button></p>
+            </div>
+            <button type="button" class="btn" id="add-module-btn">Add Another module</button>
+            <button class="btn submit-btn" id="submit-btn" type="submit">Submit</button>
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}

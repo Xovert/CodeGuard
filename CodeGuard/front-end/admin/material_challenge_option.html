@@ -7,9 +7,21 @@
         <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
     </p>
     <div class="panel">
+        <input type="hidden" id="challenge_options-0-order" name="challenge_options-0-order" value="3" class="hidden">
         <div class="type">
             <label class="d-inline-block">Type</label>
             <span class="content-type d-inline-block">Challenge Option</span>
+        </div>
+        <div class="challenge-pic position-relative">
+            <label for="challenge_options-0-image">Picture</label>
+            <label for="challenge_options-0-image" class="input-file">
+                <img src="{{ url_for('static', filename='assets/icon_upload.svg') }}" alt="">
+                Add File
+            </label>
+            <span class="filename">No file chosen</span>
+            <input type="file" id="challenge_options-0-image" name="challenge_options-0-image" class="input-file-invi">
+            <p class="error-message error-course-logo">Error</p>
+            <img id="" src="#" alt="Your image" class="preview">
         </div>
         <div class="question">
             <label for="option-question-3">Question</label>
@@ -19,7 +31,7 @@
             <label for="code-option-area-3">Code</label>
             <div class="code-playground">
                 <textarea class="code-area" id="code-option-area-3" rows="10"
-                    placeholder="Enter challenge code here..." required></textarea>
+                    placeholder="Enter challenge code here..."></textarea>
                 <span class="language-span">PHP</span>
                 <button class="run-code d-flex align-items-center">
                     <span>RUN</span>
@@ -31,17 +43,23 @@
             <label>Options</label>
             <div class="radio-option">
                 <input type="radio" id="option-3-1" name="option-3" value="Option 1" required>
-                <label for="option-3-1" contenteditable="true">Enter Option 1</label>
+                <label for="option-3-1">
+                    <input type="text" id="challenge_options-0-choices-0-choices" name="challenge_options-0-choices-0-choices" value="Option 1" required>
+                </label>
                 <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
             </div>
             <div class="radio-option">
-                <input type="radio" id="option-3-2" name="option-3" value="Option 2">
-                <label for="option-3-2" contenteditable="true">Enter Option 2</label>
+                <input type="radio" id="option-3-2" name="option-3" value="Option 2" required>
+                <label for="option-3-2">
+                    <input type="text" id="challenge_options-0-choices-1-choices" name="challenge_options-0-choices-1-choices" value="Option 2" required>
+                </label>
                 <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
             </div>
             <div class="radio-option">
-                <input type="radio" id="option-3-3" name="option-3" value="Option 3">
-                <label for="option-3-3" contenteditable="true">Enter Option 3</label>
+                <input type="radio" id="option-3-3" name="option-3" value="Option 3" required>
+                <label for="option-3-3">
+                    <input type="text" id="challenge_options-0-choices-2-choices" name="challenge_options-0-choices-2-choices" value="Option 3" required>
+                </label>
                 <img src="{{ url_for('static', filename='assets/icon_exit.svg') }}" alt="">
             </div>
             <button type="button" class="add-option-btn"><img src="{{ url_for('static', filename='assets/icon_add_circle.svg') }}"

@@ -7,6 +7,7 @@
         <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
     </p>
     <div class="panel">
+        <input type="hidden" id="learning-0-order" name="learning-0-order" value="3" class="hidden">
         <div class="type">
             <label class="d-inline-block">Type</label>
             <span class="content-type d-inline-block">Learning</span>
@@ -18,7 +19,7 @@
                 Add File
             </label>
             <span class="filename">No file chosen</span>
-            <input type="file" id="learning-pic_1" class="input-file-invi" accept=".jpg, .jpeg, .png, .svg" required>
+            <input type="file" id="learning-pic_1" class="input-file-invi" accept=".jpg, .jpeg, .png, .svg">
             <p class="error-message error-course-logo">Error</p>
             <img id="" src="#" alt="Your image" class="preview">
         </div>

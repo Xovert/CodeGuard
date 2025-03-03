@@ -11,9 +11,15 @@ from CodeGuard.models import (
     Enrollments,
     Users,
     CourseImages,
+    ContentImages,
     CourseStatus,
     Modules,
     EnrollmentsModules,
+    Contents,
+    ContentsLearning,
+    ContentsChallenges,
+    ChallengeQuestions,
+    ChallengeOptions
 )
 
 from CodeGuard.utils.files import get_file, upload_file, delete_file
@@ -24,6 +30,13 @@ from CodeGuard.admin.create import upload_image
 # from CodeGuard.utils.user import get_uuid
 # from datetime import datetime, timezone, timedelta
 # from urllib.parse import quote
+
+def get_course(course_name):
+    course = db.session.scalars(
+        db.select(Courses)
+        .where(Courses.course_name == course_name)
+    ).first()
+    return course
 
 def get_course_fields(course_name):
     course = db.session.execute(
@@ -43,6 +56,50 @@ def get_modules(course_name):
     ).all()
     return modules
 
+def get_module_id(module_name):
+    module = db.session.scalars(
+        db.select(Modules.id)
+        .where(Modules.module_name == module_name)
+    ).first()
+    return module
+
+def get_contents(module_id):
+    # contents = db.session.execute(
+    #     db.select(Contents)
+    #     .join(Modules)
+    #     .where(Modules.module_name == module_name)
+    #     .order_by(Contents.order.asc())
+    # ).all()
+
+    contents = db.session.execute(
+        db.select(Contents, ContentImages.new_filename, ContentImages.original_filename)
+        .outerjoin(ContentImages, Contents.id == ContentImages.content_id)
+        .where(Contents.module_id == module_id)
+        .order_by(Contents.order.asc())
+    ).all()
+    return contents
+
+def get_challenge_data(content_id):
+    data = db.session.execute(
+        db.select(ChallengeQuestions.id, ChallengeQuestions.question_text, ChallengeQuestions.code)
+        .join(Contents)
+        .where(Contents.id == content_id)
+    ).first()
+    return data
+    # def get_correct(content_id) -> str:
+    # return db.session.scalar(
+    #     db.select(ChallengeOptions.option_text)
+    #     .join(ChallengeQuestions)
+    #     .where(ChallengeQuestions.content_id == content_id)
+    # )
+
+def get_options(question_id):
+    options = db.session.execute(
+        db.select(ChallengeOptions.option_text, ChallengeOptions.is_correct)
+        .join(ChallengeQuestions)
+        .where(ChallengeQuestions.id == question_id)
+    ).all()
+    return options
 
 def update_course(old_name, course_name, course_description, course_status, course_img:FileStorage=None):
     course, images = (
