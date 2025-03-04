@@ -22,6 +22,7 @@ from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import column_property, validates, sessionmaker
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import event
 
 from CodeGuard.models.enums import CourseStatus, CompletionStatus, Severity
 
@@ -42,7 +43,7 @@ class Users(db.Model):
     registration_date: Mapped[datetime] = mapped_column(DateTime, nullable=False)
 
     enrollments: Mapped[List["Enrollments"]] = relationship(
-        back_populates="user", cascade="all, delete-orphan"
+        back_populates="user", cascade="all"
     )
 
     def __repr__(self):
@@ -61,7 +62,7 @@ class Courses(db.Model):
         back_populates="course", cascade="all, delete-orphan"
     )
     enrollments: Mapped[List["Enrollments"]] = relationship(
-        back_populates="course", cascade="all, delete-orphan"
+        back_populates="course", cascade="all"
     )
     exams: Mapped[List["Exams"]] = relationship(
         back_populates="course", cascade="all, delete-orphan"
@@ -76,13 +77,13 @@ class Courses(db.Model):
 class Enrollments(db.Model):
     __tablename__ = "enrollments"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete='CASCADE'))
-    course_id: Mapped[int] = mapped_column(ForeignKey("courses.id", ondelete='CASCADE'))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    course_id: Mapped[int] = mapped_column(ForeignKey("courses.id"))
     enrollment_date: Mapped[datetime.date] = mapped_column(Date)
     progress: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     last_accessed_time: Mapped[datetime.time] = mapped_column(Time, nullable=False)
     status: Mapped[CompletionStatus] = mapped_column(Enum(CompletionStatus), nullable=False, default=CompletionStatus.NOT_STARTED)
-    exam_id: Mapped[Optional[int]] = mapped_column(ForeignKey("exams.id", ondelete='CASCADE'), nullable=True, default=None)
+    exam_id: Mapped[Optional[int]] = mapped_column(ForeignKey("exams.id"), nullable=True, default=None)
     score: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
     user: Mapped["Users"] = relationship(back_populates="enrollments")
@@ -109,7 +110,7 @@ class Modules(db.Model):
     __tablename__ = "modules"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    course_id: Mapped[int] = mapped_column(ForeignKey("courses.id", ondelete='CASCADE'), nullable=False)
+    course_id: Mapped[int] = mapped_column(ForeignKey("courses.id"), nullable=False)
     order: Mapped[int] = mapped_column(Integer, nullable=False)
     module_name: Mapped[str] = mapped_column(String(255), nullable=False)
 
@@ -118,7 +119,7 @@ class Modules(db.Model):
     )
     course: Mapped["Courses"] = relationship(back_populates="module")
     enrollments_modules: Mapped[List["EnrollmentsModules"]] = relationship(
-        back_populates="module", cascade="all, delete-orphan"
+        back_populates="module", cascade="all"
     )
 
     __table_args__ = (
@@ -143,7 +144,7 @@ class EnrollmentsModules(db.Model):
         back_populates='enrollments_modules'
     )
     users_contents: Mapped[List["UsersContents"]] = relationship(
-        back_populates='enrollment_module', cascade='all, delete-orphan'
+        back_populates='enrollment_module', cascade='all'
     )
 
     __table_args__ = (
@@ -157,7 +158,7 @@ class Contents(db.Model):
     __tablename__ = "contents"
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    module_id: Mapped[int] = mapped_column(ForeignKey("modules.id", ondelete='CASCADE'), nullable=False)
+    module_id: Mapped[int] = mapped_column(ForeignKey("modules.id"), nullable=False)
     order: Mapped[int] = mapped_column(Integer, nullable=False)
     type: Mapped[str] = mapped_column(String(60), nullable=False)
     
@@ -167,7 +168,7 @@ class Contents(db.Model):
     )
 
     users_contents: Mapped[List["UsersContents"]] = relationship(
-        back_populates='content', cascade='all, delete-orphan'
+        back_populates='content', cascade='all'
     )
 
     __mapper_args__ = {
@@ -215,6 +216,9 @@ class UsersContents(db.Model):
     content: Mapped["Contents"] = relationship(
         back_populates='users_contents'
     )
+    option: Mapped["ChallengeOptions"] = relationship(
+        back_populates='users_contents'
+    )
 
     __table_args__ = (
         UniqueConstraint('enrollment_module_id', 'content_id', name='uq_content_users'),
@@ -238,7 +242,7 @@ class Exams(db.Model):
         back_populates="exam"
     )
     exams_results: Mapped[List["ExamsResults"]] = relationship(
-        back_populates="exam", cascade='all, delete-orphan'
+        back_populates="exam", cascade="save-update, merge, refresh-expire, expunge"
     )
     
     @hybrid_property
@@ -265,7 +269,7 @@ class ExamsResults(db.Model):
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     enrollment_id: Mapped[int] = mapped_column(ForeignKey('enrollments.id'), nullable=False)
-    exam_id: Mapped[int] = mapped_column(ForeignKey('exams.id'), nullable=False)
+    exam_id: Mapped[Optional[int]] = mapped_column(ForeignKey('exams.id'), nullable=True, default=None)
     check_id: Mapped[Optional[str]] = mapped_column(String(255), nullable=True, default=None)
     lines: Mapped[Optional[str]] = mapped_column(Text, nullable=True, default=None)
     message: Mapped[Optional[str]] = mapped_column(Text, nullable=True, default=None)
@@ -362,6 +366,9 @@ class ChallengeOptions(Options):
     question: Mapped["ChallengeQuestions"] = relationship(
         back_populates='options'
     )
+    users_contents: Mapped[List["UsersContents"]] = relationship(
+        back_populates='option', cascade="save-update, merge, refresh-expire, expunge"
+    )
 
 
 class Images(db.Model):
@@ -396,3 +403,8 @@ class CourseImages(Images):
     course: Mapped["Courses"] = relationship(
         back_populates="image", single_parent=True
     )
+
+@event.listens_for(Images, 'before_delete', propagate=True)
+def before_delete_image(mapper, connection, target):
+    from CodeGuard.utils.files import delete_from_storage
+    delete_from_storage(filename=target.location)

@@ -91,11 +91,14 @@ def upload_file(file: FileStorage, usage, id=None, location=None):
 
     return file_row
 
+def delete_from_storage(filename):
+    uploader = get_uploader()
+    uploader.delete(filename=filename)
+
 def delete_file(file_id):
     f = Images.query.filter_by(id=file_id).first_or_404()
 
-    uploader = get_uploader()
-    uploader.delete(filename=f.location)
+    delete_from_storage(filename=f.location)
 
     db.session.delete(f)
     db.session.commit()

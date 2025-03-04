@@ -1941,28 +1941,20 @@ def test_query(id):
     course_name = "PHP"
     module_name = "Broken Access Control"
     content_id = 5
-    enrollment_id = db.session.scalars(
-        db.select(Enrollments.id)
-        .join(Users)
-        .join(Courses)
-        .where(Users.uuid == user_uuid)
-        .where(Courses.course_name == course_name)
-    ).first()
-    # module_id = db.session.scalar(
-    #     db.select(Modules.id)
-    #     .where(Modules.module_name == module_name)
-    # )
-    # course_id = db.session.scalar(
-    #     db.select(Courses.id)
-    #     .where(Courses.course_name == course_name)
-    # )
-    result = db.session.execute(
-        db.select(Exams.label("exam"), Enrollments)
-        .join(Enrollments)
-        .where(Enrollments.id == enrollment_id)
-    ).first()
-    print(result)
-    print(result.exam)
+
+    # php = db.session.scalar(db.select(Courses).where(Courses.course_name == "PHP"))
+    model = Exams
+    id = 1
+    php = db.session.scalar(db.select(model).where(model.id == id))
+   
+    try:
+        result = db.session.delete(php)
+    except Exception as e:
+        print(f'error: {e}')
+        db.session.rollback()
+    else:
+        db.session.commit()
+
 
 def is_seeded() -> bool:
     admin_exists = db.session.scalar(
