@@ -12,7 +12,6 @@ from flask import (
     flash,
     redirect
 )
-# from werkzeug.urls 
 from urllib.parse import unquote, quote_plus
 
 from CodeGuard.utils.decorators import login_required, exams_unlocked
@@ -35,7 +34,7 @@ from CodeGuard.utils.course import (
     course_complete
 )
 from CodeGuard.utils.security import generate_token
-
+nxt = next
 
 @courses.route('/dashboard', methods=('GET',))
 @login_required
@@ -175,19 +174,28 @@ def get_attempts(**kwargs):
     content_id = request.args.get('content')
     row = content.get_user_content(content_id)
     attempts = row.attempts
-    isComplete = row.correct
+    isCorrect = row.correct
     selected = row.option_selected
     answer = row.answer
     
-    if attempts >= 0 or isComplete:
+    if attempts >= 0 or isCorrect:
         data = {
             'attempts': attempts,
-            'isComplete': isComplete,
+            'isComplete': isCorrect,
         }
         if selected:
             data['selected'] = selected
         if answer:
             data['answer'] = answer
+        if attempts == 0 and not isCorrect:
+            question = row.content.question
+            options = question.options
+            correct_option = nxt(option for option in options if option.is_correct)
+            if correct_option and options:
+                if len(options) > 1:
+                    data['correctAnswer'] = correct_option.id
+                else:
+                    data['correctAnswer'] = correct_option.option_text
         return data
     abort(404)
 

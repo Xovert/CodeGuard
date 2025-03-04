@@ -1,5 +1,5 @@
 import math
-from flask import g
+from flask import g, current_app as app
 from sqlalchemy import func, case
 
 from CodeGuard.models import (
@@ -15,7 +15,7 @@ from CodeGuard.models import (
 )
 from CodeGuard.models.enums import CompletionStatus, CourseStatus
 from datetime import datetime, timezone, timedelta
-
+log = app.logger
 
 def update_time():
     if g.enrollment_id is None:
@@ -102,7 +102,7 @@ def unlock_module(module: Modules):
         db.session.commit()
     except Exception as e:
         db.session.rollback()
-        print(f'Error: {e}')
+        log.error(f'Error: {e}')
 
     
 def get_percentage():
@@ -190,7 +190,7 @@ def enroll_course():
     ).scalars().all()
 
     if not modules:
-        print("No Modules")
+        log.error("No Modules")
         return
 
     enrollments_modules = [
@@ -239,7 +239,7 @@ def enroll_course():
         )
 
     if not users_contents:
-        print('No contents found!')
+        log.error('No contents found!')
         return
 
     users_contents[0]["status"] = CompletionStatus.STARTED

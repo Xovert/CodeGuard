@@ -51,6 +51,10 @@ def create_app(config="CodeGuard.config.production", instance_path=None):
         app.register_blueprint(user)
         
         app.register_blueprint(admin)
+        
+        from CodeGuard.utils.logging import setup_logging
+        import logging
+        setup_logging(app.logger, logging.ERROR)
 
         
     return app

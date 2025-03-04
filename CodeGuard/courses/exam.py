@@ -17,7 +17,7 @@ from CodeGuard.models.enums import CompletionStatus, Severity
 from CodeGuard.utils.decorators import login_required, exams_unlocked
 from CodeGuard.utils.security import verify_token
 from CodeGuard.utils.exam import clear_exam_lock, check_exam
-
+log = app.logger
 
 @courses.route('/exam/<path:course_name>', methods=('GET','POST'))
 @login_required
@@ -118,7 +118,7 @@ def exam(course_name):
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            print(f'An error has occurred: {e}')
+            log.error(f'An error has occurred: {e}')
         
 
         exams_results = [
@@ -139,7 +139,7 @@ def exam(course_name):
             )
         except Exception as e:
             db.session.rollback()
-            print(f'An error has occurred: {e}')
+            log.error(f'An error has occurred: {e}')
         else:
             db.session.commit()
 

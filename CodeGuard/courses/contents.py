@@ -1,4 +1,4 @@
-from flask import g
+from flask import g, current_app as app
 from sqlalchemy import func
 from sqlalchemy.orm import joinedload
 
@@ -23,6 +23,7 @@ from CodeGuard import courses as course
 from CodeGuard.utils.user import get_uuid
 from datetime import datetime, timezone, timedelta
 from urllib.parse import quote
+log = app.logger
 
 def get_status(id):
     return db.session.scalar(
@@ -50,7 +51,7 @@ def update_progress(page):
     try:
         db.session.commit()
     except Exception as e:
-        print(f'Error: {e}')
+        log.error(f'Error: {e}')
         db.session.rollback()
     return
 
@@ -93,7 +94,7 @@ def set_status(content: UsersContents, status:CompletionStatus=None):
     try:
         db.session.commit()
     except Exception as e:
-        print(f"Error {e}")
+        log.error(f"Error {e}")
         db.session.rollback()
 
     
@@ -115,7 +116,7 @@ def check() -> CompletionStatus:
     try:
         db.session.commit()
     except Exception as e:
-        print(f'Fails for whatever reason: {e}')
+        log.error(f'Fails for whatever reason: {e}')
         db.session.rollback()
 
     return CompletionStatus.COMPLETE
@@ -141,7 +142,7 @@ def update_user_content(user_content: UsersContents):
     try:
         db.session.commit()
     except Exception as e:
-        print(f'error: {e}')
+        log.error(f'error: {e}')
         db.session.rollback()
 
 
