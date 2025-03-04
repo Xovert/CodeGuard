@@ -73,7 +73,7 @@ def details(**kwargs):
         course = course,
         modules = modules,
         percentage = percentage,
-        exam = True if exam else False,
+        exam = bool(exam or g.courseComplete),
         modulesComplete = g.modulesComplete,
         courseComplete = g.courseComplete,
         exam_url = link_url
