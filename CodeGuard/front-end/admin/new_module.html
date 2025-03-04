@@ -61,6 +61,7 @@
     
     
         <div class="button-wrapper d-flex justify-content-center position-relative">
+            <button type="button" class="btn" id="cancel-btn"><a href="{{ url_for('admin.modules', course_name=course_name) }}">Cancel</a></button>
             <button type="button" class="btn d-flex add-more-page-btn"><img src="{{ url_for('static', filename='assets/icon_plus.svg') }}"
                     alt="">Add more page</button>
             <div class="add-page-options d-none">
@@ -70,7 +71,6 @@
                 <p id="exam-code-option"><button type="button">Exam Code</button></p>
                 <p id="exam-option-option"><button type="button">Exam Options</button></p>
             </div>
-            <button type="button" class="btn" id="add-module-btn">Add Another module</button>
             <button class="btn submit-btn" id="submit-btn" type="submit">Submit</button>
         </div>
     </form>

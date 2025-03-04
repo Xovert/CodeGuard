@@ -369,8 +369,13 @@ select {
     flex: 1;
 }
 
-.add-more-page-btn, #add-module-btn{
+.add-more-page-btn{
     padding: 12px;
+}
+
+#cancel-btn a{
+    text-decoration: none;
+    color: var(--black);
 }
 
 .add-more-page-btn > img{
@@ -384,7 +389,7 @@ select {
     align-items: start;
     padding: 8px 0px;
     position: absolute;
-    left: calc(50% - 92px);
+    left: calc(50% + 100px);
     bottom: 0;
 }
 
@@ -405,7 +410,7 @@ select {
     color: var(--white);
 }
 
-.submit-btn{
+.submit-btn, #cancel-btn{
     padding: 12px 32px;
 }
 

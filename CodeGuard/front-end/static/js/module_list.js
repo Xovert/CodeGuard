@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
 
-// ======== CHANGES TO DOM =========
+// ======== CHANGES TO SAVE BUTTON =========
 document.addEventListener("DOMContentLoaded", () => {
     // Select the target element to observe
     const moduleWrapper = document.querySelector(".module-wrapper");
@@ -97,3 +97,35 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initial check to set the button state
     checkPairChanges();
 })
+
+
+// ======= SEND DATA TO BACKEND ========
+const saveButton = document.getElementById("save-changes");
+saveButton.addEventListener("click", function () {
+    let moduleOrder = [];
+    document.querySelectorAll(".module").forEach((module, index) => {
+        moduleOrder.push({
+            order: module.querySelector('.order').textContent.replace('#', '').trim(),
+            module_name: module.querySelector('.module-name').textContent.trim(),
+        });
+    });
+    const course_name = encodeURIComponent(document.querySelector('.title > h1').textContent.trim());
+    // body = {
+    //     test: "halo",
+    //     yuhu: "testing"
+    // }
+    fetch(`/admin/${course_name}/modules`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ modules: moduleOrder }),
+        // body: JSON.stringify(body)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Order updated successfully!");
+        } else {
+            alert("Failed to update order.");
+        }
+    });
+});

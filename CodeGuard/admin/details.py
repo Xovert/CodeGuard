@@ -49,19 +49,25 @@ def get_course_fields(course_name):
 
 def get_modules(course_name):
     modules = db.session.execute(
-        db.select(Modules.module_name, Modules.order)
+        db.select(Modules)
         .join(Courses)
         .where(Courses.course_name == course_name)
         .order_by(Modules.order.asc())
-    ).all()
+    ).scalars().all()
     return modules
 
-def get_module_id(module_name):
+def get_module_id(module_name, course_id):
     module = db.session.scalars(
         db.select(Modules.id)
-        .where(Modules.module_name == module_name)
+        .where(Modules.module_name == module_name, Modules.course_id == course_id)
     ).first()
     return module
+
+def get_single_module(module_name, course_id):
+    return db.session.scalars(
+        db.select(Modules)
+        .where(Modules.module_name == module_name, Modules.course_id == course_id)
+    ).first()
 
 def get_contents(module_id):
     # contents = db.session.execute(
@@ -72,16 +78,28 @@ def get_contents(module_id):
     # ).all()
 
     contents = db.session.execute(
-        db.select(Contents, ContentImages.new_filename, ContentImages.original_filename)
+        db.select(Contents, ContentImages.new_filename, ContentImages.original_filename, ContentImages.id)
         .outerjoin(ContentImages, Contents.id == ContentImages.content_id)
         .where(Contents.module_id == module_id)
         .order_by(Contents.order.asc())
     ).all()
     return contents
 
+def get_single_content(content_id):
+    return db.session.execute(
+        db.select(Contents, ContentImages)
+        .outerjoin(ContentImages, Contents.id == ContentImages.content_id)
+        .where(Contents.id == content_id)
+    ).first()
+
+# def get_single_content(content_id):
+#     return db.session.scalars(
+#         db.select(Contents, ContentImages.new_filename, ContentImages.original_filename)
+#     )
+
 def get_challenge_data(content_id):
-    data = db.session.execute(
-        db.select(ChallengeQuestions.id, ChallengeQuestions.question_text, ChallengeQuestions.code)
+    data = db.session.scalars(
+        db.select(ChallengeQuestions)
         .join(Contents)
         .where(Contents.id == content_id)
     ).first()
@@ -100,6 +118,51 @@ def get_options(question_id):
         .where(ChallengeQuestions.id == question_id)
     ).all()
     return options
+
+def delete_options(question_id):
+    try:
+        db.session.execute(
+            db.delete(ChallengeOptions)
+            .where(ChallengeOptions.question_id == question_id)
+        )
+        db.session.flush()
+        print(f"Successfully deleted options for question_id: {question_id}")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting options: {e}")
+    else:
+        db.session.commit()
+    return
+
+def delete_challenge_data(question_id):
+    try:
+        db.session.execute(
+            db.delete(ChallengeQuestions)
+            .where(ChallengeQuestions.id == question_id)
+        )
+        db.session.flush()
+        print(f"Successfully deleted challenge data with id = {question_id}")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting options: {e}")
+    else:
+        db.session.commit()
+    return
+
+def delete_content(content_id):
+    try:
+        db.session.execute(
+            db.delete(Contents)
+            .where(Contents.id == content_id)
+        )
+        db.session.flush()
+        print(f"Successfully deleted content with id: {content_id}")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting options: {e}")
+    else:
+        db.session.commit()
+    return
 
 def update_course(old_name, course_name, course_description, course_status, course_img:FileStorage=None):
     course, images = (
@@ -152,26 +215,27 @@ def update_course(old_name, course_name, course_description, course_status, cour
     return error, success
 
 
-def update_image(file: FileStorage, ref_id, usage=None, location=None):
-    filename = file.filename
-    file_stream = file.stream
-    mime_type, _ = mimetypes.guess_type(filename)
-    if mime_type is None:
-        # Default to binary stream if MIME type cannot be determined
-        mime_type = 'application/octet-stream'
 
-    file_storage = FileStorage(
-        stream=file_stream,
-        filename=filename,
-        content_type=mime_type
-    )
+# def update_image(file: FileStorage, ref_id, usage=None, location=None):
+#     filename = file.filename
+#     file_stream = file.stream
+#     mime_type, _ = mimetypes.guess_type(filename)
+#     if mime_type is None:
+#         # Default to binary stream if MIME type cannot be determined
+#         mime_type = 'application/octet-stream'
 
-    ret = upload_file(
-        file=file_storage,
-        id=ref_id,
-        usage=usage,
-        location=location
-    )
+#     file_storage = FileStorage(
+#         stream=file_stream,
+#         filename=filename,
+#         content_type=mime_type
+#     )
 
-    print(ret)
-    return
+#     ret = upload_file(
+#         file=file_storage,
+#         id=ref_id,
+#         usage=usage,
+#         location=location
+#     )
+
+#     print(ret)
+#     return

@@ -388,7 +388,6 @@ class NewModuleForm(FlaskForm):
 
 
 class ExistingContentForm(Form):
-    ###### NOT DONE #######
     order = HiddenField(
         validators=[DataRequired()]
     )
@@ -447,12 +446,11 @@ class ExistingContentForm(Form):
         ],
         validate_choice=False
     )
-    choices = FieldList(FormField(ChoicesForm), min_entries=5)
+    choices = FieldList(FormField(ChoicesForm), min_entries=10)
     correct = StringField()
     
 
 class ModuleForm(FlaskForm):
-    ###### NOT DONE #######
     module = StringField(
         label='Module Name',
         name='module-name',
@@ -463,4 +461,4 @@ class ModuleForm(FlaskForm):
             "placeholder":"Enter the module name here...",
         }
     )
-    content = FieldList(FormField(ExistingContentForm), min_entries=10)
+    content = FieldList(FormField(ExistingContentForm), min_entries=15)

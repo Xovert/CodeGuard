@@ -63,7 +63,6 @@ def upload_image(file: FileStorage, ref_id, usage=None):
         id=ref_id,
         usage=usage,
     )
-
     return
 
 def add_module(module):
@@ -91,6 +90,7 @@ def add_module(module):
 def add_content(content):
     error = None
     success = None
+    # id = None
 
     try:
         db.session.add(content)
@@ -112,6 +112,7 @@ def add_content(content):
 def add_questions(question):
     error = None
     success = None
+    # id = None
 
     try:
         db.session.add(question)
