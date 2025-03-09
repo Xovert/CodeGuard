@@ -61,6 +61,10 @@ body {
     background-color: var(--white);
 }
 
+input:-webkit-autofill{
+    -webkit-box-shadow: 0 0 0 30px var(--white) inset !important;
+}
+
 .btn{
     padding: 12px 24px;
     border-radius: 10px;

@@ -22,14 +22,8 @@ from CodeGuard.models import (
     ChallengeOptions
 )
 
-from CodeGuard.utils.files import get_file, upload_file, delete_file
+from CodeGuard.utils.files import delete_file
 from CodeGuard.admin.create import upload_image
-
-# from CodeGuard.courses import courses
-# from CodeGuard import courses as course
-# from CodeGuard.utils.user import get_uuid
-# from datetime import datetime, timezone, timedelta
-# from urllib.parse import quote
 
 def get_course(course_name):
     course = db.session.scalars(
@@ -70,13 +64,6 @@ def get_single_module(module_name, course_id):
     ).first()
 
 def get_contents(module_id):
-    # contents = db.session.execute(
-    #     db.select(Contents)
-    #     .join(Modules)
-    #     .where(Modules.module_name == module_name)
-    #     .order_by(Contents.order.asc())
-    # ).all()
-
     contents = db.session.execute(
         db.select(Contents, ContentImages.new_filename, ContentImages.original_filename, ContentImages.id)
         .outerjoin(ContentImages, Contents.id == ContentImages.content_id)
@@ -92,11 +79,6 @@ def get_single_content(content_id):
         .where(Contents.id == content_id)
     ).first()
 
-# def get_single_content(content_id):
-#     return db.session.scalars(
-#         db.select(Contents, ContentImages.new_filename, ContentImages.original_filename)
-#     )
-
 def get_challenge_data(content_id):
     data = db.session.scalars(
         db.select(ChallengeQuestions)
@@ -104,12 +86,6 @@ def get_challenge_data(content_id):
         .where(Contents.id == content_id)
     ).first()
     return data
-    # def get_correct(content_id) -> str:
-    # return db.session.scalar(
-    #     db.select(ChallengeOptions.option_text)
-    #     .join(ChallengeQuestions)
-    #     .where(ChallengeQuestions.content_id == content_id)
-    # )
 
 def get_options(question_id):
     options = db.session.execute(
@@ -127,7 +103,7 @@ def delete_options(question_id):
         )
         db.session.flush()
         print(f"Successfully deleted options for question_id: {question_id}")
-    except Exception as e:
+    except sqlerror as e:
         db.session.rollback()
         print(f"Error deleting options: {e}")
     else:
@@ -142,7 +118,7 @@ def delete_challenge_data(question_id):
         )
         db.session.flush()
         print(f"Successfully deleted challenge data with id = {question_id}")
-    except Exception as e:
+    except sqlerror as e:
         db.session.rollback()
         print(f"Error deleting options: {e}")
     else:
@@ -157,9 +133,22 @@ def delete_content(content_id):
         )
         db.session.flush()
         print(f"Successfully deleted content with id: {content_id}")
-    except Exception as e:
+    except sqlerror as e:
         db.session.rollback()
         print(f"Error deleting options: {e}")
+    else:
+        db.session.commit()
+    return
+
+def delete_module(module_name, course_id):
+    module = get_single_module(module_name, course_id)
+    try:
+        db.session.delete(module)
+        db.session.flush()
+        print(f"Successfully deleted module: {module_name}, course id: {course_id}")
+    except sqlerror as e:
+        db.session.rollback()
+        print(f"Error deleting module: {e}")
     else:
         db.session.commit()
     return
@@ -210,32 +199,6 @@ def update_course(old_name, course_name, course_description, course_status, cour
         
     else:
         db.session.commit()
-        success = f"{course_name} has been updated!"
+        success = f'"{course_name}" has been updated!'
 
     return error, success
-
-
-
-# def update_image(file: FileStorage, ref_id, usage=None, location=None):
-#     filename = file.filename
-#     file_stream = file.stream
-#     mime_type, _ = mimetypes.guess_type(filename)
-#     if mime_type is None:
-#         # Default to binary stream if MIME type cannot be determined
-#         mime_type = 'application/octet-stream'
-
-#     file_storage = FileStorage(
-#         stream=file_stream,
-#         filename=filename,
-#         content_type=mime_type
-#     )
-
-#     ret = upload_file(
-#         file=file_storage,
-#         id=ref_id,
-#         usage=usage,
-#         location=location
-#     )
-
-#     print(ret)
-#     return

@@ -94,91 +94,6 @@ class CourseForm(FlaskForm):
         ]
     )
 
-# class TypeForm(FlaskForm):
-#     types = SelectField(
-#         label='Type',
-#         choices=[
-#             ('Learning', 'Learning'),
-#             ('Challenge Code', 'Challenge Code'),
-#             ('Challenge Options', 'Challenge Options')
-#         ],
-#         validate_choice=True,
-#         validators=[
-#             DataRequired(message="You need to specify the type of the type of the page!")
-#         ]
-#     )
-
-class ImageForm(FlaskForm):
-    image = FileField(
-        label='Picture',
-        validators=[
-            FileAllowed(photos, 'Only images are allowed!'),
-            FileRequired(message='You need to upload a file!')
-        ],
-    )
-
-class ContentBodyForm(FlaskForm):
-    content_body = TextAreaField(
-        label='Content',
-        validators=[
-            DataRequired(message='You need to specify the content!')
-        ],
-        render_kw={
-            "placeholder":"Enter learning content here...",
-            "rows":'4',
-        }
-    )
-
-class QuestionCodeForm(FlaskForm):
-    question = TextAreaField(
-        label='Question',
-        validators=[
-            DataRequired(message='You need to specify the question for the challenge!')
-        ],
-        render_kw={
-            "placeholder":"Enter challenge question here...",
-            "rows":'2',
-        }
-    )
-    code = TextAreaField(
-        label='Code',
-        validators=[
-            DataRequired(message='You need to specify the code for the challenge!')
-        ],
-        render_kw={
-            "placeholder":"Enter challenge code here...",
-            "rows":'10',
-        }
-    )
-
-class OptionsForm(FlaskForm):
-    options = RadioField(
-        label='Options',
-        choices=[
-            ('value-1', 'Option 1'),
-            ('value-2', 'Option 2'),
-            ('value-3', 'Option 3')
-        ],
-        validators=[
-            DataRequired(message="You need to specify the options for the challenge!")
-        ]
-    )
-
-class TimerForm(FlaskForm):
-    timer = TimeField(
-        label='Timer',
-        format='%H:%M:%S',
-        validators=[
-            DataRequired(message='You need to specify the exam completion time!')
-        ],
-    )
-    
-class OrderForm(FlaskForm):
-    order = HiddenField(
-        validators=[DataRequired()]
-    )
-
-
 
 class ChoicesForm(Form):
     choices = StringField(
@@ -187,10 +102,11 @@ class ChoicesForm(Form):
         ]
     )
 
+# this is for update content
+class ChoicesFormNotRequired(Form):
+    choices = StringField()
+
 class ChallengeLearningForm(Form):
-    # order = FormField(OrderForm)
-    # image = FormField(ImageForm)
-    # content_body = FormField(ContentBodyForm)
     order = HiddenField(
         validators=[DataRequired()]
     )
@@ -212,38 +128,7 @@ class ChallengeLearningForm(Form):
         }
     )
 
-
-class ChallengeCodeForm(Form):
-    # order = FormField(OrderForm)
-    # question_code = FormField(QuestionCodeForm)
-    order = HiddenField(
-        validators=[DataRequired()]
-    )
-    question = TextAreaField(
-        label='Question',
-        validators=[
-            DataRequired(message='You need to specify the question for the challenge!')
-        ],
-        render_kw={
-            "placeholder":"Enter challenge question here...",
-            "rows":'2',
-        }
-    )
-    code = TextAreaField(
-        label='Code',
-        validators=[
-            DataRequired(message='You need to specify the code for the challenge!')
-        ],
-        render_kw={
-            "placeholder":"Enter challenge code here...",
-            "rows":'10',
-        }
-    )
-
 class ChallengeOptionsForm(Form):
-    # order = FormField(OrderForm)
-    # question_code = FormField(QuestionCodeForm)
-    # options = FormField(OptionsForm)
     order = HiddenField(
         validators=[DataRequired()]
     )
@@ -287,87 +172,87 @@ class ChallengeOptionsForm(Form):
     choices = FieldList(FormField(ChoicesForm), min_entries=1)
 
 
-class ExamCodeForm(Form):
-    # order = FormField(OrderForm)
-    # timer = FormField(TimerForm)
-    # question_code = FormField(QuestionCodeForm)
-    order = HiddenField(
-        validators=[DataRequired()]
-    )
-    timer = TimeField(
-        label='Timer',
-        format='%H:%M:%S',
-        validators=[
-            DataRequired(message='You need to specify the exam completion time!')
-        ],
-    )
-    question = TextAreaField(
-        label='Question',
-        validators=[
-            DataRequired(message='You need to specify the question for the challenge!')
-        ],
-        render_kw={
-            "placeholder":"Enter challenge question here...",
-            "rows":'2',
-        }
-    )
-    code = TextAreaField(
-        label='Code',
-        # validators=[
-        #     DataRequired(message='You need to specify the code for the challenge!')
-        # ],
-        render_kw={
-            "placeholder":"Enter challenge code here...",
-            "rows":'10',
-        }
-    )
+# class ExamCodeForm(Form):
+#     # order = FormField(OrderForm)
+#     # timer = FormField(TimerForm)
+#     # question_code = FormField(QuestionCodeForm)
+#     order = HiddenField(
+#         validators=[DataRequired()]
+#     )
+#     timer = TimeField(
+#         label='Timer',
+#         format='%H:%M:%S',
+#         validators=[
+#             DataRequired(message='You need to specify the exam completion time!')
+#         ],
+#     )
+#     question = TextAreaField(
+#         label='Question',
+#         validators=[
+#             DataRequired(message='You need to specify the question for the challenge!')
+#         ],
+#         render_kw={
+#             "placeholder":"Enter challenge question here...",
+#             "rows":'2',
+#         }
+#     )
+#     code = TextAreaField(
+#         label='Code',
+#         # validators=[
+#         #     DataRequired(message='You need to specify the code for the challenge!')
+#         # ],
+#         render_kw={
+#             "placeholder":"Enter challenge code here...",
+#             "rows":'10',
+#         }
+#     )
 
-class ExamOptionsForm(Form):
-    # order = FormField(OrderForm)
-    # timer = FormField(TimerForm)
-    # question_code = FormField(QuestionCodeForm)
-    # options = FormField(OptionsForm)
-    order = HiddenField(
-        validators=[DataRequired()]
-    )
-    timer = TimeField(
-        label='Timer',
-        format='%H:%M:%S',
-        validators=[
-            DataRequired(message='You need to specify the exam completion time!')
-        ],
-    )
-    question = TextAreaField(
-        label='Question',
-        validators=[
-            DataRequired(message='You need to specify the question for the challenge!')
-        ],
-        render_kw={
-            "placeholder":"Enter challenge question here...",
-            "rows":'2',
-        }
-    )
-    code = TextAreaField(
-        label='Code',
-        validators=[
-            DataRequired(message='You need to specify the code for the challenge!')
-        ],
-        render_kw={
-            "placeholder":"Enter challenge code here...",
-            "rows":'10',
-        }
-    )
-    options = RadioField(
-        label='Options',
-        choices=[
-            ('value-1', 'Option 1'),
-        ],
-        validators=[
-            DataRequired(message="You need to specify the options for the challenge!")
-        ],
-        validate_choice=False
-    )
-    choices = FieldList(FormField(ChoicesForm), min_entries=1)
+# class ExamOptionsForm(Form):
+#     # order = FormField(OrderForm)
+#     # timer = FormField(TimerForm)
+#     # question_code = FormField(QuestionCodeForm)
+#     # options = FormField(OptionsForm)
+#     order = HiddenField(
+#         validators=[DataRequired()]
+#     )
+#     timer = TimeField(
+#         label='Timer',
+#         format='%H:%M:%S',
+#         validators=[
+#             DataRequired(message='You need to specify the exam completion time!')
+#         ],
+#     )
+#     question = TextAreaField(
+#         label='Question',
+#         validators=[
+#             DataRequired(message='You need to specify the question for the challenge!')
+#         ],
+#         render_kw={
+#             "placeholder":"Enter challenge question here...",
+#             "rows":'2',
+#         }
+#     )
+#     code = TextAreaField(
+#         label='Code',
+#         validators=[
+#             DataRequired(message='You need to specify the code for the challenge!')
+#         ],
+#         render_kw={
+#             "placeholder":"Enter challenge code here...",
+#             "rows":'10',
+#         }
+#     )
+#     options = RadioField(
+#         label='Options',
+#         choices=[
+#             ('value-1', 'Option 1'),
+#         ],
+#         validators=[
+#             DataRequired(message="You need to specify the options for the challenge!")
+#         ],
+#         validate_choice=False
+#     )
+#     choices = FieldList(FormField(ChoicesForm), min_entries=1)
 
 class NewModuleForm(FlaskForm):
     module = StringField(
@@ -381,15 +266,14 @@ class NewModuleForm(FlaskForm):
         }
     )
     learning = FieldList(FormField(ChallengeLearningForm), min_entries=1)
-    challenge_code = FieldList(FormField(ChallengeCodeForm), min_entries=0)
     challenge_options = FieldList(FormField(ChallengeOptionsForm), min_entries=0)
-    exam_code = FieldList(FormField(ExamCodeForm), min_entries=0)
-    exam_options = FieldList(FormField(ExamOptionsForm), min_entries=0)
+    # exam_code = FieldList(FormField(ExamCodeForm), min_entries=0)
+    # exam_options = FieldList(FormField(ExamOptionsForm), min_entries=0)
 
 
 class ExistingContentForm(Form):
     order = HiddenField(
-        validators=[DataRequired()]
+        # validators=[DataRequired()]
     )
     content_type = StringField()
     content_id = HiddenField(
@@ -418,9 +302,9 @@ class ExistingContentForm(Form):
     )
     question = TextAreaField(
         label='Question',
-        validators=[
-            DataRequired(message='You need to specify the question for the challenge!')
-        ],
+        # validators=[
+        #     DataRequired(message='You need to specify the question for the challenge!')
+        # ],
         render_kw={
             "placeholder":"Enter challenge question here...",
             "rows":'2',
@@ -428,9 +312,9 @@ class ExistingContentForm(Form):
     )
     code = TextAreaField(
         label='Code',
-        validators=[
-            DataRequired(message='You need to specify the code for the challenge!')
-        ],
+        # validators=[
+        #     DataRequired(message='You need to specify the code for the challenge!')
+        # ],
         render_kw={
             "placeholder":"Enter challenge code here...",
             "rows":'10',
@@ -441,12 +325,12 @@ class ExistingContentForm(Form):
         choices=[
             ('value-1', 'Option 1'),
         ],
-        validators=[
-            DataRequired(message="You need to specify the options for the challenge!")
-        ],
+        # validators=[
+        #     DataRequired(message="You need to specify the options for the challenge!")
+        # ],
         validate_choice=False
     )
-    choices = FieldList(FormField(ChoicesForm), min_entries=10)
+    choices = FieldList(FormField(ChoicesFormNotRequired), min_entries=10)
     correct = StringField()
     
 

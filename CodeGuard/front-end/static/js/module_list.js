@@ -36,22 +36,50 @@ document.addEventListener('click', function (e){
 
 // ======== DELETE ========
 document.addEventListener("DOMContentLoaded", function () {
-    // Select all the trash buttons
-    const trashButtons = document.querySelectorAll(".icon-trash");
+    let moduleToDelete = null; // Stores the module to delete
 
-    // Add a click event listener to each trash button
-    trashButtons.forEach((button) => {
+    // Select all trash buttons
+    document.querySelectorAll(".icon-trash").forEach(button => {
         button.addEventListener("click", function () {
-            // Find the parent .module element of the clicked button
-            const moduleElement = button.closest(".module");
+            // Find the closest module container
+            moduleToDelete = this.closest(".module");
 
-            // Get the module name from the .module-name element inside the module
-            const moduleName = moduleElement.querySelector(".module-name").textContent.trim();
+            if (moduleToDelete) {
+                // Get module name for the modal message
+                const moduleName = moduleToDelete.querySelector(".module-name").textContent;
 
-            // Update the modal's message with the module name
-            const messageElement = document.getElementById("message");
-            messageElement.innerHTML = `Are you sure you want to delete <strong>${moduleName}</strong> module?`;
+                // Update modal message
+                const messageElement = document.getElementById("message");
+                messageElement.innerHTML = `Are you sure you want to delete <strong>${moduleName}</strong> module?`;
+            }
         });
+    });
+
+    // Handle delete confirmation
+    document.getElementById("yes").addEventListener("click", function () {
+        if (moduleToDelete) {
+            // Get the deleted module's order number
+            const deletedOrder = parseInt(moduleToDelete.querySelector(".order").textContent.replace("#", ""), 10);
+
+            moduleToDelete.remove(); // Remove the module from the DOM
+            moduleToDelete = null; // Reset the variable
+            
+            // update the order for all modules after the deleted one
+            document.querySelectorAll(".module").forEach(module => {
+                let orderElement = module.querySelector(".order");
+                let currentOrder = parseInt(orderElement.textContent.replace("#", ""), 10);
+    
+                // Decrease the order number if it's greater than the deleted order
+                if (currentOrder > deletedOrder) {
+                    orderElement.textContent = `#${currentOrder - 1}`;
+                }
+            });
+        }
+
+        // Close the modal programmatically after deletion
+        const modalElement = document.getElementById("delete");
+        const deleteModal = bootstrap.Modal.getInstance(modalElement);
+        deleteModal.hide(); // Hide the modal
     });
 });
 
@@ -109,23 +137,16 @@ saveButton.addEventListener("click", function () {
             module_name: module.querySelector('.module-name').textContent.trim(),
         });
     });
-    const course_name = encodeURIComponent(document.querySelector('.title > h1').textContent.trim());
-    // body = {
-    //     test: "halo",
-    //     yuhu: "testing"
-    // }
+    const course_name = encodeURIComponent(document.querySelector('.module-list-title').getAttribute('data-course-name'));
+    
     fetch(`/admin/${course_name}/modules`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ modules: moduleOrder }),
-        // body: JSON.stringify(body)
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) {
-            alert("Order updated successfully!");
-        } else {
-            alert("Failed to update order.");
-        }
-    });
+        window.location.replace(data.url);
+    })
+    .catch(error => console.error("Fetch error:", error));
 });

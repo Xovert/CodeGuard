@@ -18,10 +18,10 @@
                 <img src="{{ url_for('static', filename='assets/icon_upload.svg') }}" alt="">
                 Add File
             </label>
-            <span class="filename">No file chosen</span>
+            <input type="text" class="filename" name="content-0-original_filename" id="content-0-original_filename" value="No file chosen" data-original-filename="No file chosen" readonly>
             <input type="file" id="learning-pic_1" class="input-file-invi" accept=".jpg, .jpeg, .png">
             <p class="error-message error-course-logo">Error</p>
-            <img id="" src="#" alt="Your image" class="preview">
+            <img id="" src="#" alt="Your image" data-url-preview="" class="preview">
         </div>
         <div class="content-learning">
             <label for="content-learning-1">Content</label>

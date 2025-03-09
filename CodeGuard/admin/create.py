@@ -72,11 +72,11 @@ def add_module(module):
     db.session.add(module)
     try:
         db.session.flush()
-        success = f'Module {module.module_name} has succesfully been added'
+        success = f'Module "{module.module_name}" has succesfully been added'
         print(success)
         id = module.id
     except sqlerror:
-        error = f"Module {module.module_name} already added"
+        error = f'Module "{module.module_name}" already added'
         print(error)
         db.session.rollback()
     # else:
@@ -95,11 +95,11 @@ def add_content(content):
     try:
         db.session.add(content)
         db.session.flush()
-        success = f"Content number {content.order} successfully added"
+        success = f'Content number {content.order} successfully added'
         print(success)
         id = content.id
     except sqlerror:
-        error = f"Content number {content.order} already added"
+        error = f'Content number {content.order} already added'
         print(error)
         db.session.rollback()
     else:
@@ -135,10 +135,10 @@ def add_options(option):
     try:
         db.session.add(option)
         db.session.flush()
-        success = f'Option {option.option_text} for {option.question_id} successfully added'
+        success = f'Option "{option.option_text}" for {option.question_id} successfully added'
         print(success)
     except sqlerror:
-        error = f'Option {option.option_text} for {option.question_id} already added'
+        error = f'Option "{option.option_text}" for {option.question_id} already added'
         print(error)
         db.session.rollback()
     else:

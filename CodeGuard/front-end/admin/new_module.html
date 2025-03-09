@@ -46,7 +46,7 @@
                         Add File
                     </label>
                     <span class="filename">No file chosen</span>
-                    <input type="file" id="{{ form.learning[0].image.id }}" name="{{ form.learning[0].image.name }}" class="input-file-invi">
+                    <input type="file" id="{{ form.learning[0].image.id }}" name="{{ form.learning[0].image.name }}" class="input-file-invi" accept=".jpg, .jpeg, .png">
                     <p class="error-message error-course-logo">Error</p>
                     <img id="" src="#" alt="Your image" class="preview">
                 </div>
@@ -66,10 +66,7 @@
                     alt="">Add more page</button>
             <div class="add-page-options d-none">
                 <p id="learning-option"><button type="button">Learning</button></p>
-                <p id="challenge-code-option"><button type="button">Challenge Code</button></p>
                 <p id="challenge-option-option"><button type="button">Challenge Options</button></p>
-                <p id="exam-code-option"><button type="button">Exam Code</button></p>
-                <p id="exam-option-option"><button type="button">Exam Options</button></p>
             </div>
             <button class="btn submit-btn" id="submit-btn" type="submit">Submit</button>
         </div>

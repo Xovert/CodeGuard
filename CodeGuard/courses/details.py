@@ -36,7 +36,7 @@ def get_course_fields():
     course = db.session.execute(
         db.select(Courses.course_name, Courses.description, CourseImages.new_filename)
         .join(CourseImages)
-        .where(Courses.id == g.course_id)
+        .where(Courses.id == g.course_id, Courses.status == CourseStatus.PUBLISHED)
     ).first()
     return course
 

@@ -1,33 +1,77 @@
-from flask import Blueprint, current_app, render_template, url_for
-from flask import redirect, url_for
+from flask import Blueprint, current_app as app, render_template, url_for, request, flash, redirect, abort
 
 from CodeGuard.utils.user import get_current_user
 from CodeGuard.utils.decorators import login_required
 from CodeGuard.utils.exam import check_exam
+from CodeGuard.forms.profile import ProfileForm, UpdatePasswordForm
+from CodeGuard.user import profile as profiles
 
 user = Blueprint('user', __name__, template_folder='front-end')
 
-@user.route('/profile', methods=('GET',))
+@user.route('/profile', methods=('GET','POST'))
 @login_required
 def profile():
-    user = get_current_user()
-    return render_template("user/profile.html", username=user.username, email=user.email, fullname=user.fullname, regis_date=user.registration_date)
+    if request.method == 'GET':
+        user = get_current_user()
+        form = ProfileForm()
 
-@user.route('/profile/save' , methods=('PATCH',))
-def update():
-    return redirect(url_for('profile'))
-# intended: utk save changes of updates
-# NOW KEGUNAANNYA UNTUK:
-# update profile + pw, if any attr is empty, flash
-# flash('Apa field cannot be empty!')
+        form.fullname.data = user.fullname
+        form.username.data = user.username
+        form.email.data = user.email
 
-# @user.route('/profile/change', methods=('PATCH', 'GET'))
-# def change():
-#     if request.method == 'GET':
-#         return render_template('change_pass.html')
-    # redirect(url_for('change_pass.html'))
-# intended: utk GET change_pass
-# DOES NOT NEED THIS ANYMORE
+        return render_template(
+            "user/profile.html",
+            form=form,
+            regis_date=user.registration_date
+        )
+
+    error = None
+    success = None
+    form = ProfileForm()
+    if form.validate_on_submit():
+        fullname = form.fullname.data
+        username = form.username.data
+        email = form.email.data
+
+        error, success = profiles.update_profile(fullname, username, email)
+
+        if error:
+            flash(error)
+        else:
+            flash(success)
+    
+    else:
+        error = "<br>".join(
+            message for messages in form.errors.values() for message in messages
+        )
+        flash(error)
+    
+    return redirect(url_for('user.profile'))
+
+
+@user.route('/update_pw' , methods=('POST',))
+def update_pw():
+    if request.method == 'POST':
+        form = UpdatePasswordForm()
+        error = success = None
+
+        if form.validate_on_submit():
+            old_password = form.old_password.data
+            new_password = form.new_password.data
+
+            error, success = profiles.update_pw(old_password, new_password)
+
+            if error:
+                flash(error)
+            else:
+                flash(success)
+        
+        else:
+            error = "<br>".join(
+                message for messages in form.errors.values() for message in messages
+            )
+            flash(error)
+        return redirect(url_for('user.profile'))
 
 
 @user.before_request

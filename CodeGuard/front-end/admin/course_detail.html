@@ -45,7 +45,6 @@
         </div>
         <div class="detail">
             {{ form.visibility.label }}
-            <!-- {{ form.visibility }} -->
             <select name="{{ form.visibility.name }}" id="{{ form.visibility.id }}">
                 {% for value, label in form.visibility.choices %}
                 {% if ((form.visibility.data == 'published' or form.visibility.data == 'archived') and value == 'draft') %}
@@ -67,7 +66,6 @@
             <a href="{{ url_for('admin.modules', course_name=form.title.data|urlencode|replace('/', '%2F')) }}" class="a-tag"><button type="button" class="btn">Edit Modules</button></a>
         </div>
     </form>
-    <!-- get the data, save it in the DB, and then redirect to admin_course_content.html ( ada di admin_course_content() ) -->
 </div>
 
 {% endblock %}

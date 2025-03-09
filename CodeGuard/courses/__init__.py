@@ -54,6 +54,9 @@ def dashboard():
 @login_required
 def details(**kwargs):
     course = detail.get_course_fields()
+    if course is None:
+        abort(404)
+    
     modules = detail.get_modules()
     percentage = detail.get_percentage()
     exam = detail.get_exam()

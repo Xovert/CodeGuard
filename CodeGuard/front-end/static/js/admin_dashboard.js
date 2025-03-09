@@ -38,3 +38,49 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+
+// ===== DELETE COURSE =====
+let courseToDelete = null;
+
+// show modal
+document.addEventListener('click', (event) => {
+    if (event.target.classList.contains('delete-btn')) {
+        const courseElement = event.target.closest('.course');
+        courseToDelete = courseElement.getAttribute('data-course-name');
+
+        // Update the modal message
+        document.getElementById('message').textContent = `Are you sure you want to delete "${courseToDelete}"?`;
+
+        const option = courseElement.querySelector('.option');
+        if(option && !option.classList.contains('d-none')){
+            option.classList.add('d-none');
+        }
+    }
+});
+
+// if yes
+document.getElementById('yes').addEventListener('click', () => {
+    if (!courseToDelete) return;
+
+    courseToDelete = encodeURIComponent(courseToDelete);
+    fetch(`/admin/delete_course/${courseToDelete}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ course_name: courseToDelete })
+    })
+    .then(response => response.json())
+    .then(data => {
+        window.location.replace(data.url);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        courseToDelete = null;
+    });
+});
+
+// if no
+document.getElementById('no').addEventListener('click', () => {
+    courseToDelete = null;
+});

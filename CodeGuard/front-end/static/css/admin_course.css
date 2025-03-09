@@ -46,7 +46,7 @@
     margin-bottom: 0px;
 }
 
-label, input, textarea, select, .filename, .content-type{
+label, input, textarea, select, .filename, .content-type, .delete-img-btn{
     font-family: Poppins;
     font-size: 16px;
 }
@@ -82,10 +82,6 @@ input:-webkit-autofill{
 .content-type:hover{
     cursor: no-drop;
 }
-
-/* #course-title:-webkit-autofill {
-    background-color: var(--medium-light-green) !important;
-} */
 
 input, textarea{
     width: 100%;
@@ -137,11 +133,25 @@ input:focus{
 .filename{
     margin-left: 8px;
     display: inline-block;
-    max-width: calc(100% - 140px);
+    max-width: calc(100% - 285px);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     vertical-align: middle;
+    background-color: transparent;
+}
+
+.filename:focus{
+    outline: none;
+}
+
+.delete-img-btn{
+    outline: none;
+    background-color: var(--dark-blue);
+    color: var(--white);
+    border-radius: 10px;
+    padding: 6px 12px;
+    display: inline-block;
 }
 
 select {
@@ -318,16 +328,9 @@ select {
     cursor: pointer;
 }
 
-/* .radio-option ul{
-    margin: 0;
-    display: flex;
-    padding: 8px;
-    border-radius: 5px;
+.radio-option label{
+    width: 90%;
 }
-
-.radio-option li{
-    list-style: none;
-} */
 
 .add-option-btn{
     margin-top: 8px;

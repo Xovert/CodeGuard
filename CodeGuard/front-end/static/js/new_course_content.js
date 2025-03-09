@@ -1,4 +1,4 @@
-// ======= RESIZE TEXTAREA (AMAN) =======
+// ======= RESIZE TEXTAREA =======
 function autoResize(textarea) {
     textarea.style.height = 'auto'; // Reset the height
     textarea.style.height = textarea.scrollHeight + 'px'; // Set the height to match the content
@@ -12,7 +12,7 @@ document.addEventListener("input", function (event) {
 
 
 
-// ===== ACCORDION (AMAN) =====
+// ===== ACCORDION =====
 document.addEventListener("click", function (event) {
     // Check if the clicked element has the 'accordion' class
     if (event.target.classList.contains("accordion")) {
@@ -72,38 +72,6 @@ document.addEventListener('click', function (event) {
                 });
             }
 
-            else if (pageElement.classList.contains('exam')) {
-                // Get all .study elements after the current pageElement
-                const examPages = Array.from(
-                    document.querySelectorAll('.page.exam')
-                );
-
-                const currentIndex = examPages.indexOf(pageElement);
-
-                // Decrease the page number in p.accordion for all .study elements after the current one
-                examPages.slice(currentIndex + 1).forEach((examPage) => {
-                    const accordion = examPage.querySelector('p.accordion');
-                    if (accordion) {
-                        // Extract the text content of the accordion (excluding buttons)
-                        const textNode = Array.from(accordion.childNodes).find(
-                            (node) => node.nodeType === Node.TEXT_NODE
-                        );
-
-                        if (textNode) {
-                            // Extract and decrement the page number
-                            const match = textNode.textContent.match(/Exam (\d+)/);
-                            if (match) {
-                                const pageNumber = parseInt(match[1], 10);
-                                textNode.textContent = textNode.textContent.replace(
-                                    `Exam ${pageNumber}`,
-                                    `Exam ${pageNumber - 1}`
-                                );
-                            }
-                        }
-                    }
-                });
-            }
-
             // UPDATE ALL THE PAGES ORDER VALUE
             const pages = Array.from(
                 document.querySelectorAll('.page')
@@ -127,7 +95,7 @@ document.addEventListener('click', function (event) {
 
 
 
-// ======= MOVE UP + DOWN (AMAN, TP HRS CHECK LG?) ========
+// ======= MOVE UP + DOWN ========
 document.addEventListener('click', function (e) {
     // up
     if (e.target.closest('.up')) {
@@ -136,7 +104,7 @@ document.addEventListener('click', function (e) {
 
         if (previousPage && previousPage.classList.contains('page')) {
             currentPage.parentNode.insertBefore(currentPage, previousPage); // swap
-            if ((currentPage.classList.contains('study') && previousPage.classList.contains('study')) || (currentPage.classList.contains('exam') && previousPage.classList.contains('exam'))){
+            if (currentPage.classList.contains('study') && previousPage.classList.contains('study')){
                 swapPageNumbers(currentPage, previousPage);
             }
         }
@@ -149,7 +117,7 @@ document.addEventListener('click', function (e) {
 
         if (nextPage && nextPage.classList.contains('page')) {
             currentPage.parentNode.insertBefore(nextPage, currentPage); // swap
-            if ((currentPage.classList.contains('study') && nextPage.classList.contains('study')) || (currentPage.classList.contains('exam') && nextPage.classList.contains('exam'))){
+            if (currentPage.classList.contains('study') && nextPage.classList.contains('study')){
                 swapPageNumbers(currentPage, nextPage);
             }
         }
@@ -185,10 +153,6 @@ function swapPageNumbers(page1, page2) {
 
 
 // ====== FILE IMAGE INPUT VALIDATION + PREVIEW + FILENAME CHANGES ======
-// var save;
-
-// const fileInput = document.querySelectorAll('.input-file-invi');
-// const filenameSpan = document.querySelectorAll('.filename');
 const allowedExtensions = ['jpg', 'jpeg', 'png'];
 const maxFileSize = 1 * 1024 * 1024; // max size 5mb
 
@@ -203,17 +167,8 @@ document.querySelectorAll('.input-file-invi').forEach((fileInput) => {
     const filename = parentContainer.querySelector('.filename').textContent.trim();
     if (!file && preview && (filename != "No file chosen")) {
         preview.style.display = "block";
-        console.log("masuk preview")
     }
 });
-// let file = fileInput.files[0];
-// const preview = document.getElementById("preview");
-// const filename = document.getElementById("filename").textContent.trim();
-
-// if (!file && preview && (filename != "No file chosen")) {
-//     preview.style.display = "block";
-//     console.log("masuk preview")
-// }
 
 document.addEventListener('change', (event) => {
     if (event.target.classList.contains('input-file-invi')) {
@@ -240,7 +195,6 @@ document.addEventListener('change', (event) => {
                 // No preview
                 preview.src = '';
                 preview.style.display = 'none';
-
                 return;
             }
 
@@ -255,7 +209,6 @@ document.addEventListener('change', (event) => {
                 // No preview
                 preview.src = '';
                 preview.style.display = 'none';
-
                 return;
             }
 
@@ -282,13 +235,7 @@ document.addEventListener('change', (event) => {
 
 
 
-// ===== EDIT OPTIONS (AMAN) =====
-// document.addEventListener('click', function (e) {
-//     if (e.target.matches('[contenteditable="true"]')) {
-//         e.preventDefault(); // Prevent default behavior if necessary
-//         e.target.focus();   // Set focus to the clicked label
-//     }
-// });
+// ===== EDIT OPTIONS =====
 document.addEventListener("input", function (event) {
     // Check if the event target is a text input inside a radio-option
     if (event.target.matches(".radio-option label input[type='text']")) {
@@ -301,6 +248,7 @@ document.addEventListener("input", function (event) {
         }
     }
 });
+
 
 // update the value
 document.addEventListener("input", function (event) {
@@ -315,21 +263,9 @@ document.addEventListener("input", function (event) {
     }
 });
 
-// blur event > triggered when element loses its focus, i dont think this part of the code is necessary
-// document.addEventListener("blur", function (event) {
-//     if (event.target.matches('label[contenteditable="true"]')) {
-//         const label = event.target;
-//         const input = label.previousElementSibling;
-
-//         if (input && input.tagName === "INPUT") {
-//             input.setAttribute("value", label.textContent.trim());
-//         }
-//     }
-// }, true); // Use capture phase to ensure blur is captured
 
 
-
-// ======= ADD OPTIONS (AMAN) =======
+// ======= ADD OPTIONS =======
 document.addEventListener("click", function (event) {
     if (event.target.closest(".add-option-btn")) {
         const button = event.target.closest(".add-option-btn");
@@ -357,26 +293,12 @@ document.addEventListener("click", function (event) {
 
         // no .radio-option available
         else{
-            // const panel = optionContainer.closest(".panel");
-            // const typeInput = panel.querySelector('.type > input');
-
             // get the for attribute of the label
             const labelOption = optionContainer.querySelector("label");
             const forAttribute = labelOption?.getAttribute("for");
-            console.log(forAttribute);
 
-            // const idParts = forAttribute.split("-");
-            // console.log("id parts aman?");
-            baseID = `${forAttribute}-options`
-            // if (idParts.length === 3){
-            //     baseID = `${idParts[1]}-${idParts[2]}`;
-            // }
-            // else if (idParts.length === 4){
-            //     baseID = `${idParts[0]}-${idParts[1]}-${idParts[3]}`;
-            // }
-            
+            baseID = `${forAttribute}` 
             choicesID = forAttribute.split('-').slice(0, 2).join("-");
-
             nextCounter = 0;
         }
 
@@ -395,7 +317,7 @@ document.addEventListener("click", function (event) {
 });
 
 
-// ===== DELETE OPTIONS (AMAN) =====
+// ===== DELETE OPTIONS =====
 document.addEventListener("click", function (event) {
     // Check if the clicked element is an <img> inside a radio-option
     if (event.target.tagName === "IMG" && event.target.closest(".radio-option")) {
@@ -409,7 +331,6 @@ document.addEventListener("click", function (event) {
 // ===== ADD MORE PAGE (toggle) =====
 const addMorePageBtn = document.querySelector('.add-more-page-btn');
 const optionsContainer = document.querySelector('.add-page-options');
-// const buttonWrapper = document.querySelector('.button-wrapper');
 const error = document.getElementById('error-message');
 
 
@@ -436,24 +357,14 @@ optionsContainer.addEventListener('click', async function (e) {
         case 'learning-option':
             url = '/admin/course/material_learning';
             break;
-        case 'challenge-code-option':
-            url = '/admin/course/material_challenge_code';
-            break;
         case 'challenge-option-option':
             url = '/admin/course/material_challenge_option';
-            break;
-        case 'exam-code-option':
-            url = '/admin/course/material_exam_code';
-            break;
-        case 'exam-option-option':
-            url = '/admin/course/material_exam_option';
             break;
         default:
             alert('Unknown option selected!');
             return;
     }
 
-    console.log("url chosen")
     try {
         const response = await fetch(url);
         if (response.ok) {
@@ -462,25 +373,16 @@ optionsContainer.addEventListener('click', async function (e) {
             // Parse the content into a DOM element
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = content; // Insert the fetched HTML
-            console.log("content fetched")
 
-            // FOR PAGE COUNTTTTTTTTTTTTT
+            // FOR PAGE COUNTTTTTT
             let currentPageCount;
             let prefixTitle;
             let newPageNumber;
-            if (target.id === "learning-option" || target.id === "challenge-code-option" || target.id === "challenge-option-option"){
+            if (target.id === "learning-option" || target.id === "challenge-option-option"){
                 currentPageCount = document.querySelectorAll('.study').length;
                 prefixTitle = "Page ";
                 newPageNumber = currentPageCount + 1;
             }
-
-            else if(target.id === "exam-code-option" || target.id === "exam-option-option"){
-                currentPageCount = document.querySelectorAll('.exam').length;
-                prefixTitle = "Exam ";
-                newPageNumber = currentPageCount + 1;
-            }
-            // Count existing .page elements to determine the page number
-            console.log(`Page count for each study/exam: ${newPageNumber}`)
 
             // Update the <p> tag with the new page number
             const newAccordion = tempDiv.querySelector('p.accordion');
@@ -488,20 +390,15 @@ optionsContainer.addEventListener('click', async function (e) {
                 newAccordion.childNodes[0].textContent = `${prefixTitle}${newPageNumber} `;
             }
 
-
             // HITUNG ORDER PAGES
             const allPageCount = document.querySelectorAll('.page').length;
             const order = tempDiv.querySelector('.hidden');
             
             if(order){
                 order.value = allPageCount + 1;
-                console.log(`${order.value}`)
             }
-            // BELUM SELESAIIIIII
 
-
-
-            // GENERATE IDDDDDDD
+            // GENERATE IDDDD
             let randID;
 
             switch (target.id) {
@@ -509,28 +406,14 @@ optionsContainer.addEventListener('click', async function (e) {
                     randID = generateID("learning");
                     randomizeLearningId(tempDiv, randID);
                     break;
-                case 'challenge-code-option':
-                    randID = generateID("challenge code");
-                    randomizeChallengeCodeId(tempDiv, randID);
-                    break;
                 case 'challenge-option-option':
                     randID = generateID("challenge option");
                     randomizeChallengeOptionId(tempDiv, randID);
-                    break;
-                case 'exam-code-option':
-                    randID = generateID("exam code");
-                    randomizeExamCodeId(tempDiv, randID);
-                    break;
-                case 'exam-option-option':
-                    randID = generateID("exam option");
-                    randomizeExamOptionId(tempDiv, randID);
                     break;
                 default:
                     alert("Unknown option selected!")
                     return;
             }
-            
-            console.log("id generated")
 
             // Insert the updated content before the .button-wrapper
             error.parentNode.insertBefore(tempDiv.firstElementChild, error);
@@ -551,7 +434,6 @@ optionsContainer.addEventListener('click', async function (e) {
 
 // generate random ID function
 function generateID(type) {
-    // return Date.now();
     const pages = document.querySelectorAll(".page");
 
     let maxIndex = 0;
@@ -569,24 +451,19 @@ function generateID(type) {
 
             if (inputLabel) {
                 const forAttribute = inputLabel.getAttribute("for");
-                console.log(forAttribute)
                 const parts = forAttribute.split("-");
                 const index = parseInt(parts[1], 10);
 
                 if (index > maxIndex) {
                     maxIndex = index; // Update max index
-                    console.log(`max index now = ${maxIndex}`)
                 }
             }
         }
     });
 
     if(!avail){
-        console.log("gaada, not avail")
-        console.log(maxIndex);
         return maxIndex;
     }
-    console.log(maxIndex + 1)
     return maxIndex + 1;
 }
 
@@ -595,15 +472,6 @@ function generateID(type) {
  * @param {HTMLElement} container - The container element to randomize IDs for
  */
 function randomizeLearningId(container, randID) {
-    // type
-    // const typeInput = container.querySelector('.type > input');
-    // const typeLabel = container.querySelector('.type > label');
-    // if (typeInput && typeLabel) {
-    //     const randomID = `learning-${randID}`;
-    //     typeInput.id = randomID; // Update the input ID
-    //     typeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
-    // }
-
     // order
     const order = container.querySelector('.hidden');
     if (order){
@@ -630,52 +498,7 @@ function randomizeLearningId(container, randID) {
     }
 }
 
-function randomizeChallengeCodeId(container, randID){
-    // type
-    // const typeInput = container.querySelector('.type > input');
-    // const typeLabel = container.querySelector('.type > label');
-    // if (typeInput && typeLabel) {
-    //     const randomID = `challenge-code-${randID}`;
-    //     typeInput.id = randomID; // Update the input ID
-    //     typeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
-    // }
-    
-    // order
-    const order = container.querySelector('.hidden');
-    if (order){
-        const randomID = `challenge_code-${randID}-order`;
-        order.id = order.name = randomID;
-    }
-
-    // question
-    const questionTextarea = container.querySelector('.question > textarea');
-    const questionLabel = container.querySelector('.question > label');
-    if (questionTextarea && questionLabel) {
-        const randomID = `challenge_code-${randID}-question`;
-        questionTextarea.id = questionTextarea.name = randomID; // Update the textarea ID
-        questionLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
-    }
-
-    // code area
-    const codeTextarea = container.querySelector('.code-playground > textarea');
-    const codeLabel = container.querySelector('.code > label');
-    if (codeTextarea && codeLabel) {
-        const randomID = `challenge_code-${randID}-code`;
-        codeTextarea.id = codeTextarea.name = randomID; // Update the textarea ID
-        codeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
-    }
-}
-
 function randomizeChallengeOptionId(container, randID){
-    // type
-    // const typeInput = container.querySelector('.type > input');
-    // const typeLabel = container.querySelector('.type > label');
-    // if (typeInput && typeLabel) {
-    //     const randomID = `challenge-option-${randID}`;
-    //     typeInput.id = randomID; // Update the input ID
-    //     typeLabel.setAttribute('for', randomID); // Update the label's 'for' attribute
-    // }
-
     // order
     const order = container.querySelector('.hidden');
     if (order){
@@ -746,151 +569,10 @@ function randomizeChallengeOptionId(container, randID){
 
 }
 
-function randomizeExamCodeId(container, randID) {
-    // const typeInput = container.querySelector(".type > input");
-    // const typeLabel = container.querySelector(".type > label");
-    // if (typeInput && typeLabel) {
-    //     const newTypeID = `exam-code-type-${randID}`;
-    //     typeInput.setAttribute("id", newTypeID);
-    //     typeLabel.setAttribute("for", newTypeID);
-    // }
-
-    // order
-    const order = container.querySelector('.hidden');
-    if (order){
-        const randomID = `exam_code-${randID}-order`;
-        order.id = order.name = randomID;
-    }
-
-    // Randomize .timer > input and label
-    const timerInput = container.querySelector(".timer > input");
-    const timerLabel = container.querySelector(".timer > label");
-    if (timerInput && timerLabel) {
-        const newTimerID = `exam_code-${randID}-timer`;
-        timerInput.setAttribute("id", newTimerID);
-        timerInput.setAttribute("name", newTimerID);
-        timerLabel.setAttribute("for", newTimerID);
-    }
-
-    // Randomize .question > textarea and label
-    const questionTextarea = container.querySelector(".question > textarea");
-    const questionLabel = container.querySelector(".question > label");
-    if (questionTextarea && questionLabel) {
-        const newQuestionID = `exam_code-${randID}-question`;
-        questionTextarea.setAttribute("id", newQuestionID);
-        questionTextarea.setAttribute("name", newQuestionID);
-        questionLabel.setAttribute("for", newQuestionID);
-    }
-
-    // Randomize .code-playground > textarea and .code > label
-    const codeTextarea = container.querySelector(".code-playground > textarea");
-    const codeLabel = container.querySelector(".code > label");
-    if (codeTextarea && codeLabel) {
-        const newCodeID = `exam_code-${randID}-code`;
-        codeTextarea.setAttribute("id", newCodeID);
-        codeTextarea.setAttribute("name", newCodeID);
-        codeLabel.setAttribute("for", newCodeID);
-    }
-}
-
-function randomizeExamOptionId(container, randID){
-    // const typeInput = container.querySelector(".type > input");
-    // const typeLabel = container.querySelector(".type > label");
-    // if (typeInput && typeLabel) {
-    //     const newTypeID = `exam-option-type-${randID}`;
-    //     typeInput.setAttribute("id", newTypeID);
-    //     typeLabel.setAttribute("for", newTypeID);
-    // }
-
-    // order
-    const order = container.querySelector('.hidden');
-    if (order){
-        const randomID = `exam_options-${randID}-order`;
-        order.id = order.name = randomID;
-    }
-
-    // Randomize .timer > input and label
-    const timerInput = container.querySelector(".timer > input");
-    const timerLabel = container.querySelector(".timer > label");
-    if (timerInput && timerLabel) {
-        const newTimerID = `exam_options-${randID}-timer`;
-        timerInput.setAttribute("id", newTimerID);
-        timerInput.setAttribute("name", newTimerID);
-        timerLabel.setAttribute("for", newTimerID);
-    }
-
-    // Randomize .question > textarea and label
-    const questionTextarea = container.querySelector(".question > textarea");
-    const questionLabel = container.querySelector(".question > label");
-    if (questionTextarea && questionLabel) {
-        const newQuestionID = `exam_options-${randID}-question`;
-        questionTextarea.setAttribute("id", newQuestionID);
-        questionTextarea.setAttribute("name", newQuestionID);
-        questionLabel.setAttribute("for", newQuestionID);
-    }
-
-    // Randomize .code-playground > textarea and .code > label
-    const codeTextarea = container.querySelector(".code-playground > textarea");
-    const codeLabel = container.querySelector(".code > label");
-    if (codeTextarea && codeLabel) {
-        const newCodeID = `exam_options-${randID}-code`;
-        codeTextarea.setAttribute("id", newCodeID);
-        codeTextarea.setAttribute("name", newCodeID);
-        codeLabel.setAttribute("for", newCodeID);
-    }
-
-    const optionsContainer = container.querySelector('.option');
-    const randomID = `exam_options-${randID}`;
-    const optionID = `${randomID}-options`;
-    const hiddenID = `${randomID}-choices`;
-
-    const optionsLabel = optionsContainer.querySelector("label");
-    optionsLabel.setAttribute('for', optionID)
-
-    const radioOptions = optionsContainer.querySelectorAll(".radio-option");
-    let counter = 0; // Initialize counter
-
-    radioOptions.forEach(radioOption => {
-        const input = radioOption.querySelector("input[type='radio']");
-        const radioLabel = radioOption.querySelector("label");
-        const choice = radioOption.querySelector("input[type='text']");
-
-        // Update name attribute
-        // const name = `${randomID}-options`
-        input.setAttribute("name", optionID);
-
-        // Update ID attribute
-        const newID = `${optionID}-${counter}`;
-        input.setAttribute("id", newID);
-
-        // Update label's for attribute
-        radioLabel.setAttribute("for", newID);
-
-        // update choices
-        choice.id = choice.name = `${hiddenID}-${counter}-choices`;
-
-        counter++; // Increment counter
-    });
-}
-
-// document.getElementById("submit-btn").addEventListener("click", function (event) {
-//     // if (save === true){
-//     //     document.querySelector("form").submit();
-//     // }
-//     document.querySelector("form").submit();
-// });
-
 // MAU KIRIM DATA
 const submitButton = document.querySelector('.submit-btn');
 
 submitButton.addEventListener('click', async function (e) {
-    // Prevent form submission for validation
-    // e.preventDefault();
-
-
-    // Prepare FormData to handle both JSON data and files
-    const formData = new FormData();
-
     // module name
     const moduleNameInput = document.querySelector('#module-name');
     const moduleName = moduleNameInput?.value.trim() || null;
@@ -903,189 +585,4 @@ submitButton.addEventListener('click', async function (e) {
     
     error.textContent = '';
     error.style.display = ''
-
-    // dari sini, holdup
-//     let studyCounter = 1;
-//     let order = 1;
-
-//     // Convert all .page data to JSON while also handling file uploads
-//     const pages = Array.from(document.querySelectorAll('.page')).map((page) => {
-//         // Determine the ID format based on the class
-//         let id;
-//         if (page.classList.contains('study')) {
-//             id = `study-${studyCounter++}`;
-//         } else if (page.classList.contains('exam')) {
-//             id = "exam";
-//         } else {
-//             alert('Error: Invalid page!');
-//             throw new Error('Invalid page!'); // Stop further processing
-//         }
-
-//         const type = page.querySelector('.content-type')?.textContent || null;
-//         const content = page.querySelector('.content-learning > textarea')?.value || null;
-//         const question = page.querySelector('.question > textarea')?.value || null;
-//         const code = page.querySelector('.code-area')?.value || null;
-
-//         const optionContainer = page.querySelector('.option');
-//         let options = {}
-//         if (optionContainer){
-//             options = Array.from(page.querySelectorAll('.radio-option')).map(option => {
-//                 return {
-//                     id: option.querySelector('input')?.id || '',
-//                     value: option.querySelector('input')?.value || '',
-//                     is_correct: option.querySelector('input')?.checked || false,
-//                 };
-//             });
-//         }
-
-//         const timer = page.querySelector('.timer > input[type="time"]')?.value || null;
-
-//         // Handle file inputs (images)
-//         const fileInput = page.querySelector('.input-file-invi');
-//         const files = fileInput?.files;
-//         if (files && files.length > 0) {
-//             // Append the file to FormData
-//             formData.append(`file-page-${order}`, files[0]); // Unique key for each file
-//         }
-
-//         console.log(id)
-//         console.log(order)
-//         console.log(type)
-//         console.log(content)
-//         console.log(question)
-//         console.log(code)
-
-//         return {
-//             id: id,
-//             order: order++,
-//             type: type,
-//             content: content,
-//             question: question,
-//             code: code,
-//             options: options,
-//             duration: timer,
-//         };
-//     });
-
-//     const moduleData = {
-//         moduleName: moduleName,
-//         pages: pages
-//     };
-
-//     console.log(moduleData)
-//     // Add JSON data to FormData
-//     formData.append('data', JSON.stringify(moduleData));
-
-//     const courseName = encodeURIComponent(document.querySelector('.title').dataset.courseName);
-//     const encodedCourseName = encodeURIComponent(courseName);
-
-//     // console.log(formData)
-//     // Submit FormData to the backend
-//     try {  // SUBMIT KEMANA NIH
-
-//         var xhr = new XMLHttpRequest();
-//         var url = `/admin/${encodedCourseName}/new`;
-//         xhr.open("POST", url, true);
-//         xhr.setRequestHeader("Content-Type", "application/json");
-//         xhr.setRequestHeader("Accept", "application/json")
-//         // xhr.onreadystatechange = function () {
-//         //     if (xhr.readyState === 4 && xhr.status === 200) {
-//         //         var json = JSON.parse(xhr.responseText);
-//         //         console.log(json.email + ", " + json.password);
-//         //     }
-//         // };
-
-//         xhr.onload = function () {
-//             if (xhr.status >= 200 && xhr.status < 300) {
-//                 alert("Success! The module has been added.");
-//             } else {
-//                 alert("Error: " + xhr.status + "\nFailed to add the module. Please try again.");
-//             }
-//         };
-
-//         // var data = JSON.stringify({ "email": "hey@mail.com", "password": "101010" });
-//         xhr.send(JSON.stringify({ "email": "hey@mail.com", "password": "101010" }));
-//         console.log('data send')
-
-
-//         // const response = await fetch(`/admin/${encodedCourseName}/new`, {
-//         //     method: 'POST',
-//         //     headers: { 'Content-Type': 'application/json' },
-//         //     body: JSON.stringify(moduleData),
-//         // });
-
-//         // if (response.ok) {
-//         //     const data = await response.json();
-//         //     alert(data.message + '\nNew module has been successfully added');
-//         // } 
-        
-//         // else {
-//         //     const data = await response.json();
-//         //     alert(data.message + '\nFailed to add a new module. Please try again.')
-//         // }
-//     } catch (error) {
-//         console.error('Error submitting form:', error);
-//         alert('An error occured while submitting the form. Please try again.');
-//     }
 });
-
-// BATASSSSSSS 
-
-    // alert('Validation Passed. Form will be submitted.');
-    // Replace the line below with actual form submission logic if needed
-    // e.target.closest('form').submit();
-
-    /*
-        learning            : type, pic, content
-        challenge code      : type, question, code
-        challenge options   : type, question, code, options
-        exam code           : type, question, code, timer
-        exam options        : type, question, code, options, timer
-
-        jadi: module name, type, order, pic, content, question, code, options, timer
-
-
-[
-  {
-    "id": "page-1",
-    "type": "Learning",
-    "question": "What is this about?",
-    "options": [],
-    "timer": null,
-    "file": blob of data here
-  },
-  {
-    "id": "page-2",
-    "type": "Challenge Code",
-    "question": "What is the correct syntax?",
-    "options": [],
-    "timer": null
-  },
-  {
-    "id": "page-3",
-    "type": "Challenge Option",
-    "question": "Choose the correct answer.",
-    "options": [
-      {
-        "id": "option-3-1",
-        "value": "Option 1",
-        "text": "Answer 1"
-      },
-      {
-        "id": "option-3-2",
-        "value": "Option 2",
-        "text": "Answer 2"
-      }
-    ],
-    "timer": null
-  },
-  {
-    "id": "page-4",
-    "type": "Exam Code",
-    "question": "Write a function to calculate the sum.",
-    "options": [],
-    "timer": "00:30:00"
-  }
-]
-
-    */

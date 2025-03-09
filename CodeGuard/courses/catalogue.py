@@ -31,7 +31,7 @@ def get_enrolled():
         .join(CourseImages)
         .join(Enrollments)
         .join(Users)
-        .where(Users.id == g.user_id)
+        .where(Users.id == g.user_id, Courses.status == CourseStatus.PUBLISHED)
         .order_by(Enrollments.last_accessed_time.desc())
     ).all()
     return courses

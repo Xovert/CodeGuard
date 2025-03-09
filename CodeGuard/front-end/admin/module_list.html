@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Module{% endblock %}
+{% block title %}Modules{% endblock %}
 
 {% block header %}
 <link rel="stylesheet" href="{{ url_for('static',filename='css/module_list.css') }}">
@@ -28,8 +28,8 @@
 
 <div class="content">
     <form action="">
-        <div class="title">
-            <h1>{{ course_name }}</h1>
+        <div class="title module-list-title" data-course-name="{{ course_name }}">
+            <h1>List of Modules for "{{ course_name }}"</h1>
         </div>
 
         <div class="module-wrapper d-flex flex-column">
