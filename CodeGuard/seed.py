@@ -1939,16 +1939,21 @@ def reseed():
 def test_query(id):
     user_uuid = db.session.scalar(db.select(Users.uuid).where(Users.id == id))
     course_name = "PHP"
-    module_name = "Broken Access Control"
     content_id = 5
 
     # php = db.session.scalar(db.select(Courses).where(Courses.course_name == "PHP"))
-    model = Exams
-    id = 1
-    php = db.session.scalar(db.select(model).where(model.id == id))
+    # model = Exams
+
+    module_name = "Broken Access Control"
+    course_id = 1
+    module = db.session.execute(
+        db.select(Modules)
+        .where(Modules.module_name == module_name, Modules.course_id == course_id)
+    ).scalar()
    
     try:
-        result = db.session.delete(php)
+        db.session.delete(module)
+        db.session.flush()
     except Exception as e:
         print(f'error: {e}')
         db.session.rollback()

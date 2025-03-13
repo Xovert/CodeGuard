@@ -22,7 +22,7 @@ from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import column_property, validates, sessionmaker
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import event
+from sqlalchemy import event, func
 
 from CodeGuard.models.enums import CourseStatus, CompletionStatus, Severity
 
@@ -229,6 +229,7 @@ class Exams(db.Model):
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     _duration: Mapped[int] = mapped_column(Integer, nullable=False)
+    exam_number: Mapped[int] = mapped_column(Integer, nullable=False)
     course_id: Mapped[int] = mapped_column(ForeignKey("courses.id"), nullable=False)
     todo: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
 
@@ -408,3 +409,15 @@ class CourseImages(Images):
 def before_delete_image(mapper, connection, target):
     from CodeGuard.utils.files import delete_from_storage
     delete_from_storage(filename=target.location)
+
+@event.listens_for(Exams, 'before_insert')
+def assign_exam_id(mapper, connection, target):
+    # Only set exam_number if it's not already provided
+    if target.exam_number is None:
+        stmt = (
+            db.select(func.max(Exams.exam_number))
+            .where(Exams.course_id == target.course_id)
+        )
+        result = db.session.execute(stmt)
+        max_exam_id = result.scalar() or 0
+        target.exam_number = max_exam_id + 1

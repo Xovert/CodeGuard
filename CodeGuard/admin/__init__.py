@@ -30,6 +30,7 @@ from CodeGuard.models import (
 # from CodeGuard.admin import create
 
 admin = Blueprint('admin', __name__, template_folder='front-end')
+from CodeGuard.admin import exam
 
 @admin.route('/admin', methods=('GET',))
 @admin_required

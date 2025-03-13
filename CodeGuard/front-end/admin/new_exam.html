@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block title %}Add New Exam{% endblock %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='css/admin_exam.css') }}">
+<link rel="stylesheet" href="{{ url_for('static',filename='css/navbar_footer_admin.css') }}">
+<script src="{{ url_for('static', filename='js/cm6.bundle.js') }}"></script>
+<script src="{{ url_for('static', filename='js/new_exam.js') }}" defer></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="modal fade" id="confirmModal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1" aria-labelledby="ConfirmLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body d-flex flex-column justify-content-center align-items-center">
+                <p class="mt-3 text-center" id="confirmMessage"></p>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="button" class="btn btn-success" id="confirmButton">
+                    <span id="confirmButtonText">Yes</span>
+                    <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                    <span class="d-none" role="status">Loading...</span>
+                </button>
+                <button type="button" class="btn btn-secondary" id="no" data-bs-dismiss="modal" data-mdb-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content">
+    {% with form = Forms.exam.NewExamForm(exam=exam_name) %}
+    <form id="exam-form" action="{{ url_for('admin.add_exam', course_name=course_name|urlencode|replace('/', '%2F')) }}" class="course-content d-flex flex-column needs-validation" method="post" enctype="multipart/form-data" novalidate>
+        {{ form.csrf_token }}
+        <div class="title" data-course-name="{{ course_name }}">
+            <h1>New Exam for "{{ course_name }}"</h1>
+        </div>
+        <span class="warning-msg">Please beware that once you leave this form without submitting, you will need to re-enter all of the fields. We recommend you to submit the form as it is and edit it later.</span>
+        <div class="d-flex flex-column">
+            <div class="module d-flex align-items-center user-select-none flex-wrap">
+                {{ form.exam.label(class="d-inline-block form-label") }}
+                {{ form.exam(id="exam-name", class="d-inline-block") }}
+            </div>
+            <span class="error-message text-start"></span>
+        </div>
+        
+        <!-- EXAM CODE -->
+        <div class="page exam">
+            <p class="d-flex accordion">New Exam
+                <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
+            </p>
+            <div class="panel">
+                <div class="d-flex type-timer-wrapper">
+                    <div class="type">
+                        <label class="d-inline-block form-label">Type</label>
+                        <span class="content-type d-inline-block">Exam Code</span>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <div class="timer d-flex align-items-center" id="duration">
+                            {{ form.duration.label(class="d-inline-block form-label", for="duration") }}
+                            <div class="d-flex justify-content-start align-items-center flex-grow-1 gap-3">
+                                {{ form.duration.hours(id="hours", class="timer-item") }}
+                                <span class="d-inline-block colon">:</span>
+                                {{ form.duration.minutes(id="minutes", class="timer-item") }}
+                            </div>
+                        </div>
+                        <span class="error-message text-start"></span>
+                    </div>
+                    <div class="d-flex flex-column align-items-stretch flex-grow-1">
+                        <div class="todo-wrapper d-flex align-items-center gap-3">
+                            {{ form.todo.label(class="d-inline-block form-label") }}
+                            {{ form.todo(class="todo-input") }}
+                        </div>
+                        <span class="error-message text-start"></span>
+                    </div>
+                </div>
+                <div class="question">
+                    {{form.question.label(class="form-label") }}
+                    {{form.question(id="question") }}
+                    <span class="error-message text-start"></span>
+                </div>
+                <div class="code">
+                    {{ form.code.label(class="form-label") }}
+                    <div id="playground">
+                        {{ form.code }}
+                        <span class="language-span">PHP</span>
+                    </div>
+                    <span class="error-message text-start"></span>
+                </div>
+                <input type="hidden" id="content-content_id" name="content-content_id" value="" class="content-id">
+            </div>
+        </div>
+        
+        <p class="error-message" id="error-all"></p>
+    
+    
+        <div class="button-wrapper d-flex justify-content-center position-relative">
+            <button type="button" class="btn" id="cancel-btn"><a href="{{ url_for('admin.exams', course_name=course_name|urlencode|replace('/', '%2F')) }}">Cancel</a></button>
+            <button class="btn submit-btn" id="submit-btn" type="button">Submit</button>
+        </div>
+    </form>
+
+</div>
+
+
+{% endwith %}
+
+{% endblock %}
