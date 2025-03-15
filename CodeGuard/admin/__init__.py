@@ -1,6 +1,6 @@
 from flask import current_app as app, render_template, url_for, Blueprint, session, request, flash, redirect, jsonify, abort
+from sqlalchemy import exc
 from sqlalchemy.exc import IntegrityError as sqlerror
-import logging
 from CodeGuard.utils.decorators import admin_required
 from CodeGuard.utils.files import delete_file
 from CodeGuard.admin.create import upload_image
@@ -29,6 +29,7 @@ from CodeGuard.models import (
 )
 # from CodeGuard.admin import create
 
+log = app.logger
 admin = Blueprint('admin', __name__, template_folder='front-end')
 from CodeGuard.admin import exam
 
@@ -815,3 +816,20 @@ def detail_material_challenge_option():
     return render_template('admin/detail_material_challenge_option.html')
 
 # template materials
+
+@admin.before_request
+def check_course():
+    course_name = request.view_args.get('course_name', None)
+    if course_name:
+        course_name = unquote(course_name)
+        try:
+            course: Courses = db.session.execute(
+                db.select(Courses)
+                .where(Courses.course_name == course_name)
+            ).scalars().one_or_none()
+        except exc.MultipleResultsFound as e:
+            log.error(e)
+            abort(500, description="Multiple Course with the same name were found!")
+
+        if course is None:
+            abort(404, description=f'Course \"{course_name}\" was not found on the server!')

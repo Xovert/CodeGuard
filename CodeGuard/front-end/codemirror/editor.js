@@ -1,5 +1,5 @@
 import { EditorView, basicSetup} from "codemirror"
-import { keymap, placeholder } from "@codemirror/view"
+import { keymap, placeholder, ViewUpdate } from "@codemirror/view"
 import { php } from "@codemirror/lang-php"
 import { html } from "@codemirror/lang-html"
 import { css } from "@codemirror/lang-css"
@@ -8,7 +8,7 @@ import { EditorState } from "@codemirror/state";
 import { oneDark } from "@codemirror/theme-one-dark"
 import { defaultKeymap, historyKeymap, indentWithTab } from "@codemirror/commands";
 import { indentUnit } from "@codemirror/language"
-import { completionKeymap } from "@codemirror/autocomplete";
+import { completionKeymap, currentCompletions } from "@codemirror/autocomplete";
 
 class Base {
 	#extensions = [];
@@ -36,6 +36,14 @@ class Base {
 			}));
 		}
 		
+		if ('change' in options && typeof options.change === 'function') {
+			extensions.push(EditorView.updateListener.of((v) => {
+				if(v.docChanged){
+					options.change();
+				}
+			}))
+		}
+
 		if ('styles' in options) {
 			extensions.push(EditorView.theme(options.styles))
 		}

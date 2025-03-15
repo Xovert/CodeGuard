@@ -1,6 +1,81 @@
 var view;
 
 document.addEventListener("DOMContentLoaded", (event) => {
+    setupCodeMirror();
+    document.getElementById("submit-btn").disabled = true;
+    var initialValues = {};
+    document.querySelectorAll('.form-input').forEach((element) => {
+        const initialValue = element.value;
+        initialValues[element.id] = initialValue;
+        element.addEventListener('input', checkAllChanges);
+    });
+    initialValues.code = view.state.doc.toString();
+    window.initialValues = initialValues;
+})
+
+function hasChangestoSubmit() {
+    const inputs = document.querySelectorAll('.form-input');
+    
+    for (const element of inputs) {
+        if (element.value !== window.initialValues[element.id]) {
+            return true;
+        }
+    }
+    if (view.state.doc.toString() !== window.initialValues.code ){
+        return true;
+    }
+    return false;
+}
+
+function checkAllChanges() {
+    const inputs = document.querySelectorAll('.form-input');
+
+    for (const element of inputs) {
+        if ( element.value !== window.initialValues[element.id] ) {
+            document.getElementById('submit-btn').removeAttribute('disabled');
+            return;
+        }
+    }
+    if (view.state.doc.toString() !== window.initialValues.code ){
+        document.getElementById('submit-btn').removeAttribute('disabled');
+        return;
+    }
+    document.getElementById('submit-btn').disabled = true;
+}
+
+document.getElementById('submit-btn').addEventListener('click', (e) => {
+    if ( !checkAll() ) {
+        showError('There are still errors!');
+    } else if ( !hasChangestoSubmit() ) {
+        showError('There are no changes to be saved!');
+    } else {
+        closeError();
+        confirm('Are you sure you want to save your changes?', "submit");
+    }
+})
+
+document.getElementById("cancel-btn").addEventListener('click', (e) => {
+    confirm("You have unsaved changes. If you leave this page, your changes will be lost. Are you sure you want to continue?", "cancel");
+})
+
+document.getElementById('confirmButton').addEventListener('click', async (event) => {
+    let elem = document.getElementById('confirmModal');
+    let form = document.getElementById('exam-form');
+    closeModal();
+    var purpose = elem.dataset.purpose;
+    delete elem.dataset.purpose;
+
+    if ( purpose === "submit" ) {
+        form.requestSubmit();
+    } else if ( purpose === "cancel" ) {
+        var btn = document.getElementById("cancel-btn");
+        var replaceUrl = btn.dataset.backUrl;
+        delete btn.dataset.backUrl;
+        window.location.replace(replaceUrl);
+    }
+})
+
+function setupCodeMirror() {
     let max_height = 1700;
     let height = 400;
     let options = {
@@ -29,6 +104,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
             },
         },
         lineWrapping: false,
+        change: checkAllChanges,
     }
     let editor = document.querySelector("#code");
     view = cm6.load().textarea(editor, options);
@@ -37,9 +113,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     labels.forEach((element) => {
         element.innerHTML += '<span class="asterisk">*</span>';
     })
-
-
-})
+}
 
 document.querySelector('#exam-form').addEventListener('submit', function (e) {
     // e.preventDefault(); // if using async
@@ -203,7 +277,7 @@ function confirm(message, purpose){
     modal.show()
 }
 
-function closeModal(message){
+function closeModal(){
     let elem = document.getElementById('confirmModal')
     let modal = bootstrap.Modal.getOrCreateInstance(elem)
     let confirmMessage = elem.querySelector('#confirmMessage')
@@ -212,35 +286,7 @@ function closeModal(message){
     modal.hide()
 }
 
-document.getElementById('submit-btn').addEventListener('click', (e) => {
-    if ( !checkAll() ) {
-        showError('There are still errors!')
-    } else {
-        closeError();
-        confirm('Are you ready to save the new exam?', "submit");
-    }
-})
 
-document.getElementById("cancel-btn").addEventListener("click", (e) => {
-    confirm("You have unsaved changes. If you leave this page, your changes will be lost. Are you sure you want to continue?", "cancel");
-})
-
-document.getElementById('confirmButton').addEventListener('click', async (event) => {
-    let elem = document.getElementById('confirmModal');
-    let form = document.getElementById('exam-form');
-    closeModal();
-    var purpose = elem.dataset.purpose;
-    delete elem.dataset.purpose;
-
-    if ( purpose === "submit" ) {
-        form.requestSubmit();
-    } else if ( purpose === "cancel" ) {
-        var btn = document.getElementById("cancel-btn");
-        var replaceUrl = btn.dataset.backUrl;
-        delete btn.dataset.backUrl;
-        window.location.replace(replaceUrl);
-    }
-})
 
 
 // ===== ACCORDION (AMAN) =====

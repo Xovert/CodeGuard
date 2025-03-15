@@ -29692,6 +29692,14 @@ var cm6 = (function (exports) {
   			}));
   		}
   		
+  		if ('change' in options && typeof options.change === 'function') {
+  			extensions.push(EditorView.updateListener.of((v) => {
+  				if(v.docChanged){
+  					options.change();
+  				}
+  			}));
+  		}
+
   		if ('styles' in options) {
   			extensions.push(EditorView.theme(options.styles));
   		}

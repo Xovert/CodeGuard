@@ -59,7 +59,7 @@ class DurationForm(Form):
 
         return True
 
-class NewExamForm(FlaskForm):
+class ExamForm(FlaskForm):
     exam = StringField(
         label='Exam Name',
         name='exam-name',
@@ -108,6 +108,3 @@ class NewExamForm(FlaskForm):
             "rows":'10',
         }
     )
-
-class ExamForm(FlaskForm):
-    pass

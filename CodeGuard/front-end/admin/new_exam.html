@@ -20,8 +20,6 @@
             <div class="modal-footer d-flex justify-content-center">
                 <button type="button" class="btn btn-success" id="confirmButton">
                     <span id="confirmButtonText">Yes</span>
-                    <span class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
-                    <span class="d-none" role="status">Loading...</span>
                 </button>
                 <button type="button" class="btn btn-secondary" id="no" data-bs-dismiss="modal" data-mdb-dismiss="modal">No</button>
             </div>
@@ -30,7 +28,7 @@
 </div>
 
 <div class="content">
-    {% with form = Forms.exam.NewExamForm(exam=exam_name) %}
+    {% with form = Forms.exam.ExamForm(exam=exam_name) %}
     <form id="exam-form" action="{{ url_for('admin.add_exam', course_name=course_name|urlencode|replace('/', '%2F')) }}" class="course-content d-flex flex-column needs-validation" method="post" enctype="multipart/form-data" novalidate>
         {{ form.csrf_token }}
         <div class="title" data-course-name="{{ course_name }}">
@@ -47,7 +45,7 @@
         
         <!-- EXAM CODE -->
         <div class="page exam">
-            <p class="d-flex accordion">New Exam
+            <p class="d-flex accordion" role="button">New Exam
                 <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
             </p>
             <div class="panel">
@@ -88,7 +86,6 @@
                     </div>
                     <span class="error-message text-start"></span>
                 </div>
-                <input type="hidden" id="content-content_id" name="content-content_id" value="" class="content-id">
             </div>
         </div>
         
@@ -96,7 +93,7 @@
     
     
         <div class="button-wrapper d-flex justify-content-center position-relative">
-            <button type="button" class="btn" id="cancel-btn"><a href="{{ url_for('admin.exams', course_name=course_name|urlencode|replace('/', '%2F')) }}">Cancel</a></button>
+            <button type="button" class="btn" id="cancel-btn" data-back-url="{{ url_for('admin.exams', course_name=course_name|urlencode|replace('/', '%2F')) }}">Cancel</button>
             <button class="btn submit-btn" id="submit-btn" type="button">Submit</button>
         </div>
     </form>
