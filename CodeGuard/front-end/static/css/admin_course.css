@@ -254,40 +254,18 @@ select {
 
 /* CODE PLAYGROUND */
 .code-playground{
-    background-color: var(--dark-blue);
-    padding: 40px 12px 64px 12px;
-    border-radius: 5px;
     position: relative;
 }
 
-.code-area{
-    background-color: transparent;
-    color: var(--white);
-}
-
-.code-playground span{
+.language-span{
     color: var(--blue);
     font-family: Manrope;
     font-size: 16px;
     font-weight: 800;
-}
 
-.language-span{
     position: absolute;
-    top: 12px;
+    top: 8px;
     right: 12px;
-}
-
-.run-code{
-    position: absolute;
-    bottom: 12px;
-    right: 12px;
-    background-color: transparent;
-    border: none;
-}
-
-.run-code img{
-    margin-left: 8px;
 }
 
 .radio-option{

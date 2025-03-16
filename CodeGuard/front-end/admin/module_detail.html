@@ -5,6 +5,7 @@
 {% block header %}
 <link rel="stylesheet" href="{{ url_for('static',filename='css/admin_course.css') }}">
 <link rel="stylesheet" href="{{ url_for('static',filename='css/navbar_footer_admin.css') }}">
+<script src="{{ url_for('static', filename='js/cm6.bundle.js') }}"></script>
 <script src="{{ url_for('static', filename='js/admin_course_content.js') }}" defer></script>
 {% endblock %}
 
@@ -111,10 +112,6 @@
                     <div class="code-playground">
                         <textarea class="code-area" id="{{ content.code.id }}" name="{{ content.code.name }}" rows="10" placeholder="Enter challenge code here...">{{ content.code.data }}</textarea>
                         <span class="language-span">PHP</span>
-                        <button class="run-code d-flex align-items-center">
-                            <span>RUN</span>
-                            <img src="{{ url_for('static', filename='assets/icon_run.svg') }}" alt="">
-                        </button>
                     </div>
                 </div>
                 <div class="option">
@@ -173,10 +170,6 @@
                         <textarea class="code-area" name="{{ content.code.name }}" id="{{ content.code.id }}" rows="10"
                             placeholder="Enter challenge code here...">{{ content.code.data }}</textarea>
                         <span class="language-span">PHP</span>
-                        <button class="run-code d-flex align-items-center">
-                            <span>RUN</span>
-                            <img src="{{ url_for('static', filename='assets/icon_run.svg') }}" alt="">
-                        </button>
                     </div>
                 </div>
                 <div class="answer">

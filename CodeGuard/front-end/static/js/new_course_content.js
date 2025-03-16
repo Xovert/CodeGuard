@@ -327,7 +327,38 @@ document.addEventListener("click", function (event) {
     }
 });
 
-
+function setupCodeMirror(elem) {
+    let max_height = 410;
+    let height = 400;
+    let options = {
+        dark: true,
+        styles: {
+            "&":{
+                "max-height": `${max_height}px`,
+                backgroundColor: "var(--dark-blue)",
+                border: "5px solid var(--dark-blue)",
+                borderRadius: "5px",
+            },
+            ".cm-gutter": {
+                backgroundColor: "var(--dark-blue)",
+            },
+            ".cm-content, .cm-gutter": {
+                minHeight: `${height}px`,
+            },
+            ".cm-scroller": {
+                overflow: "auto",
+            },
+            ".cm-scroller::-webkit-scrollbar:vertical": {
+                display: "none",
+            },
+            ".cm-activeLineGutter": {
+                backgroundColor: "var(--dark-blue)",
+            },
+        },
+        lineWrapping: false,
+    }
+    var view = cm6.load().textarea(elem, options);
+}
 
 // ===== ADD MORE PAGE (toggle) =====
 const addMorePageBtn = document.querySelector('.add-more-page-btn');
@@ -411,10 +442,12 @@ optionsContainer.addEventListener('click', async function (e) {
                 case 'challenge-option-option':
                     randID = generateID("challenge option");
                     randomizeChallengeOptionId(tempDiv, randID);
+                    setupCodeMirror(tempDiv.querySelector('.code-area'));        
                     break;
                 case 'challenge-input-option':
                     randID = generateID("challenge input");
                     randomizeChallengeInputId(tempDiv, randID);
+                    setupCodeMirror(tempDiv.querySelector('.code-area'));        
                     break;
                 default:
                     alert("Unknown option selected!")
