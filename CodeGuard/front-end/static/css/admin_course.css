@@ -122,23 +122,23 @@ input:focus{
     margin-top: 8px;
 }
 
-.notice{
-    font-family: Poppins;
-    font-size: 16px;
-    font-weight: 400;
-    color: var(--red);
-    margin-bottom: 4px;
-}
-
 .filename{
     margin-left: 8px;
     display: inline-block;
-    max-width: calc(100% - 285px);
+    max-width: 32%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     vertical-align: middle;
     background-color: transparent;
+}
+
+input.filename{
+    max-width: 32%;
+}
+
+span.filename{
+    width: calc(100% - 275px);
 }
 
 .filename:focus{
@@ -149,7 +149,7 @@ input:focus{
     outline: none;
     background-color: var(--dark-blue);
     color: var(--white);
-    border-radius: 10px;
+    border-radius: 5px;
     padding: 6px 12px;
     display: inline-block;
 }
@@ -374,11 +374,6 @@ select {
 
 .add-more-page-btn{
     padding: 12px;
-}
-
-#cancel-btn a{
-    text-decoration: none;
-    color: var(--black);
 }
 
 .add-more-page-btn > img{

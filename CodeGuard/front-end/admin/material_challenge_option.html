@@ -1,4 +1,3 @@
-<!-- CHALLENGE OPTION -->
 <div class="page study">
     <p class="d-flex accordion">New Page
         <button type="button" class="ms-auto icon-trash"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
@@ -19,6 +18,7 @@
                 Add File
             </label>
             <span class="filename">No file chosen</span>
+            <button type="button" class="d-inline-block delete-img-btn">Delete image</button>
             <input type="file" id="challenge_options-0-image" name="challenge_options-0-image" class="input-file-invi" accept=".jpg, .jpeg, .png">
             <p class="error-message error-course-logo">Error</p>
             <img id="" src="#" alt="Your image" class="preview">
@@ -65,6 +65,5 @@
             <button type="button" class="add-option-btn"><img src="{{ url_for('static', filename='assets/icon_add_circle.svg') }}"
                     alt="">Add Option</button>
         </div>
-        <input type="hidden" id="content-content_id" name="content-content_id" value="" class="content-id">
     </div>
 </div>

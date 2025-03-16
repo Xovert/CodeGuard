@@ -51,12 +51,6 @@ h3{
     position: relative;
 }
 
-.course:hover{
-    transform: scale(1.05);
-    transition: 0.3s ease;
-    z-index: 2;
-}
-
 .course:hover .more{
     display: block;
 }

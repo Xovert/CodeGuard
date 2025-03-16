@@ -36,50 +36,46 @@ document.addEventListener('click', function (e){
 
 // ======== DELETE ========
 document.addEventListener("DOMContentLoaded", function () {
-    let moduleToDelete = null; // Stores the module to delete
+    let moduleToDelete = null;
 
-    // Select all trash buttons
     document.querySelectorAll(".icon-trash").forEach(button => {
         button.addEventListener("click", function () {
-            // Find the closest module container
             moduleToDelete = this.closest(".module");
 
             if (moduleToDelete) {
-                // Get module name for the modal message
                 const moduleName = moduleToDelete.querySelector(".module-name").textContent;
 
-                // Update modal message
+                // update modal message
                 const messageElement = document.getElementById("message");
                 messageElement.innerHTML = `Are you sure you want to delete <strong>${moduleName}</strong> module?`;
             }
         });
     });
 
-    // Handle delete confirmation
+    // delete the module
     document.getElementById("yes").addEventListener("click", function () {
         if (moduleToDelete) {
-            // Get the deleted module's order number
             const deletedOrder = parseInt(moduleToDelete.querySelector(".order").textContent.replace("#", ""), 10);
 
-            moduleToDelete.remove(); // Remove the module from the DOM
-            moduleToDelete = null; // Reset the variable
+            // remove from DOM first
+            moduleToDelete.remove();
+            moduleToDelete = null;
             
-            // update the order for all modules after the deleted one
+            // update the order for all modules (order - 1)
             document.querySelectorAll(".module").forEach(module => {
                 let orderElement = module.querySelector(".order");
                 let currentOrder = parseInt(orderElement.textContent.replace("#", ""), 10);
     
-                // Decrease the order number if it's greater than the deleted order
                 if (currentOrder > deletedOrder) {
                     orderElement.textContent = `#${currentOrder - 1}`;
                 }
             });
         }
 
-        // Close the modal programmatically after deletion
+        // close the modal afterwards
         const modalElement = document.getElementById("delete");
         const deleteModal = bootstrap.Modal.getInstance(modalElement);
-        deleteModal.hide(); // Hide the modal
+        deleteModal.hide();
     });
 });
 
@@ -87,9 +83,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // ======== CHANGES TO SAVE BUTTON =========
 document.addEventListener("DOMContentLoaded", () => {
-    // Select the target element to observe
     const moduleWrapper = document.querySelector(".module-wrapper");
-    const saveChanges = document.getElementById("save-changes"); // Replace with your button's ID or selector
+    const saveChanges = document.getElementById("save-changes");
   
     function getCurrentPairs() {
         return Array.from(moduleWrapper.querySelectorAll(".module")).map(module => {

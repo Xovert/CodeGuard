@@ -9,6 +9,20 @@
 {% endblock %}
 
 {% block content %}
+<div class="modal fade" id="confirmation" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="ConfirmationLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body d-flex flex-column justify-content-center align-items-center">
+                <p class="mt-3 text-center" id="message">You have unsaved changes. If you leave this page, your changes will be lost. Are you sure you want to continue?</p>
+            </div>
+            <div class="modal-footer d-flex justify-content-center">
+                <button type="button" class="btn btn-success" id="yes">Yes</button>
+                <button type="button" class="btn btn-secondary" id="no" data-bs-dismiss="modal" data-mdb-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="content">
     {% with form = Forms.course.NewModuleForm() %}
@@ -21,11 +35,8 @@
         <div class="module d-flex align-items-center">
             {{ form.module.label(class="d-inline-block") }}
             {{ form.module(id="module-name", class="d-inline-block") }}
-            <!-- <label for="module-name" class="d-inline-block">Module Name</label>
-            <input type="text" class="d-inline-block" id="module-name" placeholder="Enter the module name here..."> -->
         </div>
 
-        <!-- LEARNING -->
         <div class="page study">
             <p class="d-flex accordion">Page 1
                 <button type="button" class="ms-auto icon-trash"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
@@ -46,6 +57,7 @@
                         Add File
                     </label>
                     <span class="filename">No file chosen</span>
+                    <button type="button" class="d-inline-block delete-img-btn">Delete image</button>
                     <input type="file" id="{{ form.learning[0].image.id }}" name="{{ form.learning[0].image.name }}" class="input-file-invi" accept=".jpg, .jpeg, .png">
                     <p class="error-message error-course-logo">Error</p>
                     <img id="" src="#" alt="Your image" class="preview">
@@ -56,17 +68,18 @@
                 </div>
             </div>
         </div>
-        
+
         <p id="error-message"></p>
     
     
         <div class="button-wrapper d-flex justify-content-center position-relative">
-            <button type="button" class="btn" id="cancel-btn"><a href="{{ url_for('admin.modules', course_name=course_name) }}">Cancel</a></button>
+            <button type="button" class="btn" id="cancel-btn" data-bs-toggle="modal" data-bs-target="#confirmation">Cancel</button>
             <button type="button" class="btn d-flex add-more-page-btn"><img src="{{ url_for('static', filename='assets/icon_plus.svg') }}"
                     alt="">Add more page</button>
             <div class="add-page-options d-none">
                 <p id="learning-option"><button type="button">Learning</button></p>
                 <p id="challenge-option-option"><button type="button">Challenge Options</button></p>
+                <p id="challenge-input-option"><button type="button">Challenge Input</button></p>
             </div>
             <button class="btn submit-btn" id="submit-btn" type="submit">Submit</button>
         </div>

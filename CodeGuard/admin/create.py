@@ -31,7 +31,6 @@ def new_course(name, file: FileStorage, description):
             upload_image(
                 file=file,
                 ref_id=course.id,
-                # filename=file.filename, 
                 usage="course"
             )
         except FileNotFoundError as e:
@@ -73,16 +72,10 @@ def add_module(module):
     try:
         db.session.flush()
         success = f'Module "{module.module_name}" has succesfully been added'
-        print(success)
         id = module.id
     except sqlerror:
         error = f'Module "{module.module_name}" already added'
-        print(error)
         db.session.rollback()
-    # else:
-        # db.session.commit()
-        # print("committed")
-    # JGN COMMMIT DULU, COMMIT PAS AKHIR SETELAH ADD CONTENTS
 
     return error, success, id
 
@@ -90,21 +83,15 @@ def add_module(module):
 def add_content(content):
     error = None
     success = None
-    # id = None
 
     try:
         db.session.add(content)
         db.session.flush()
         success = f'Content number {content.order} successfully added'
-        print(success)
         id = content.id
     except sqlerror:
         error = f'Content number {content.order} already added'
-        print(error)
         db.session.rollback()
-    else:
-        db.session.commit()
-        print("committed")
 
     return error, success, id
 
@@ -112,19 +99,15 @@ def add_content(content):
 def add_questions(question):
     error = None
     success = None
-    # id = None
 
     try:
         db.session.add(question)
         db.session.flush()
         success = f"Question for {question.content_id} succesfully added"
-        print(success)
         id = question.id
     except sqlerror:
         error = f'Question for {question.content_id} already added'
-        print(error)
         db.session.rollback()
-        # jgn commit dulu
     
     return error, success, id
 
@@ -136,11 +119,8 @@ def add_options(option):
         db.session.add(option)
         db.session.flush()
         success = f'Option "{option.option_text}" for {option.question_id} successfully added'
-        print(success)
     except sqlerror:
         error = f'Option "{option.option_text}" for {option.question_id} already added'
-        print(error)
         db.session.rollback()
-    else:
-        db.session.commit()
+    
     return error, success

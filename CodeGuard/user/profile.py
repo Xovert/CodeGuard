@@ -1,12 +1,9 @@
-from flask import Blueprint, current_app as app, render_template, url_for, request, flash, redirect, abort
+from flask import current_app as app
 from flask_bcrypt import Bcrypt
 from sqlalchemy.exc import IntegrityError as sqlerror
 
 from CodeGuard.utils.user import get_current_user
-from CodeGuard.models import (
-    db, 
-    Users,
-)
+from CodeGuard.models import db
 
 bcrypt = Bcrypt()
 
@@ -21,7 +18,6 @@ def update_profile(fullname, username, email):
     except sqlerror as e:
         db.session.rollback()
         error = "An error occurred while updating user profile, please try again"
-        print(e)
     else:
         db.session.commit()
         success = "Profile successfully updated"
@@ -43,7 +39,6 @@ def update_pw(old_password, new_password):
         except sqlerror as e:
             db.session.rollback()
             error = "An error occurred while updating the user's password, please try again"
-            print(e)
         else:
             db.session.commit()
             success = "Password successfully updated"

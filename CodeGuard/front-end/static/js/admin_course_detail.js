@@ -1,7 +1,7 @@
 // ======= RESIZE TEXTAREA =======
 function autoResize(textarea) {
-    textarea.style.height = 'auto'; // Reset the height
-    textarea.style.height = textarea.scrollHeight + 'px'; // Set the height to match the content
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
 }
 
 document.addEventListener("input", function (event) {
@@ -17,14 +17,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const submitBtn = document.getElementById("submit-btn");
     const initialValues = {};
 
-    // Store initial values of the form fields
+    // store initial values from the form fields
     Array.from(form.elements).forEach((field) => {
         if (field.type !== "submit" && field.type !== "button") {
             initialValues[field.name] = field.value;
         }
     });
 
-    // Function to check if any field value has changed
+    // check the changes
     const checkChanges = () => {
         let isChanged = false;
 
@@ -36,11 +36,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // Enable or disable the submit button
+        // the button is disabled or not depends whether the values have changed or not
         submitBtn.disabled = !isChanged;
     };
 
-    // Add event listeners to detect changes in form fields
+    // add event listeners to detect changes
     Array.from(form.elements).forEach((field) => {
         if (field.type !== "submit" && field.type !== "button") {
             field.addEventListener("input", checkChanges);
@@ -57,7 +57,7 @@ var save = true;
 const fileInput = document.getElementById('course-logo');
 const filenameSpan = document.querySelector('.filename');
 const allowedExtensions = ['jpg', 'jpeg', 'png'];
-const maxFileSize = 1 * 1024 * 1024; // max size 1mb
+const maxFileSize = 1 * 1024 * 1024;
 
 var errorCourseLogo = document.getElementById('error-course-logo');
 
@@ -65,6 +65,7 @@ let file = fileInput.files[0];
 const preview = document.getElementById("preview");
 const filename = document.getElementById("filename").textContent.trim();
 
+// preview existing image
 if (!file && preview && (filename != "No file chosen")) {
     preview.style.display = "block";
 }
@@ -81,7 +82,7 @@ fileInput.addEventListener('change', () => {
             errorCourseLogo.textContent = `Invalid file type! Only ${allowedExtensions.join(', ')} are allowed.`;
             errorCourseLogo.style.display = 'block';
 
-            fileInput.value = ''; // Reset the input
+            fileInput.value = '';
             filenameSpan.textContent = 'No file chosen';
 
             // no preview
@@ -95,7 +96,7 @@ fileInput.addEventListener('change', () => {
             errorCourseLogo.textContent = "Maximum file size is 1 MB!";
             errorCourseLogo.style.display = 'block';
 
-            fileInput.value = ''; // Reset the input
+            fileInput.value = '';
             filenameSpan.textContent = 'No file chosen';
 
             // no preview
@@ -116,11 +117,11 @@ fileInput.addEventListener('change', () => {
 
     // no file chosen
     else if (!file){
-        filenameSpan.textContent = 'No file chosen';
+        filenameSpan.textContent = filenameSpan.dataset.originalFilename.trim();
         errorCourseLogo.textContent = "";
         errorCourseLogo.style.display = 'none';
-        preview.src = "";
-        preview.style.display = 'none';
+        preview.src = preview.dataset.urlPreview.trim();
+        preview.style.display = 'block';
     }
 });
 
@@ -133,7 +134,7 @@ document.getElementById("submit-btn").addEventListener("click", function (event)
     // clear previous errors
     document.querySelectorAll(".error-message").forEach(p => {
         p.style.display = "none";
-        p.textContent = ""; // Clear any previous messages
+        p.textContent = "";
     });
 
     // get values
@@ -151,12 +152,6 @@ document.getElementById("submit-btn").addEventListener("click", function (event)
         errorTitle.style.display = "block";
         save = false;
     }
-
-    // if (fileInput.files.length === 0){
-    //     errorCourseLogo.textContent = "Course image cannot be empty!";
-    //     errorCourseLogo.style.display = "block";
-    //     save = false;
-    // }
 
     if (!desc){
         errorDesc.textContent = "Description cannot be empty!";

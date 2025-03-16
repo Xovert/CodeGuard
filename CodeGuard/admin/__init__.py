@@ -5,7 +5,6 @@ from CodeGuard.utils.decorators import admin_required
 from CodeGuard.utils.files import delete_file
 from CodeGuard.admin.create import upload_image
 
-# from werkzeug.urls 
 from urllib.parse import unquote
 
 from CodeGuard.forms.course import (
@@ -14,8 +13,7 @@ from CodeGuard.forms.course import (
     NewModuleForm,
     ModuleForm
 )
-from CodeGuard.admin import dashboard_catalogue, create
-from CodeGuard.admin import details as detail
+from CodeGuard.admin import dashboard_catalogue, create, details as detail
 from CodeGuard.models import (
     db,
     Courses,
@@ -27,7 +25,6 @@ from CodeGuard.models import (
     ChallengeQuestions,
     ChallengeOptions
 )
-# from CodeGuard.admin import create
 
 log = app.logger
 admin = Blueprint('admin', __name__, template_folder='front-end')
@@ -56,7 +53,7 @@ def add_course():
     if request.method == 'GET':
         username = session.get('username', '')
         return render_template('admin/new_course.html', username=username)
-    # return render_template('admin/course_settings.html')
+    
     error = None
     success = None
 
@@ -65,7 +62,6 @@ def add_course():
         course_name = form.title.data
         course_img = form.logo.data
         course_description = form.description.data
-        # course_status = form.visibility.data
 
         create.new_course(course_name, course_img, course_description)
         success = f'Course "{course_name}" has been succesfully added!'
@@ -127,7 +123,6 @@ def description(course_name):
         course_description = form.description.data
         course_status = usage_mapping.get(form.visibility.data)
 
-        # if there is an image, update the image
         error, success = detail.update_course(old_name, new_name, course_description, course_status, course_img)
 
         if error:
@@ -165,7 +160,6 @@ def modules(course_name):
             abort(404)
 
         modules = detail.get_modules(course_name)
-        print(modules)
 
         return render_template(
             'admin/module_list.html',
@@ -174,70 +168,48 @@ def modules(course_name):
             modules=modules
         )
     
-    print("UPDATE MODULE STARTS HERE")
     course_name = unquote(course_name)
     course = detail.get_course(course_name)
     if course is None:
         abort(404)
 
     modules = detail.get_modules(course_name)
-    print(f"EXISTING MODULES: {modules}\n")
     existing_name = [module.module_name for module in modules]
-    print(f"EXISTING NAMEE: {existing_name}\n")
 
     data = request.get_json()
-    print(f"DATAA: {data}\n")
-    # Data: {'modules': [{'order': '1', 'module_name': 'testing'}, {'order': '2', 'module_name': '333333'}, {'order': '3', 'module_name': 'asaddff'}]}
     
     try:
         for module_data in data["modules"]:
             module_name = module_data["module_name"]
             order = int(module_data["order"])
-            print(module_name, order)
 
-            # i dont think this is the right algo???
-            # if module yg dikirim exists
+            # if sent module exists
             if module_name in existing_name:
-                print(f"{module_name} is in existing_name")
                 existing_module = next((module for module in modules if module.module_name == module_name), None)
-                print(f"EXISTING MODULE BEFORE UPDATE: {existing_module}")
                 
-                # update order * 100 to avpid unique constraint
+                # update order to avoid unique constraint
                 existing_module.order = order * 100
                 db.session.flush()
-                print(f"EXISTING MODULE AFTER UPDATE ORDER: {existing_module}")
-
-                print(f"Existing name before: {existing_name}")
-                print(f"Popped name: {module_name}")
                 existing_name.remove(module_name)
-                print(f"Existing name after: {existing_name}")
             
         # leftover module
         for leftover_name in existing_name:
-            print(f"leftover module {leftover_name}")
-            # module = detail.get_single_module(letfover_name, course.id)
             detail.delete_module(leftover_name, course.id)
-            print(f"Successfully delete module: {leftover_name}")
 
         # update order
         updated_modules = detail.get_modules(course_name)
-        print(f"ALL UPDATED MODULES: {updated_modules}")
         for module in updated_modules:
             module.order = int(module.order / 100)
             db.session.flush()
-            print(f"Updated module data: {module}")
     except sqlerror as e:
         db.session.rollback()
         error = "An error occured while updating the order of the module"
-        print(error, e)
         flash(error)
     else:
         db.session.commit()
         success = "List of modules have been updated"
-        print(success)
         flash(success)
-
-    # return jsonify({"success": True})
+    
     return jsonify({"url": url_for('admin.modules', course_name=course_name)})
 
 
@@ -262,140 +234,176 @@ def add_module(course_name):
         success = None
             
         form = NewModuleForm()
-        if form.validate_on_submit():
-            print("AMAN")
-            
+        if form.validate_on_submit(): 
             # get form data
             module_name = form.module.data
             learning = form.learning.data
             challenge_option = form.challenge_options.data
+            challenge_input = form.challenge_input.data
 
-            # add module
-            course_name = unquote(course_name)
-            course = detail.get_course(course_name)
-            if course is None:
-                abort(404)
+            try:
+                # add module
+                course_name = unquote(course_name)
+                course = detail.get_course(course_name)
+                if course is None:
+                    abort(404)
 
-            num_of_modules = len(detail.get_modules(course_name))
+                num_of_modules = len(detail.get_modules(course_name))
 
-            module = Modules(
-                course_id=course.id,
-                order=num_of_modules+1,
-                module_name=module_name
-            )
-            print(module)
-            error, success, module_id = create.add_module(module)
-            print(module_id)
-            if error:
-                flash(error)
-                return redirect(url_for('admin.add_module', course_name=course_name))
+                module = Modules(
+                    course_id=course.id,
+                    order=num_of_modules+1,
+                    module_name=module_name
+                )
+                error, success, module_id = create.add_module(module)
+                if error:
+                    flash(error)
+                    return redirect(url_for('admin.add_module', course_name=course_name))
 
-            # add contents
-            if learning:
-                for content in learning:
-                    print("ini content learning")
-                    print(content)
-                    # {'order': '1', 'image': <FileStorage: '010.png' ('image/png')>, 'content_body': 'adsadsa'}, INI PER PAGE POKOKNYA
-                    order = content["order"]
-                    image = content["image"]
-                    content_body = content["content_body"]
-                    
-                    new_content = ContentsLearning(
-                        module_id=module_id,
-                        order=order,
-                        content_body=content_body
-                    )
-                    error, success, content_id = create.add_content(new_content)
-                    if error:
-                        flash(error)
-                        return redirect(url_for('admin.add_module', course_name=course_name))
-
-                    if image:
-                        create.upload_image(
-                            file=image,
-                            ref_id=content_id,
-                            usage="content"
+                # add contents
+                if learning:
+                    for content in learning:
+                        order = content["order"]
+                        image = content["image"]
+                        content_body = content["content_body"]
+                        
+                        new_content = ContentsLearning(
+                            module_id=module_id,
+                            order=order,
+                            content_body=content_body
                         )
-                        print("IMAGE ADDED")
+                        error, success, content_id = create.add_content(new_content)
+                        if error:
+                            flash(error)
+                            return redirect(url_for('admin.add_module', course_name=course_name))
 
-            if challenge_option:
-                for content in challenge_option:
-                    print("ini challenge_option")
-                    print(content)
-                    # {'order': '1', 'image': <FileStorage: '008.png' ('image/png')>, 'question': 'ini questionn', 'code': 'ini codeee', 'options': 'Option 2as', 'choices': [{'choices': 'Option 1as'}, {'choices': 'Option 2as'}, {'choices': 'Option 3as'}]}
+                        if image:
+                            create.upload_image(
+                                file=image,
+                                ref_id=content_id,
+                                usage="content"
+                            )
 
-                    order = content["order"]
-                    image = content["image"]
-                    question_text = content["question"]
-                    code = content["code"]
-                    correct = content["options"]
-                    options = content["choices"]
+                if challenge_option:
+                    for content in challenge_option:
+                        order = content["order"]
+                        image = content["image"]
+                        question_text = content["question"]
+                        code = content["code"]
+                        correct = content["options"]
+                        options = content["choices"]
 
-                    new_content = ContentsChallenges(
-                        module_id=module_id,
-                        order=order
-                    )
-                    error, success, content_id = create.add_content(new_content)
-                    if error:
-                        flash(error)
-                        return redirect(url_for('admin.add_module', course_name=course_name))
-
-                    # add image
-                    if image:
-                        create.upload_image(
-                            file=image,
-                            ref_id=content_id,
-                            usage="content"
+                        new_content = ContentsChallenges(
+                            module_id=module_id,
+                            order=order
                         )
-                        print("IMAGE ADDED")
+                        error, success, content_id = create.add_content(new_content)
+                        if error:
+                            flash(error)
+                            return redirect(url_for('admin.add_module', course_name=course_name))
 
-                    # add questions
-                    questions = ChallengeQuestions(
-                        question_text=question_text,
-                        code=code,
-                        content_id=content_id
-                    )
+                        # add image
+                        if image:
+                            create.upload_image(
+                                file=image,
+                                ref_id=content_id,
+                                usage="content"
+                            )
 
-                    error, success, question_id = create.add_questions(questions)
-                    if error:
-                        flash(error)
-                        return redirect(url_for('admin.add_module', course_name=course_name))
+                        # add questions
+                        questions = ChallengeQuestions(
+                            question_text=question_text,
+                            code=code,
+                            content_id=content_id
+                        )
 
-                    # add options
-                    print("ini choices:")
-                    print(options)
-                    # [{'choices': 'Option 1as'}, {'choices': 'Option 2as'}, {'choices': 'Option 3as'}]
+                        error, success, question_id = create.add_questions(questions)
+                        if error:
+                            flash(error)
+                            return redirect(url_for('admin.add_module', course_name=course_name))
 
-                    for option in options:
-                        option_text = option["choices"]
-                        if option_text == correct:
-                            is_correct = True
-                        else:
-                            is_correct = False
+                        # add options
+                        for option in options:
+                            option_text = option["choices"]
+                            if option_text == correct:
+                                is_correct = True
+                            else:
+                                is_correct = False
+                            row = {
+                                "option_text": option_text,
+                                "is_correct": is_correct,
+                                "question_id": question_id
+                            }
+                            error, success = create.add_options(ChallengeOptions(**row))
+                            if error:
+                                flash(error)
+                                return redirect(url_for('admin.add_module', course_name=course_name))
+                
+                if challenge_input:
+                    for content in challenge_input:
+                        order = content["order"]
+                        image = content["image"]
+                        question_text = content["question"]
+                        code = content["code"]
+                        answer = content["answer"]
+
+                        new_content = ContentsChallenges(
+                            module_id=module_id,
+                            order=order
+                        )
+                        error, success, content_id = create.add_content(new_content)
+                        if error:
+                            flash(error)
+                            return redirect(url_for('admin.add_module', course_name=course_name))
+
+                        # add image
+                        if image:
+                            create.upload_image(
+                                file=image,
+                                ref_id=content_id,
+                                usage="content"
+                            )
+
+                        # add questions
+                        questions = ChallengeQuestions(
+                            question_text=question_text,
+                            code=code,
+                            content_id=content_id
+                        )
+                        error, success, question_id = create.add_questions(questions)
+                        if error:
+                            flash(error)
+                            return redirect(url_for('admin.add_module', course_name=course_name))
+                        
+                        # add answer (1 option)
                         row = {
-                            "option_text": option_text,
-                            "is_correct": is_correct,
+                            "option_text": answer,
+                            "is_correct": True,
                             "question_id": question_id
                         }
                         error, success = create.add_options(ChallengeOptions(**row))
                         if error:
                             flash(error)
                             return redirect(url_for('admin.add_module', course_name=course_name))
-                    print("dah ketambah semua challenge option")
-            
-            success = f'All contents for "{module_name}" is successfully added'
-            flash(success)
+
+            except sqlerror as e:
+                error = "An error occurred when adding the module, please try again"
+                flash(error)
+                db.session.rollback()
+            else:
+                db.session.commit()   
+                success = f'All contents for "{module_name}" is successfully added'
+                flash(success)
+
             return redirect(url_for('admin.modules', course_name=course_name))
 
         else:
-            error = f"An error occurred when adding the module, please try again"
-            flash(error)  
-        print("DATA FINISHED")
+            error = f"An error has occurred while adding the module, please fill in all required fields before proceeding"
+            flash(error)
         return redirect(url_for('admin.modules', course_name=course_name))
 
 @admin.route('/admin/<path:course_name>/<path:module_name>', methods=('GET','POST'))
 def detail_module(course_name, module_name):
-    print("awopga")
     if request.method == 'GET':
         username = session.get('username', '')
         course_name = unquote(course_name)
@@ -409,34 +417,22 @@ def detail_module(course_name, module_name):
         if module_id is None:
             abort(404)
 
-        print(f"module id = {module_id}")
         contents = detail.get_contents(module_id)
-        print(f"Contents: {contents}")
 
         form = ModuleForm()
         form.module.data = module_name
         for i, data in enumerate(contents):
-            print("masuk for")
-            print(f"Data: {data}")
-            # (Contents: module_id:20 order=1 type=learning, '27d693ec-6c6d-4176-98f3-c8db2fcf0e5a-010.png', '010.png')
-            # print(content["order"])
             content = data[0]
             if content.type == "learning":
-                print(content.order)
-                print("learning detected")
-                print(i, content.order, content.type, content.content_body)
-                # 0 1 learning testing learning content
                 form.content[i].content_id.data = content.id
                 form.content[i].order.data = content.order
                 form.content[i].content_type.data = content.type
                 form.content[i].content_body.data = content.content_body
                 form.content[i].new_filename.data = data[1] if data[1] is not None else ""
                 form.content[i].original_filename.data = data[2] if data[2] is not None else ""
-                print("show learning done")
+
             elif content.type == 'challenges':
-                print("challenge detected")
                 challenge_data = detail.get_challenge_data(content.id)
-                print(f"Challenge data: {challenge_data}")
                 form.content[i].content_id.data = content.id
                 form.content[i].order.data = content.order
                 form.content[i].content_type.data = content.type
@@ -446,16 +442,19 @@ def detail_module(course_name, module_name):
                 form.content[i].original_filename.data = data[2] if data[2] is not None else ""
 
                 options = detail.get_options(challenge_data.id)
-                print(f"Options: {options}")
-                # Options: [('op1', False), ('op2', False), ('op3', False), ('op5 skip op 4 (ini bener)', True)]
-                for j, (option_text, is_correct) in enumerate(options):
-                    form.content[i].choices[j].choices.data = option_text
-                    if is_correct:
-                        form.content[i].correct.data = option_text
 
-                print("show challenges done")
-            # print(f"new: {data[1]}, ori: {data[2]}")
-            # print(form.content[i])
+                # for challenge input
+                if len(options) == 1:
+                    form.content[i].answer.data = options[0][0]
+                    form.content[i].correct.data = None
+                
+                # for challenge options
+                else:
+                    form.content[i].answer.data = None
+                    for j, (option_text, is_correct) in enumerate(options):
+                        form.content[i].choices[j].choices.data = option_text
+                        if is_correct:
+                            form.content[i].correct.data = option_text
 
         return render_template(
             'admin/module_detail.html',
@@ -477,312 +476,357 @@ def detail_module(course_name, module_name):
         error = None
         form = ModuleForm()
         if form.validate_on_submit():
-            print("form validated")   
-
-            # update module name
-            module_name = form.module.data
-            module = detail.get_single_module(old_module_name, course.id)
-            if module is None:
-                abort(404)
-            print(f"Module {module}")
             try:
-                module.module_name = module_name
-                db.session.flush()
-                success = f"Module name for {old_module_name} has been updated to {module.module_name}"
-                print(success)
-            except sqlerror as e:
-                error = f"An error has occured while updating the module"
-                db.session.rollback()
-            else:
-                db.session.commit()
+                # update module name
+                module_name = form.module.data
+                error, success, module_id = detail.update_module(module_name, old_module_name, course.id)
 
-            module_id = module.id
-            # get all existing contents
-            contents = detail.get_contents(module_id)
-            # contents ada [1] = Contents, [2] = new_filename, [3] = original_filename
-            print(f"Old Contents: {contents}")
+                # get all existing contents
+                contents = detail.get_contents(module_id)
+                existing_id = [content[0].id for content in contents]
+        
+                # loop over each content in the form
+                for i, subform in enumerate(form.content):
+                    id = subform.content_id.data
+                    order = subform.order.data
 
-            existing_id = [content[0].id for content in contents]
-            print(existing_id)
-    
-            # loop over each content in the form
-            for i, subform in enumerate(form.content):
-                id = subform.content_id.data
-                order = subform.order.data
-                print(f"dah dapet id dari formnya: {id}, {type(id)}")
-                print(i)
-                # print(f"Subform: {subform}")
-
-                if not id:
-                    # new content, no id, but have order
-                    if order:
-                        print(f"{i} new content")
-                        if subform.content_body.data:
-                            print("this is learning")
-                            order = int(order) * 100
-                            image = subform.image.data
-                            content_body = subform.content_body.data
-                            new_content = ContentsLearning(
-                                module_id=module_id,
-                                order=order,
-                                content_body=content_body
-                            )
-                            error, success, content_id = create.add_content(new_content)
-                            if error:
-                                flash(error)
-                                return redirect(url_for('admin.modules', course_name=course_name))
-                            
-                            if image:
-                                create.upload_image(
-                                    file=image,
-                                    ref_id=content_id,
-                                    usage="content"
+                    if not id:
+                        # new content, no id, but have order
+                        if order:
+                            if subform.content_body.data:
+                                order = int(order) * 100
+                                image = subform.image.data
+                                content_body = subform.content_body.data
+                                new_content = ContentsLearning(
+                                    module_id=module_id,
+                                    order=order,
+                                    content_body=content_body
                                 )
-                                print("IMAGE ADDED")
-                            
-                        elif subform.options.data:
-                            print("this is challenges")
-                            order = int(order) * 100
-                            image = subform.image.data
-                            question_text = subform.question.data
-                            code = subform.code.data
-                            correct = subform.options.data
-                            options = subform.choices.data
-                            print(f"choices: {options}")
-
-                            new_content = ContentsChallenges(
-                                module_id=module_id,
-                                order=order
-                            )
-                            error, success, content_id = create.add_content(new_content)
-                            if error:
-                                flash(error)
-                                return redirect(url_for('admin.modules', course_name=course_name))
-                            
-                            # add image
-                            if image:
-                                create.upload_image(
-                                    file=image,
-                                    ref_id=content_id,
-                                    usage="content"
-                                )
-                                print("IMAGE ADDED")
-
-                            # add question
-                            questions = ChallengeQuestions(
-                                question_text=question_text,
-                                code=code,
-                                content_id=content_id
-                            )
-                            error, success, question_id = create.add_questions(questions)
-                            if error:
-                                flash(error)
-                                return redirect(url_for('admin.modules', course_name=course_name))
-
-                            # add options
-                            for option in options:
-                                option_text = option["choices"]
-                                if option_text is None:
-                                    continue
+                                error, success, content_id = create.add_content(new_content)
+                                if error:
+                                    flash(error)
+                                    return redirect(url_for('admin.modules', course_name=course_name))
                                 
-                                if option_text == correct:
-                                    is_correct = True
-                                else:
-                                    is_correct = False
+                                if image:
+                                    create.upload_image(
+                                        file=image,
+                                        ref_id=content_id,
+                                        usage="content"
+                                    )
+                                
+                            elif subform.options.data:
+                                order = int(order) * 100
+                                image = subform.image.data
+                                question_text = subform.question.data
+                                code = subform.code.data
+                                correct = subform.options.data
+                                options = subform.choices.data
+                                
+                                if not question_text:
+                                    db.session.rollback()
+                                    error = "An error has occurred while updating the module, please fill in all required fields before proceeding"
+                                    flash(error)
+                                    return redirect(url_for('admin.modules', course_name=course_name))
+
+                                new_content = ContentsChallenges(
+                                    module_id=module_id,
+                                    order=order
+                                )
+                                error, success, content_id = create.add_content(new_content)
+                                if error:
+                                    flash(error)
+                                    return redirect(url_for('admin.modules', course_name=course_name))
+                                
+                                # add image
+                                if image:
+                                    create.upload_image(
+                                        file=image,
+                                        ref_id=content_id,
+                                        usage="content"
+                                    )
+
+                                # add question
+                                questions = ChallengeQuestions(
+                                    question_text=question_text,
+                                    code=code,
+                                    content_id=content_id
+                                )
+                                error, success, question_id = create.add_questions(questions)
+                                if error:
+                                    flash(error)
+                                    return redirect(url_for('admin.modules', course_name=course_name))
+
+                                # add options
+                                for option in options:
+                                    option_text = option["choices"]
+                                    if option_text is None:
+                                        continue
+                                    
+                                    if option_text == correct:
+                                        is_correct = True
+                                    else:
+                                        is_correct = False
+                                    row = {
+                                        "option_text": option_text,
+                                        "is_correct": is_correct,
+                                        "question_id": question_id
+                                    }
+                                    error, success = create.add_options(ChallengeOptions(**row))
+                                    if error:
+                                        flash(error)
+                                        return redirect(url_for('admin.modules', course_name=course_name))
+                            
+                            elif subform.answer.data:
+                                order = int(order) * 100
+                                image = subform.image.data
+                                question_text = subform.question.data
+                                code = subform.code.data
+                                answer = subform.answer.data
+                                                                
+                                if not question_text:
+                                    db.session.rollback()
+                                    error = "An error has occurred while updating the module, please fill in all required fields before proceeding"
+                                    flash(error)
+                                    return redirect(url_for('admin.modules', course_name=course_name))
+
+                                new_content = ContentsChallenges(
+                                    module_id=module_id,
+                                    order=order
+                                )
+                                error, success, content_id = create.add_content(new_content)
+                                if error:
+                                    flash(error)
+                                    return redirect(url_for('admin.modules', course_name=course_name))
+                                
+                                # add image
+                                if image:
+                                    create.upload_image(
+                                        file=image,
+                                        ref_id=content_id,
+                                        usage="content"
+                                    )
+
+                                # add question
+                                questions = ChallengeQuestions(
+                                    question_text=question_text,
+                                    code=code,
+                                    content_id=content_id
+                                )
+                                error, success, question_id = create.add_questions(questions)
+                                if error:
+                                    flash(error)
+                                    return redirect(url_for('admin.modules', course_name=course_name))
+
+                                # add answer (1 option)
                                 row = {
-                                    "option_text": option_text,
-                                    "is_correct": is_correct,
+                                    "option_text": answer,
+                                    "is_correct": True,
                                     "question_id": question_id
                                 }
                                 error, success = create.add_options(ChallengeOptions(**row))
                                 if error:
                                     flash(error)
-                                    return redirect(url_for('admin.modules', course_name=course_name))
-                                # print(row)
-                            print("dah ketambah semua challenge option")
-                            # SOMETHING IS WRONG HERE, TAMPUNG DULU
-                        continue
+                                    return redirect(url_for('admin.modules', course_name=course_name))                               
 
-                    # empty form (cuz content = min entries = 15)
-                    elif not order:
-                        print(f"{i}, subform ini none : {id}")
-                        continue                   
-                
-                # if ketemu nih, course yg udah ada (id is not None and not "")
-                id = int(id)
-                if id in existing_id:
-                    print(f"{i} {id} is in existing_id")
-                    existing_content = next((content for content in contents if content[0].id == id), None)
-                    print(f"existing content: {existing_content}")
+                            # if in the newly added content, some important field is emptied, and hence their respective if condition is not triggered
+                            else:
+                                db.session.rollback()
+                                error = "An error has occurred while adding a new content, please fill in all required fields before proceeding"
+                                flash(error)
+                                return redirect(url_for('admin.modules', course_name=course_name))
+                        continue                 
+                    
+                    # update existing content, id exists
+                    id = int(id)
+                    if id in existing_id:
+                        existing_content = next((content for content in contents if content[0].id == id), None)
 
-                    # if content is learning (ga berubah)
-                    if subform.content_body.data and existing_content[0].type == 'learning':
-                        # content_type = "learning"
-                        order = int(order) * 100
-                        content_body = subform.content_body.data
-                        image = subform.image.data
+                        # if content is learning
+                        if subform.content_body.data and existing_content[0].type == 'learning':
+                            order = int(order) * 100
+                            content_body = subform.content_body.data
+                            image = subform.image.data
+                            original_filename = subform.original_filename.data
 
-                        try:
-                            # existing_content.type = "learning"
-                            print(f"Existing content (before) order: {existing_content[0].order}")
-                            existing_content[0].order = order
-                            print(f"Order now (after): {existing_content[0].order}")
-                            existing_content[0].content_body = content_body
-                            
-                            # if ada imagenya
-                            if image:
-                                try:
-                                    if existing_content[3]:
-                                        delete_file(existing_content[3])
-                                    upload_image(
-                                        file=image,
-                                        ref_id=id,
-                                        usage='content',
-                                    )
-                                except FileNotFoundError as e:
-                                    error = f"An error occcured while uploading course image:\n\t {e}"
-                                    db.session.rollback()
-                            db.session.flush()
-                            print(f"After update: {existing_content[0]}")
-                        except sqlerror as e:
-                            error = f'An error has occured when updating the content'
-                            print(error)
-                            print(f"Database error: {e}")
-                            db.session.rollback()
-                            
-                        else:
-                            db.session.commit()
-                            success = f"Content {id} has been updated!"
-
-                    # if content is challenge options
-                    elif subform.options.data and existing_content[0].type == 'challenges':
-                        # content_type = "learning"
-                        order = int(order) * 100
-                        image = subform.image.data
-                        question_text = subform.question.data
-                        code = subform.code.data
-                        correct = subform.options.data
-                        options = subform.choices.data
-                        print(f"choices: {options}")
-                        # [{'choices': 'op1'}, {'choices': 'op2'}, {'choices': 'op3'}, {'choices': 'op5 skip op 4 (ini bener)'}, {'choices': None}]
-
-                        # get challenges data (questions n code) + options
-                        challenge_data = detail.get_challenge_data(id)
-                        print(challenge_data)
-                        
-                        try:
-                            # existing_content.type = "challenges"
-                            print(f"Existing content (before) order: {existing_content[0].order}")
-                            
-                            existing_content[0].order = order
-                            print(f"Order now (after): {existing_content[0].order}")
-                            challenge_data.question_text = question_text
-                            challenge_data.code = code
-
-                            # delete options n add new options
-                            detail.delete_options(challenge_data.id)
-                            for option in options:
-                                option_text = option["choices"]
-                                if option_text is None:
-                                    continue
-
-                                if option_text == correct:
-                                    is_correct = True
+                            try:
+                                existing_content[0].order = order
+                                existing_content[0].content_body = content_body
+                                
+                                if image:
+                                    try:
+                                        if existing_content[3]:
+                                            delete_file(existing_content[3])
+                                        upload_image(
+                                            file=image,
+                                            ref_id=id,
+                                            usage='content',
+                                        )
+                                    except FileNotFoundError as e:
+                                        error = f"An error occcured while uploading course image:\n\t {e}"
+                                        db.session.rollback()
                                 else:
-                                    is_correct = False
-                                row = {
-                                    "option_text": option_text,
-                                    "is_correct": is_correct,
-                                    "question_id": challenge_data.id
-                                }
-                                error, success = create.add_options(ChallengeOptions(**row))
+                                    if original_filename == "No file chosen" and existing_content[3]:
+                                        delete_file(existing_content[3])
+
+                                db.session.flush()
+                            except sqlerror as e:
+                                error = f'An error has occured when updating the content'
+                                db.session.rollback()
+
+                        # if content is challenge options
+                        elif subform.options.data and existing_content[0].type == 'challenges':
+                            order = int(order) * 100
+                            image = subform.image.data
+                            original_filename = subform.original_filename.data
+                            question_text = subform.question.data
+                            code = subform.code.data
+                            correct = subform.options.data
+                            options = subform.choices.data
+
+                            if not question_text:
+                                db.session.rollback()
+                                error = "An error has occurred while updating the module, please fill in all required fields before proceeding"
+                                flash(error)
+                                return redirect(url_for('admin.modules', course_name=course_name))
+
+                            # get challenges data (questions and code)
+                            challenge_data = detail.get_challenge_data(id)
+                            
+                            try:
+                                existing_content[0].order = order
+                                challenge_data.question_text = question_text
+                                challenge_data.code = code
+
+                                # delete options and add new options
+                                detail.delete_options(challenge_data.id)
+                                for option in options:
+                                    option_text = option["choices"]
+                                    if option_text is None:
+                                        continue
+
+                                    if option_text == correct:
+                                        is_correct = True
+                                    else:
+                                        is_correct = False
+                                    row = {
+                                        "option_text": option_text,
+                                        "is_correct": is_correct,
+                                        "question_id": challenge_data.id
+                                    }
+                                    error, success = create.add_options(ChallengeOptions(**row))
+                                    if error:
+                                        flash(error)
+                                        return redirect(url_for('admin.modules', course_name=course_name))
+
+                                # update image
+                                if image:
+                                    try:
+                                        if existing_content[3]:
+                                            delete_file(existing_content[3])
+                                        upload_image(
+                                            file=image,
+                                            ref_id=id,
+                                            usage='content',
+                                        )
+                                    except FileNotFoundError as e:
+                                        error = f"An error occcured while uploading course image:\n\t {e}"
+                                        db.session.rollback()
+                                else:
+                                    if original_filename == "No file chosen" and existing_content[3]:
+                                        delete_file(existing_content[3])
+                                db.session.flush()
+
+                                
+                            except sqlerror as e:
+                                error = f'An error has occured when updating the module'
+                                db.session.rollback()
+
+                        # if content is challenge input
+                        elif subform.answer.data and existing_content[0].type == 'challenges':
+                            order = int(order) * 100
+                            image = subform.image.data
+                            original_filename = subform.original_filename.data
+                            question_text = subform.question.data
+                            code = subform.code.data
+                            answer = subform.answer.data
+
+                            if not question_text:
+                                db.session.rollback()
+                                error = "An error has occurred while updating the module, please fill in all required fields before proceeding"
+                                flash(error)
+                                return redirect(url_for('admin.modules', course_name=course_name))
+
+                            # get challenges data (questions n code) + options
+                            challenge_data = detail.get_challenge_data(id)
+                            
+                            try:
+                                existing_content[0].order = order
+                                challenge_data.question_text = question_text
+                                challenge_data.code = code
+
+                                # update option
+                                error, success = detail.update_single_option(challenge_data.id, answer)
                                 if error:
                                     flash(error)
                                     return redirect(url_for('admin.modules', course_name=course_name))
-                                # print(row)
-                            print("dah ketambah semua challenge option")
 
-                            # if ada imagenya
-                            if image:
-                                try:
-                                    if existing_content[3]:
+                                # update image
+                                if image:
+                                    try:
+                                        if existing_content[3]:
+                                            delete_file(existing_content[3])
+                                        upload_image(
+                                            file=image,
+                                            ref_id=id,
+                                            usage='content',
+                                        )
+                                    except FileNotFoundError as e:
+                                        error = f"An error occcured while uploading course image:\n\t {e}"
+                                        db.session.rollback()
+                                else:
+                                    if original_filename == "No file chosen" and existing_content[3]:
                                         delete_file(existing_content[3])
-                                    upload_image(
-                                        file=image,
-                                        ref_id=id,
-                                        usage='content',
-                                    )
-                                except FileNotFoundError as e:
-                                    error = f"An error occcured while uploading course image:\n\t {e}"
-                                    db.session.rollback()
-                            db.session.flush()
-                        except sqlerror as e:
-                            error = f'An error has occured when updating the module'
-                            db.session.rollback()
-                            print(error)
-                            print(f"Database error: {e}")
+                                db.session.flush()
+                                
+                            except sqlerror as e:
+                                error = f'An error has occured when updating the module'
+                                db.session.rollback()
+
+                        # some important fields from each content was empty, and hence their respective if condition is not executed
                         else:
-                            db.session.commit()
-                            success = f"Content {id} has been updated!"
+                            db.session.rollback()
+                            error = "An error has occurred while updating the module, please fill in all required fields before proceeding"
+                            flash(error)
+                            return redirect(url_for('admin.modules', course_name=course_name))
 
-                    print(f"Existing ID before: {existing_id}")
-                    print(f"popped id: {id}")
-                    existing_id.remove(id)
-                    print(f"Existing ID after: {existing_id}")    
-               
-            # leftover id > id yg ga disubmit, means it is deleted
-            for leftover_id in existing_id:
-                print(f"leftover id: {leftover_id}")
-                content, image = detail.get_single_content(leftover_id)
-                print(content, image)
+                        # pop the id of the updated content
+                        existing_id.remove(id)  
+                
+                # leftover id (deleted content)
+                for leftover_id in existing_id:
+                    detail.delete_content(leftover_id)
 
-                if content.type == 'learning':
-                    print(f"deleted content id {content.id} type {content.type}")
-                    if image:
-                        delete_file(image.id)
-                        print("succesfully delete image")
-                    detail.delete_content(content.id)
-                    print("sucessfully delete content")
+                # update order value after all update is done
+                contents = detail.get_contents(module_id)
+                try:
+                    for content in contents:
+                        content[0].order = int(content[0].order / 100)
+                        db.session.flush()
+                except sqlerror as e:
+                    error = f'An error has occured when updating the content'
+                    db.session.rollback()
 
-                elif content.type == 'challenges':
-                    print(f"deleted content id {content.id} type {content.type}")
-                    if image:
-                        delete_file(image.id)
-                        print("succesfully delete image")
-
-                    challenge_data = detail.get_challenge_data(content.id)
-                    print(f"question id = {challenge_data.id}")
-                    
-                    detail.delete_options(challenge_data.id)
-                    print(f"options deleted for question id {challenge_data.id}")
-                    
-                    detail.delete_challenge_data(challenge_data.id)
-                    print(f"Challenge data successfully deleted")
-
-                    detail.delete_content(content.id)
-                    print("sucessfully delete content")
-
-            # UPDATE ORDER VALUE (after all form.content is looped)
-            contents = detail.get_contents(module_id)
-            try:
-                for content in contents:
-                    content[0].order = int(content[0].order / 100)
-                    db.session.flush()
-                    print(f"order = {content[0].order}")
             except sqlerror as e:
-                error = f'An error has occured when updating the content'
+                error = "An error has occurred while updating the module, please try again"
+                flash(error)
                 db.session.rollback()
-                print(error)
-                print(f"Database error: {e}")
             else:
                 db.session.commit()
-                print("All order column has been updated")
-            flash(f'Module "{module_name}" has been updated') 
-
+                success = f'Module "{module_name}" has been updated'
+                flash(success) 
         else:
-            error = f"An error occurred when updating the module, please try again"
+            error = f"An error has occurred while updating the module, please fill in all required fields before proceeding"
             flash(error)
-            # flash(form.errors.values())
         return redirect(url_for(
             'admin.modules',  
             course_name=course_name
@@ -798,13 +842,9 @@ def material_learning():
 def material_challenge_option():
     return render_template('admin/material_challenge_option.html')
 
-@admin.route('/admin/course/material_exam_code', methods=('GET',))
-def material_exam_code():
-    return render_template('admin/material_exam_code.html')
-
-@admin.route('/admin/course/material_exam_option', methods=('GET',))
-def material_exam_option():
-    return render_template('admin/material_exam_option.html')
+@admin.route('/admin/course/material_challenge_input', methods=('GET',))
+def material_challenge_input():
+    return render_template('admin/material_challenge_input.html')
 
 # for module details
 @admin.route('/admin/course/detail_material_learning', methods=('GET',))
@@ -815,6 +855,9 @@ def detail_material_learning():
 def detail_material_challenge_option():
     return render_template('admin/detail_material_challenge_option.html')
 
+@admin.route('/admin/course/detail_material_challenge_input', methods=('GET',))
+def detail_material_challenge_input():
+    return render_template('admin/detail_material_challenge_input.html')
 # template materials
 
 @admin.before_request

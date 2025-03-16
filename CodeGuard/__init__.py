@@ -54,8 +54,6 @@ def create_app(config="CodeGuard.config.production", instance_path=None):
         
         from CodeGuard.utils.logging import setup_logging
         import logging
-        # setup_logging(app.logger, logging.ERROR)
-        # setup_logging(app.logger, logging.DEBUG)
         setup_logging(app.logger, logging.INFO)
         
 

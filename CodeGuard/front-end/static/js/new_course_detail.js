@@ -1,7 +1,7 @@
 // ======= RESIZE TEXTAREA =======
 function autoResize(textarea) {
-    textarea.style.height = 'auto'; // Reset the height
-    textarea.style.height = textarea.scrollHeight + 'px'; // Set the height to match the content
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
 }
 
 document.addEventListener("input", function (event) {
@@ -17,7 +17,7 @@ var save = true;
 const fileInput = document.getElementById('course-logo');
 const filenameSpan = document.querySelector('.filename');
 const allowedExtensions = ['jpg', 'jpeg', 'png'];
-const maxFileSize = 1 * 1024 * 1024; // max size 1mb
+const maxFileSize = 1 * 1024 * 1024;
 
 var errorCourseLogo = document.getElementById('error-course-logo');
 
@@ -37,7 +37,7 @@ fileInput.addEventListener('change', () => {
             errorCourseLogo.textContent = `Invalid file type! Only ${allowedExtensions.join(', ')} are allowed.`;
             errorCourseLogo.style.display = 'block';
 
-            fileInput.value = ''; // Reset the input
+            fileInput.value = '';
             filenameSpan.textContent = 'No file chosen';
 
             // no preview
@@ -51,7 +51,7 @@ fileInput.addEventListener('change', () => {
             errorCourseLogo.textContent = "Maximum file size is 1 MB!";
             errorCourseLogo.style.display = 'block';
 
-            fileInput.value = ''; // Reset the input
+            fileInput.value = '';
             filenameSpan.textContent = 'No file chosen';
 
             // no preview
@@ -89,21 +89,15 @@ document.getElementById("submit-btn").addEventListener("click", function (event)
     // clear previous errors
     document.querySelectorAll(".error-message").forEach(p => {
         p.style.display = "none";
-        p.textContent = ""; // Clear any previous messages
+        p.textContent = "";
     });
 
     // get values
     const title = document.getElementById("course-title").value.trim();
     const desc = document.getElementById("desc").value.trim();
-    // const visibility = document.getElementById("visibility").value.trim();
 
     const errorTitle = document.getElementById("error-title");
     const errorDesc = document.getElementById("error-desc");
-    // const errorVisibility = document.getElementById("error-visibility");
-
-
-    // regex
-    // const namePattern = /^[a-zA-Z0-9 ,.!?/'"()-]+$/;
 
     // no empty validation
     if (!title){
@@ -123,20 +117,7 @@ document.getElementById("submit-btn").addEventListener("click", function (event)
         errorDesc.style.display = "block";
         save = false;
     }
-
-    // if (!visibility){
-    //     errorVisibility.textContent = "Please choose the course visibility!";
-    //     errorVisibility.style.display = "block";
-    //     save = false;
-    // }
-
-    // // visibility sanitation
-    // const allowedVisibility = ['public', 'private'];
-    // if (!allowedVisibility.includes(visibility)) {
-    //     errorVisibility.textContent = "Invalid value";
-    //     save = false;
-    // }
-
+    
     // submit if passes the validation
     if (save === true){
         document.querySelector("form").submit();

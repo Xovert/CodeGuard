@@ -1,20 +1,16 @@
-# import math
-from flask import session, current_app as app
+from flask import session, current_app as app, abort
 from werkzeug.datastructures.file_storage import FileStorage
 import mimetypes
 from sqlalchemy.exc import IntegrityError as sqlerror
-# from sqlalchemy import func
 
 from CodeGuard.models import (
     db, 
     Courses, 
-    Enrollments,
     Users,
     CourseImages,
     ContentImages,
     CourseStatus,
     Modules,
-    EnrollmentsModules,
     Contents,
     ContentsLearning,
     ContentsChallenges,
@@ -102,40 +98,17 @@ def delete_options(question_id):
             .where(ChallengeOptions.question_id == question_id)
         )
         db.session.flush()
-        print(f"Successfully deleted options for question_id: {question_id}")
     except sqlerror as e:
         db.session.rollback()
-        print(f"Error deleting options: {e}")
-    else:
-        db.session.commit()
-    return
-
-def delete_challenge_data(question_id):
-    try:
-        db.session.execute(
-            db.delete(ChallengeQuestions)
-            .where(ChallengeQuestions.id == question_id)
-        )
-        db.session.flush()
-        print(f"Successfully deleted challenge data with id = {question_id}")
-    except sqlerror as e:
-        db.session.rollback()
-        print(f"Error deleting options: {e}")
-    else:
-        db.session.commit()
     return
 
 def delete_content(content_id):
+    content, images = get_single_content(content_id)
     try:
-        db.session.execute(
-            db.delete(Contents)
-            .where(Contents.id == content_id)
-        )
+        db.session.delete(content)
         db.session.flush()
-        print(f"Successfully deleted content with id: {content_id}")
     except sqlerror as e:
         db.session.rollback()
-        print(f"Error deleting options: {e}")
     else:
         db.session.commit()
     return
@@ -145,10 +118,8 @@ def delete_module(module_name, course_id):
     try:
         db.session.delete(module)
         db.session.flush()
-        print(f"Successfully deleted module: {module_name}, course id: {course_id}")
     except sqlerror as e:
         db.session.rollback()
-        print(f"Error deleting module: {e}")
     else:
         db.session.commit()
     return
@@ -201,4 +172,39 @@ def update_course(old_name, course_name, course_description, course_status, cour
         db.session.commit()
         success = f'"{course_name}" has been updated!'
 
+    return error, success
+
+def update_module(new_module_name, old_module_name, course_id):
+    error = success = None
+    module = get_single_module(old_module_name, course_id)
+    
+    if module is None:
+        abort(404)
+
+    try:
+        module.module_name = new_module_name
+        db.session.flush()
+        success = f"Module name for {old_module_name} has been updated to {module.module_name}"
+    except sqlerror as e:
+        error = f"An error has occured while updating the module"
+        db.session.rollback()
+    return error, success, module.id
+
+def update_single_option(question_id, answer):
+    error = success = None
+
+    option = db.session.execute(
+        db.select(ChallengeOptions)
+        .join(ChallengeQuestions)
+        .where(ChallengeQuestions.id == question_id)
+    ).scalars().first()
+
+    try:
+        option.option_text = answer
+        db.session.flush()
+        success = f"Option for {question_id} has been updated to {option.option_text}"
+    except sqlerror as e:
+        error = f"An error has occurred while updating the options"
+        db.session.rollback()
+    
     return error, success
