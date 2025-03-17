@@ -433,6 +433,7 @@ optionsContainer.addEventListener('click', async function (e) {
 
             // generateID
             let randID;
+            const courseName = document.querySelector('.title').dataset.courseName;
 
             switch (target.id) {
                 case 'learning-option':
@@ -441,12 +442,12 @@ optionsContainer.addEventListener('click', async function (e) {
                     break;
                 case 'challenge-option-option':
                     randID = generateID("challenge option");
-                    randomizeChallengeOptionId(tempDiv, randID);
+                    randomizeChallengeOptionId(tempDiv, randID, courseName);
                     setupCodeMirror(tempDiv.querySelector('.code-area'));        
                     break;
                 case 'challenge-input-option':
                     randID = generateID("challenge input");
-                    randomizeChallengeInputId(tempDiv, randID);
+                    randomizeChallengeInputId(tempDiv, randID, courseName);
                     setupCodeMirror(tempDiv.querySelector('.code-area'));        
                     break;
                 default:
@@ -537,7 +538,7 @@ function randomizeLearningId(container, randID) {
     }
 }
 
-function randomizeChallengeOptionId(container, randID){
+function randomizeChallengeOptionId(container, randID, courseName){
     // order
     const order = container.querySelector('.hidden');
     if (order){
@@ -566,10 +567,12 @@ function randomizeChallengeOptionId(container, randID){
     // code area
     const codeTextarea = container.querySelector('.code-playground > textarea');
     const codeLabel = container.querySelector('.code > label');
-    if (codeTextarea && codeLabel) {
+    const languageSpan = container.querySelector('.language-span');
+    if (codeTextarea && codeLabel && languageSpan) {
         const randomID = `challenge_options-${randID}-code`;
         codeTextarea.id = codeTextarea.name = randomID;
         codeLabel.setAttribute('for', randomID);
+        languageSpan.textContent = courseName;
     }
 
     // option
@@ -605,7 +608,7 @@ function randomizeChallengeOptionId(container, randID){
 
 }
 
-function randomizeChallengeInputId(container, randID){
+function randomizeChallengeInputId(container, randID, courseName){
     // order
     const order = container.querySelector('.hidden');
     if (order){
@@ -634,10 +637,12 @@ function randomizeChallengeInputId(container, randID){
     // code area
     const codeTextarea = container.querySelector('.code-playground > textarea');
     const codeLabel = container.querySelector('.code > label');
-    if (codeTextarea && codeLabel) {
+    const languageSpan = container.querySelector('.language-span');
+    if (codeTextarea && codeLabel && languageSpan) {
         const randomID = `challenge_input-${randID}-code`;
         codeTextarea.id = codeTextarea.name = randomID;
         codeLabel.setAttribute('for', randomID);
+        languageSpan.textContent = courseName;
     }
 
     // answer

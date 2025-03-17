@@ -111,7 +111,7 @@
                     <label for="{{ content.code.id }}">Code</label>
                     <div class="code-playground">
                         <textarea class="code-area" id="{{ content.code.id }}" name="{{ content.code.name }}" rows="10" placeholder="Enter challenge code here...">{{ content.code.data }}</textarea>
-                        <span class="language-span">PHP</span>
+                        <span class="language-span">{{ course_name }}</span>
                     </div>
                 </div>
                 <div class="option">
@@ -169,7 +169,7 @@
                     <div class="code-playground">
                         <textarea class="code-area" name="{{ content.code.name }}" id="{{ content.code.id }}" rows="10"
                             placeholder="Enter challenge code here...">{{ content.code.data }}</textarea>
-                        <span class="language-span">PHP</span>
+                        <span class="language-span">{{ course_name }}</span>
                     </div>
                 </div>
                 <div class="answer">

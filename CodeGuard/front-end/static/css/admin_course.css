@@ -262,10 +262,10 @@ select {
     font-family: Manrope;
     font-size: 16px;
     font-weight: 800;
-
     position: absolute;
     top: 8px;
-    right: 12px;
+    right: 32px;
+    opacity: 0.5;
 }
 
 .radio-option{
