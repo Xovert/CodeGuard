@@ -27,4 +27,4 @@ AWS_S3_REGION =
 
 [semgrep]
 SEMGREP_APP_TOKEN = 
-SEMGREP_PATH = 
+SEMGREP_PATH = semgrep_rules
