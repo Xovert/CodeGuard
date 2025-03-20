@@ -161,7 +161,9 @@ def run_semgrep_scan(target_path: str, semgrep_config: list[str] = []):
     command.extend([target_path, '--json'])
 
     env = os.environ.copy()
-    env['SEMGREP_APP_TOKEN'] = app.config['SEMGREP_APP_TOKEN']
+    semgrep_app_token = app.config['SEMGREP_APP_TOKEN']
+    if semgrep_app_token:
+        env['SEMGREP_APP_TOKEN'] = semgrep_app_token        
     
     result = subprocess.run(command, capture_output=True, text=True, env=env)
     scan_result:dict = json.loads(result.stdout)
