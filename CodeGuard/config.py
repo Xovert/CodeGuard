@@ -42,7 +42,7 @@ def process_boolean_str(value):
         return False
 
     if value == "":
-        return None
+        return False
 
     return bool(strtobool(value))
 
