@@ -93,6 +93,10 @@ def register():
 
             flash(success)
             return redirect(url_for('courses.dashboard'))
+        
+        else:
+            flash(error)
+            return redirect(url_for('auth.register'))
     
     error = "<br>".join(collect_errors(form.errors))
     flash(error)
