@@ -80,10 +80,10 @@ def seed_users():
         Users(
             uuid=uuid4(),
             role='user',
-            fullname='Amandoos',
-            username='scaramochi',
-            password=hash_pass('sc@ram0ch!'),
-            email='nathania@gmail.com',
+            fullname='Test User1',
+            username='user1',
+            password=hash_pass('user1'),
+            email='user1@gmail.com',
             is_confirmed=False,
             confirmed_on=None,
             registration_date=datetime.now(timezone(timedelta(hours=7)))
@@ -91,10 +91,10 @@ def seed_users():
         Users(
             uuid=uuid4(),
             role='user',
-            fullname='Greyson',
-            username='grey',
-            password=hash_pass('tokora'),
-            email='kora@gmail.com',
+            fullname='Test User2',
+            username='user2',
+            password=hash_pass('user2'),
+            email='user2@gmail.com',
             is_confirmed=False,
             confirmed_on=None,
             registration_date=datetime.now(timezone(timedelta(hours=7)))
@@ -102,10 +102,10 @@ def seed_users():
         Users(
             uuid=uuid4(),
             role='user',
-            fullname='Black Bird',
-            username='blackbird',
-            password=hash_pass('21blackbird'),
-            email='21blackbird@gmail.com',
+            fullname='Test User3',
+            username='user3',
+            password=hash_pass('user3'),
+            email='user3@gmail.com',
             is_confirmed=False,
             confirmed_on=None,
             registration_date=datetime.now(timezone(timedelta(hours=7)))
