@@ -36,6 +36,7 @@ Windows:
 Several things that you can configure (config must be created at `CodeGuard/config.ini`):
 <details>
 <summary>Server</summary>
+
 ```ini
 [server]
 SECRET_KEY = ; A specified secret key for app secrets, can be left empty, will be auto-generated.
@@ -48,6 +49,7 @@ DATABASE_URL = ; The Database URL in the format of `dialect+driver://username:pa
 </details>
 <details>
 <summary>Email for outgoing Mails</summary>
+
 ```ini
 [email]
 MAIL_DEFAULT_SENDER = ; The default name for sender that will be used when sending emails.
@@ -62,7 +64,8 @@ MAIL_PASSWORD = ; Password for Authentication with Mail Server
 </details>
 <details>
 <summary>File Uploads</summary>
-```
+
+```ini
 [uploads]
 UPLOADED_PHOTOS_DEST = uploads ; Default location for image uploads, default, leave unchanged.
 UPLOAD_PROVIDER = minio ; Default Provider for File Uploads, Compatible with S3 object storage. If use docker, default to 'minio'. Leave unchanged if not customised.
@@ -75,7 +78,8 @@ AWS_S3_REGION = ; Region for S3
 </details>
 <details>
 <summary>Semgrep</summary>
-```
+
+```ini
 [semgrep]
 SEMGREP_APP_TOKEN = ; Your personal Semgrep Token
 SEMGREP_PATH = semgrep_rules ; Directory of custom semgrep rules. Root directoryis the CodeGuard app directory. If not customised, leave unchanged.
