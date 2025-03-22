@@ -1,0 +1,44 @@
+<div class="page study">
+    <p class="d-flex accordion">New Page
+        <button type="button" class="ms-auto icon-trash"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+        <button type="button" class="up"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+        <button type="button" class="down"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+        <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
+    </p>
+    <div class="panel">
+        <input type="hidden" id="challenge_input-0-order" name="challenge_input-0-order" value="3" class="hidden">
+        <div class="type">
+            <label class="d-inline-block">Type</label>
+            <span class="content-type d-inline-block">Challenge Input</span>
+        </div>
+        <div class="input-pic position-relative">
+            <label for="challenge_input-0-image">Picture</label>
+            <label for="challenge_input-0-image" class="input-file">
+                <img src="{{ url_for('static', filename='assets/icon_upload.svg') }}" alt="">
+                Add File
+            </label>
+            <input type="text" class="filename" name="content-0-original_filename" id="content-0-original_filename" value="No file chosen" data-original-filename="No file chosen" readonly>
+            <button type="button" class="d-inline-block delete-img-btn">Delete image</button>
+            <input type="file" id="challenge_input-0-image" name="challenge_input-0-image" class="input-file-invi" accept=".jpg, .jpeg, .png">
+            <p class="error-message error-course-logo">Error</p>
+            <img id="" src="#" alt="Your image" data-url-preview="" class="preview">
+        </div>
+        <div class="question">
+            <label for="option-question-3">Question</label>
+            <textarea id="option-question-3" rows="2" placeholder="Enter challenge question here..." required></textarea>
+        </div>
+        <div class="code">
+            <label for="code-option-area-3">Code</label>
+            <div class="code-playground">
+                <textarea class="code-area" id="code-option-area-3" rows="10"
+                    placeholder="Enter challenge code here..."></textarea>
+                <span class="language-span">PHP</span>
+            </div>
+        </div>
+        <div class="answer">
+            <label for="challenge_input-0-answer">Answer</label>
+            <input type="text" name="challenge_input-0-answer" id="challenge_input-0-answer" placeholder="Enter the answer here..." required>
+        </div>
+        <input type="hidden" id="content-content_id" name="content-content_id" value="" class="content-id">
+    </div>
+</div>

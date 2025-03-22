@@ -16,19 +16,20 @@
     
     <div class="content-wrapper">
         <div class="form-wrapper d-flex flex-column col-md-8">
-            <form action="{{ url_for('user.update') }}" class="form-profile">
+            <form action="{{ url_for('user.profile') }}" class="form-profile" method="post">
+                {{ form.csrf_token() }}
                 <div class="profile-details d-flex flex-wrap">
                     <div class="detail">
-                        <label for="fullname" class="d-block">Full Name</label>
-                        <input type="text" value="{{ fullname }}" id="fullname" name="fullname" class="d-block" required>
+                        {{ form.fullname.label(class="d-block") }}
+                        {{ form.fullname(class="d-block") }}
                     </div>
                     <div class="detail">
-                        <label for="username" class="d-block">Username</label>
-                        <input type="text" value="{{ username }}" id="username" name="username" class="d-block" required>
+                        {{ form.username.label(class="d-block") }}
+                        {{ form.username(class="d-block") }}
                     </div>
                     <div class="detail">
-                        <label for="email" class="d-block">Email</label>
-                        <input type="text" value="{{ email }}" id="email" name="email" class="d-block" required>
+                        {{ form.email.label(class="d-block") }}
+                        {{ form.email(class="d-block") }}
                     </div>
                     <div class="detail">
                         <label class="d-block">Registration Date</label>
@@ -38,27 +39,29 @@
                 <button type="submit" class="btn save-btn" disabled>Save Changes</button>
             </form>
     
-            <form action="{{ url_for('user.update') }}" class="form-password">
+            {% with form_pw = Forms.profile.UpdatePasswordForm() %}
+            <form action="{{ url_for('user.update_pw') }}" class="form-password" method="post">
+                {{ form_pw.csrf_token() }}
                 <h1 class="change-password">Change Password</h1>
                 <div class="password-details d-flex flex-column">
                     <div class="pw">
-                        <label for="old-pw">Old Password</label>
+                        {{ form_pw.old_password.label }}
                         <div class="input-wrapper position-relative">
-                            <input type="password" id="old-pw" name="old-pw" required>
+                             {{ form_pw.old_password }}
                             <img src="{{ url_for('static', filename='assets/icon_eyeclose.svg') }}" alt="" class="eye position-absolute">
                         </div>
                     </div>
                     <div class="pw">
-                        <label for="new-pw">New Password</label>
+                        {{ form_pw.new_password.label }}
                         <div class="input-wrapper position-relative">
-                            <input type="password" id="new-pw" name="new-pw" required>
+                            {{ form_pw.new_password }}
                             <img src="{{ url_for('static', filename='assets/icon_eyeclose.svg') }}" alt="" class="eye position-absolute">
                         </div>
                     </div>
                     <div class="pw">
-                        <label for="confirm-pw">Confirm Password</label>
+                        {{ form_pw.rpt_password.label }}
                         <div class="input-wrapper position-relative">
-                            <input type="password" id="confirm-pw" name="confirm-pw" required>
+                            {{ form_pw.rpt_password }}
                             <img src="{{ url_for('static', filename='assets/icon_eyeclose.svg') }}" alt="" class="eye position-absolute">
                         </div>
                     </div>
@@ -66,6 +69,7 @@
                 <a href="{{ url_for('auth.forgot_password') }}" class="forgot-password d-block">Forgot password?</a>
                 <button type="submit" class="btn">Change Password</button>
             </form>
+            {% endwith %}
         </div>
     </div>
 </div>

@@ -1,29 +1,32 @@
-# import math
-from flask import session, current_app as app
+from flask import session, current_app as app, abort
 from werkzeug.datastructures.file_storage import FileStorage
 import mimetypes
 from sqlalchemy.exc import IntegrityError as sqlerror
-# from sqlalchemy import func
 
 from CodeGuard.models import (
     db, 
     Courses, 
-    Enrollments,
     Users,
     CourseImages,
+    ContentImages,
     CourseStatus,
     Modules,
-    EnrollmentsModules,
+    Contents,
+    ContentsLearning,
+    ContentsChallenges,
+    ChallengeQuestions,
+    ChallengeOptions
 )
 
-from CodeGuard.utils.files import get_file, upload_file, delete_file
+from CodeGuard.utils.files import delete_file
 from CodeGuard.admin.create import upload_image
 
-# from CodeGuard.courses import courses
-# from CodeGuard import courses as course
-# from CodeGuard.utils.user import get_uuid
-# from datetime import datetime, timezone, timedelta
-# from urllib.parse import quote
+def get_course(course_name):
+    course = db.session.scalars(
+        db.select(Courses)
+        .where(Courses.course_name == course_name)
+    ).first()
+    return course
 
 def get_course_fields(course_name):
     course = db.session.execute(
@@ -36,13 +39,90 @@ def get_course_fields(course_name):
 
 def get_modules(course_name):
     modules = db.session.execute(
-        db.select(Modules.module_name, Modules.order)
+        db.select(Modules)
         .join(Courses)
         .where(Courses.course_name == course_name)
         .order_by(Modules.order.asc())
-    ).all()
+    ).scalars().all()
     return modules
 
+def get_module_id(module_name, course_id):
+    module = db.session.scalars(
+        db.select(Modules.id)
+        .where(Modules.module_name == module_name, Modules.course_id == course_id)
+    ).first()
+    return module
+
+def get_single_module(module_name, course_id):
+    return db.session.scalars(
+        db.select(Modules)
+        .where(Modules.module_name == module_name, Modules.course_id == course_id)
+    ).first()
+
+def get_contents(module_id):
+    contents = db.session.execute(
+        db.select(Contents, ContentImages.new_filename, ContentImages.original_filename, ContentImages.id)
+        .outerjoin(ContentImages, Contents.id == ContentImages.content_id)
+        .where(Contents.module_id == module_id)
+        .order_by(Contents.order.asc())
+    ).all()
+    return contents
+
+def get_single_content(content_id):
+    return db.session.execute(
+        db.select(Contents, ContentImages)
+        .outerjoin(ContentImages, Contents.id == ContentImages.content_id)
+        .where(Contents.id == content_id)
+    ).first()
+
+def get_challenge_data(content_id):
+    data = db.session.scalars(
+        db.select(ChallengeQuestions)
+        .join(Contents)
+        .where(Contents.id == content_id)
+    ).first()
+    return data
+
+def get_options(question_id):
+    options = db.session.execute(
+        db.select(ChallengeOptions.option_text, ChallengeOptions.is_correct)
+        .join(ChallengeQuestions)
+        .where(ChallengeQuestions.id == question_id)
+    ).all()
+    return options
+
+def delete_options(question_id):
+    try:
+        db.session.execute(
+            db.delete(ChallengeOptions)
+            .where(ChallengeOptions.question_id == question_id)
+        )
+        db.session.flush()
+    except sqlerror as e:
+        db.session.rollback()
+    return
+
+def delete_content(content_id):
+    content, images = get_single_content(content_id)
+    try:
+        db.session.delete(content)
+        db.session.flush()
+    except sqlerror as e:
+        db.session.rollback()
+    else:
+        db.session.commit()
+    return
+
+def delete_module(module_name, course_id):
+    module = get_single_module(module_name, course_id)
+    try:
+        db.session.delete(module)
+        db.session.flush()
+    except sqlerror as e:
+        db.session.rollback()
+    else:
+        db.session.commit()
+    return
 
 def update_course(old_name, course_name, course_description, course_status, course_img:FileStorage=None):
     course, images = (
@@ -90,31 +170,41 @@ def update_course(old_name, course_name, course_description, course_status, cour
         
     else:
         db.session.commit()
-        success = f"{course_name} has been updated!"
+        success = f'"{course_name}" has been updated!'
 
     return error, success
 
+def update_module(new_module_name, old_module_name, course_id):
+    error = success = None
+    module = get_single_module(old_module_name, course_id)
+    
+    if module is None:
+        abort(404)
 
-def update_image(file: FileStorage, ref_id, usage=None, location=None):
-    filename = file.filename
-    file_stream = file.stream
-    mime_type, _ = mimetypes.guess_type(filename)
-    if mime_type is None:
-        # Default to binary stream if MIME type cannot be determined
-        mime_type = 'application/octet-stream'
+    try:
+        module.module_name = new_module_name
+        db.session.flush()
+        success = f"Module name for {old_module_name} has been updated to {module.module_name}"
+    except sqlerror as e:
+        error = f"An error has occured while updating the module"
+        db.session.rollback()
+    return error, success, module.id
 
-    file_storage = FileStorage(
-        stream=file_stream,
-        filename=filename,
-        content_type=mime_type
-    )
+def update_single_option(question_id, answer):
+    error = success = None
 
-    ret = upload_file(
-        file=file_storage,
-        id=ref_id,
-        usage=usage,
-        location=location
-    )
+    option = db.session.execute(
+        db.select(ChallengeOptions)
+        .join(ChallengeQuestions)
+        .where(ChallengeQuestions.id == question_id)
+    ).scalars().first()
 
-    print(ret)
-    return
+    try:
+        option.option_text = answer
+        db.session.flush()
+        success = f"Option for {question_id} has been updated to {option.option_text}"
+    except sqlerror as e:
+        error = f"An error has occurred while updating the options"
+        db.session.rollback()
+    
+    return error, success

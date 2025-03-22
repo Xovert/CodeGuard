@@ -1,0 +1,33 @@
+<div class="page study">
+    <p class="d-flex accordion">New Page
+        <button type="button" class="ms-auto icon-trash"><img src="{{ url_for('static', filename='assets/icon_trash.svg') }}" alt=""></button>
+        <button type="button" class="up"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+        <button type="button" class="down"><img src="{{ url_for('static', filename='assets/icon_arrowupdown.svg') }}" alt=""></button>
+        <img src="{{ url_for('static', filename='assets/icon_dropdown.svg') }}" alt="" class="dropdown-icon">
+    </p>
+    <div class="panel">
+        <input type="hidden" id="learning-0-order" name="learning-0-order" value="3" class="hidden">
+        <div class="type">
+            <label class="d-inline-block">Type</label>
+            <span class="content-type d-inline-block">Learning</span>
+        </div>
+        <div class="learning-pic position-relative">
+            <label for="learning-pic_1">Picture</label>
+            <label for="learning-pic_1" class="input-file">
+                <img src="{{ url_for('static', filename='assets/icon_upload.svg') }}" alt="">
+                Add File
+            </label>
+            <input type="text" class="filename" name="content-0-original_filename" id="content-0-original_filename" value="No file chosen" data-original-filename="No file chosen" readonly>
+            <button type="button" class="d-inline-block delete-img-btn">Delete image</button>
+            <input type="file" id="learning-pic_1" class="input-file-invi" accept=".jpg, .jpeg, .png">
+            <p class="error-message error-course-logo">Error</p>
+            <img id="" src="#" alt="Your image" data-url-preview="" class="preview">
+        </div>
+        <div class="content-learning">
+            <label for="content-learning-1">Content</label>
+            <textarea id="content-learning-1" rows="4"
+                placeholder="Enter learning content here..." required></textarea>
+        </div>
+        <input type="hidden" id="content-content_id" name="content-content_id" value="" class="content-id">
+    </div>
+</div>

@@ -109,7 +109,7 @@
                         <div class="lesson exam">
                             <a href="{{ exam_url }}" class="href">
                                 <div class="lesson-name">
-                                    <span>Take Exam (Exam Done)</span>
+                                    <span>Exam Complete</span>
                                 </div>
                                 <div class="icon d-flex align-items-center justify-content-center">
                                     <img src="{{ url_for('static', filename='assets/icon_checkmark.svg')}}" alt="">
@@ -120,7 +120,7 @@
                         <div class="lesson exam">
                             <div type="button" data-bs-toggle="modal" data-bs-target="#Exam" data-record-path="{{ exam_url }}">
                                 <div class="lesson-name">
-                                    <span>Take Exam (Exam Unlocked)</span>
+                                    <span>Take Exam</span>
                                 </div>
                                 <div class="icon d-flex align-items-center justify-content-center">
                                     <img src="{{ url_for('static', filename='assets/icon_unlocked.svg') }}" alt="">
@@ -130,7 +130,7 @@
                     {% else %}
                         <div class="lesson exam locked">
                             <div class="lesson-name">
-                                <span>Take Exam (Exam Locked)</span>
+                                <span>Exam Locked</span>
                             </div>
                             <div class="icon d-flex align-items-center justify-content-center">
                                 <img src="{{ url_for('static', filename='assets/icon_locked.svg') }}" alt="">

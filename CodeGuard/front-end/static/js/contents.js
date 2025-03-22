@@ -24,7 +24,7 @@ async function fetchAttempts(content_num) {
             displayCorrect("You are correct!")
             if (document.querySelector("#input-Text") === null){
                 disableRadio()
-                setSelected(data.selected)
+                setCorrectOption(data.selected)
             }else{
                 disableInput()
                 setInput(data.answer)
@@ -40,10 +40,12 @@ async function fetchAttempts(content_num) {
             displayNext()
             if (document.querySelector("#input-Text") === null){
                 disableRadio()
-                setSelected(data.selected)
+                setWrongOption(data.selected)
+                showCorrectAnswer(data.correctAnswer, "multiple-choice");
             }else{
                 disableInput()
                 setInput(data.answer)
+                showCorrectAnswer(data.correctAnswer, "input-text");
             }
         }else{
             document.getElementById('attempts').textContent = ''; // Update the DOM
@@ -157,10 +159,6 @@ function disableRadio(){
     })
 }
 
-function setSelected(option){
-    document.querySelector(`#opt-${option}`).setAttribute('checked', '')
-}
-
 function disableInput(){
     document.querySelector('#input-Text').setAttribute('disabled', '')
 }
@@ -213,4 +211,42 @@ function hideError(){
     let errors = document.querySelector('#challengeError')
     errors.classList.remove('active')
     errors.classList.add('disabled')
+}
+
+function setCorrectOption(option){
+    const elem = document.querySelector(`#opt-${option}`)
+    
+    const parent = elem.parentElement;
+    parent.classList.add('correct-option');
+    
+    const check = parent.querySelector('.check');
+    check.classList.remove('disabled');
+    check.classList.add('active');
+}
+
+function setWrongOption(option){
+    const elem = document.querySelector(`#opt-${option}`)
+    elem.setAttribute('checked', '')
+
+    const parent = elem.parentElement;
+    parent.classList.add('wrong-option');
+    
+    const cross = parent.querySelector('.cross');
+    cross.classList.remove('disabled');
+    cross.classList.add('active');
+}
+
+function showCorrectAnswer(data, type){
+    if (type === "input-text") {
+        const correct_infos = document.getElementsByClassName("correct-info");
+        for (const elem of correct_infos){
+            elem.classList.remove('disabled')
+            elem.classList.add('active')
+        }
+        let answer = document.getElementById("correctAnswer")
+        answer.textContent = `${data}`
+    }
+    if (type === "multiple-choice") {
+        setCorrectOption(data)
+    }
 }

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Add New Course{% endblock %}
+{% block title %}Edit Course{% endblock %}
 
 {% block header %}
 <link rel="stylesheet" href="{{ url_for('static',filename='css/admin_course.css') }}">
@@ -27,15 +27,14 @@
                 Add File
             </label>
             {{ form.logo(accept=".jpg, .jpeg, .png") }}
-            <span class="filename" id="filename">
+            <span class="filename" id="filename" data-original-filename="{% if original_filename %}{{ original_filename }}{% else %}No file chosen{% endif %}">
                 {% if original_filename %}
                 {{ original_filename }}
                 {% else %}
                 No file chosen
                 {% endif %}
             </span>
-            <img id="preview" src="{% if original_filename %}{{ url_for('views.image', filename=new_filename) }}{% endif %}" alt="Your image" class="preview">
-            <p class="notice">If no file is chosen as the course logo, no changes will be made to the course logo.</p>
+            <img id="preview" src="{% if original_filename %}{{ url_for('views.image', filename=new_filename) }}{% endif %}" alt="Your image" class="preview" data-url-preview="{% if original_filename %}{{ url_for('views.image', filename=new_filename) }}{% endif %}">
             <p class="error-message" id="error-course-logo">Error</p>
         </div>
         <div class="detail">
@@ -45,7 +44,6 @@
         </div>
         <div class="detail">
             {{ form.visibility.label }}
-            <!-- {{ form.visibility }} -->
             <select name="{{ form.visibility.name }}" id="{{ form.visibility.id }}">
                 {% for value, label in form.visibility.choices %}
                 {% if ((form.visibility.data == 'published' or form.visibility.data == 'archived') and value == 'draft') %}
@@ -67,7 +65,6 @@
             <a href="{{ url_for('admin.modules', course_name=form.title.data|urlencode|replace('/', '%2F')) }}" class="a-tag"><button type="button" class="btn">Edit Modules</button></a>
         </div>
     </form>
-    <!-- get the data, save it in the DB, and then redirect to admin_course_content.html ( ada di admin_course_content() ) -->
 </div>
 
 {% endblock %}

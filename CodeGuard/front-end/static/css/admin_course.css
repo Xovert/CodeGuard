@@ -46,7 +46,7 @@
     margin-bottom: 0px;
 }
 
-label, input, textarea, select, .filename, .content-type{
+label, input, textarea, select, .filename, .content-type, .delete-img-btn{
     font-family: Poppins;
     font-size: 16px;
 }
@@ -82,10 +82,6 @@ input:-webkit-autofill{
 .content-type:hover{
     cursor: no-drop;
 }
-
-/* #course-title:-webkit-autofill {
-    background-color: var(--medium-light-green) !important;
-} */
 
 input, textarea{
     width: 100%;
@@ -126,22 +122,36 @@ input:focus{
     margin-top: 8px;
 }
 
-.notice{
-    font-family: Poppins;
-    font-size: 16px;
-    font-weight: 400;
-    color: var(--red);
-    margin-bottom: 4px;
-}
-
 .filename{
     margin-left: 8px;
     display: inline-block;
-    max-width: calc(100% - 140px);
+    max-width: 32%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     vertical-align: middle;
+    background-color: transparent;
+}
+
+input.filename{
+    max-width: 32%;
+}
+
+span.filename{
+    width: calc(100% - 275px);
+}
+
+.filename:focus{
+    outline: none;
+}
+
+.delete-img-btn{
+    outline: none;
+    background-color: var(--dark-blue);
+    color: var(--white);
+    border-radius: 5px;
+    padding: 6px 12px;
+    display: inline-block;
 }
 
 select {
@@ -213,7 +223,7 @@ select {
     row-gap: 16px;
     display: flex;
     flex-direction: column;
-    max-height: 1000px;
+    max-height: 2000px;
     overflow: hidden;
     transition: max-height 0.5s ease 0.2s, padding 0.5s ease;
 }
@@ -244,40 +254,18 @@ select {
 
 /* CODE PLAYGROUND */
 .code-playground{
-    background-color: var(--dark-blue);
-    padding: 40px 12px 64px 12px;
-    border-radius: 5px;
     position: relative;
 }
 
-.code-area{
-    background-color: transparent;
-    color: var(--white);
-}
-
-.code-playground span{
+.language-span{
     color: var(--blue);
     font-family: Manrope;
     font-size: 16px;
     font-weight: 800;
-}
-
-.language-span{
     position: absolute;
-    top: 12px;
-    right: 12px;
-}
-
-.run-code{
-    position: absolute;
-    bottom: 12px;
-    right: 12px;
-    background-color: transparent;
-    border: none;
-}
-
-.run-code img{
-    margin-left: 8px;
+    top: 8px;
+    right: 32px;
+    opacity: 0.5;
 }
 
 .radio-option{
@@ -318,16 +306,9 @@ select {
     cursor: pointer;
 }
 
-/* .radio-option ul{
-    margin: 0;
-    display: flex;
-    padding: 8px;
-    border-radius: 5px;
+.radio-option label{
+    width: 90%;
 }
-
-.radio-option li{
-    list-style: none;
-} */
 
 .add-option-btn{
     margin-top: 8px;
@@ -365,15 +346,11 @@ select {
     box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.16), 0px 3px 6px 0px rgba(0, 0, 0, 0.23);
 }
 
-.type-timer-wrapper{
-    column-gap: 64px;
+.type-timer-wrapper > div {
+    flex: 1;
 }
 
-.type-timer-wrapper > .type > input{
-    width: auto;
-}
-
-.add-more-page-btn, #add-module-btn{
+.add-more-page-btn{
     padding: 12px;
 }
 
@@ -388,7 +365,7 @@ select {
     align-items: start;
     padding: 8px 0px;
     position: absolute;
-    left: calc(50% - 92px);
+    left: calc(50% + 100px);
     bottom: 0;
 }
 
@@ -409,7 +386,7 @@ select {
     color: var(--white);
 }
 
-.submit-btn{
+.submit-btn, #cancel-btn{
     padding: 12px 32px;
 }
 

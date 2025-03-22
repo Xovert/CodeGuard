@@ -4,22 +4,8 @@ document.getElementById("button").addEventListener("click", function (event) {
     // clear previous errors
     document.querySelectorAll(".error-message").forEach(span => {
         span.style.display = "none";
-        span.textContent = ""; // Clear any previous messages
+        span.textContent = "";
     });
-
-    // ==== FUNCTIONS ====
-    // sanitation function
-    // function encodeHTML(input) {
-    //     return input
-    //         .replace(/&/g, "&amp;")
-    //         .replace(/</g, "&lt;")
-    //         .replace(/>/g, "&gt;")
-    //         .replace(/"/g, "&quot;")
-    //         .replace(/'/g, "&#39;")
-    //         .replace(/:/g, "&#58;")
-    //         .replace(/\(/g, "&#40;")
-    //         .replace(/\)/g, "&#41;");
-    // }
 
     let save = true;
     

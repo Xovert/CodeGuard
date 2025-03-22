@@ -36,32 +36,55 @@ document.addEventListener('click', function (e){
 
 // ======== DELETE ========
 document.addEventListener("DOMContentLoaded", function () {
-    // Select all the trash buttons
-    const trashButtons = document.querySelectorAll(".icon-trash");
+    let moduleToDelete = null;
 
-    // Add a click event listener to each trash button
-    trashButtons.forEach((button) => {
+    document.querySelectorAll(".icon-trash").forEach(button => {
         button.addEventListener("click", function () {
-            // Find the parent .module element of the clicked button
-            const moduleElement = button.closest(".module");
+            moduleToDelete = this.closest(".module");
 
-            // Get the module name from the .module-name element inside the module
-            const moduleName = moduleElement.querySelector(".module-name").textContent.trim();
+            if (moduleToDelete) {
+                const moduleName = moduleToDelete.querySelector(".module-name").textContent;
 
-            // Update the modal's message with the module name
-            const messageElement = document.getElementById("message");
-            messageElement.innerHTML = `Are you sure you want to delete <strong>${moduleName}</strong> module?`;
+                // update modal message
+                const messageElement = document.getElementById("message");
+                messageElement.innerHTML = `Are you sure you want to delete <strong>${moduleName}</strong> module?`;
+            }
         });
+    });
+
+    // delete the module
+    document.getElementById("yes").addEventListener("click", function () {
+        if (moduleToDelete) {
+            const deletedOrder = parseInt(moduleToDelete.querySelector(".order").textContent.replace("#", ""), 10);
+
+            // remove from DOM first
+            moduleToDelete.remove();
+            moduleToDelete = null;
+            
+            // update the order for all modules (order - 1)
+            document.querySelectorAll(".module").forEach(module => {
+                let orderElement = module.querySelector(".order");
+                let currentOrder = parseInt(orderElement.textContent.replace("#", ""), 10);
+    
+                if (currentOrder > deletedOrder) {
+                    orderElement.textContent = `#${currentOrder - 1}`;
+                }
+            });
+        }
+
+        // close the modal afterwards
+        const modalElement = document.getElementById("delete");
+        const deleteModal = bootstrap.Modal.getInstance(modalElement);
+        deleteModal.hide();
     });
 });
 
 
 
-// ======== CHANGES TO DOM =========
+// ======== CHANGES TO SAVE BUTTON =========
 document.addEventListener("DOMContentLoaded", () => {
-    // Select the target element to observe
     const moduleWrapper = document.querySelector(".module-wrapper");
-    const saveChanges = document.getElementById("save-changes"); // Replace with your button's ID or selector
+    const saveChanges = document.getElementById("save-changes");
   
     function getCurrentPairs() {
         return Array.from(moduleWrapper.querySelectorAll(".module")).map(module => {
@@ -97,3 +120,28 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initial check to set the button state
     checkPairChanges();
 })
+
+
+// ======= SEND DATA TO BACKEND ========
+const saveButton = document.getElementById("save-changes");
+saveButton.addEventListener("click", function () {
+    let moduleOrder = [];
+    document.querySelectorAll(".module").forEach((module, index) => {
+        moduleOrder.push({
+            order: module.querySelector('.order').textContent.replace('#', '').trim(),
+            module_name: module.querySelector('.module-name').textContent.trim(),
+        });
+    });
+    const course_name = encodeURIComponent(document.querySelector('.module-list-title').getAttribute('data-course-name'));
+    
+    fetch(`/admin/${course_name}/modules`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ modules: moduleOrder }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        window.location.replace(data.url);
+    })
+    .catch(error => console.error("Fetch error:", error));
+});

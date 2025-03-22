@@ -8,7 +8,7 @@ from werkzeug.datastructures.file_storage import FileStorage
 from sqlalchemy.exc import IntegrityError as sqlerror
 from freezegun import freeze_time
 from sqlalchemy.orm import joinedload, lazyload, selectinload
-from flask_migrate import upgrade, migrate, downgrade, stamp
+from flask_migrate import upgrade, migrate, downgrade, stamp, current
 from flask_sqlalchemy.pagination import Pagination
 from sqlalchemy import func
 
@@ -80,10 +80,10 @@ def seed_users():
         Users(
             uuid=uuid4(),
             role='user',
-            fullname='Amandoos',
-            username='scaramochi',
-            password=hash_pass('sc@ram0ch!'),
-            email='nathania@gmail.com',
+            fullname='Test User1',
+            username='user1',
+            password=hash_pass('user1'),
+            email='user1@gmail.com',
             is_confirmed=False,
             confirmed_on=None,
             registration_date=datetime.now(timezone(timedelta(hours=7)))
@@ -91,10 +91,10 @@ def seed_users():
         Users(
             uuid=uuid4(),
             role='user',
-            fullname='Greyson',
-            username='grey',
-            password=hash_pass('tokora'),
-            email='kora@gmail.com',
+            fullname='Test User2',
+            username='user2',
+            password=hash_pass('user2'),
+            email='user2@gmail.com',
             is_confirmed=False,
             confirmed_on=None,
             registration_date=datetime.now(timezone(timedelta(hours=7)))
@@ -102,10 +102,10 @@ def seed_users():
         Users(
             uuid=uuid4(),
             role='user',
-            fullname='Black Bird',
-            username='blackbird',
-            password=hash_pass('21blackbird'),
-            email='21blackbird@gmail.com',
+            fullname='Test User3',
+            username='user3',
+            password=hash_pass('user3'),
+            email='user3@gmail.com',
             is_confirmed=False,
             confirmed_on=None,
             registration_date=datetime.now(timezone(timedelta(hours=7)))
@@ -1939,34 +1939,45 @@ def reseed():
 def test_query(id):
     user_uuid = db.session.scalar(db.select(Users.uuid).where(Users.id == id))
     course_name = "PHP"
-    module_name = "Broken Access Control"
     content_id = 5
-    enrollment_id = db.session.scalars(
-        db.select(Enrollments.id)
-        .join(Users)
-        .join(Courses)
-        .where(Users.uuid == user_uuid)
-        .where(Courses.course_name == course_name)
-    ).first()
-    # module_id = db.session.scalar(
-    #     db.select(Modules.id)
-    #     .where(Modules.module_name == module_name)
-    # )
-    # course_id = db.session.scalar(
-    #     db.select(Courses.id)
-    #     .where(Courses.course_name == course_name)
-    # )
-    result = db.session.execute(
-        db.select(Exams.label("exam"), Enrollments)
-        .join(Enrollments)
-        .where(Enrollments.id == enrollment_id)
-    ).first()
-    print(result)
-    print(result.exam)
+
+    # php = db.session.scalar(db.select(Courses).where(Courses.course_name == "PHP"))
+    # model = Exams
+
+    module_name = "Broken Access Control"
+    course_id = 1
+    module = db.session.execute(
+        db.select(Modules)
+        .where(Modules.module_name == module_name, Modules.course_id == course_id)
+    ).scalar()
+   
+    try:
+        db.session.delete(module)
+        db.session.flush()
+    except Exception as e:
+        print(f'error: {e}')
+        db.session.rollback()
+    else:
+        db.session.commit()
+
+
+def is_seeded() -> bool:
+    admin_exists = db.session.scalar(
+        db.select(Users)
+        .where(Users.id == 1)
+        .where(Users.username == 'admin')
+    )
+    if admin_exists:
+        return True
+    else:
+        return False
 
 @click.command('seed')
 def seed_command():
-    seed_all()
+    if not is_seeded():
+        seed_all()
+        return;
+    print('Database already seeded!')
 
 @click.command('reset')
 def reset_command():

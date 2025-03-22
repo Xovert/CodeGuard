@@ -1,0 +1,11 @@
+.data
+.secret_key
+.security_salt
+.git
+.dockerignore
+.gitignore
+**/node_modules
+**/*.pyc
+**/pycache
+.venv*
+venv*

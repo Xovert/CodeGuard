@@ -52,6 +52,22 @@ document.addEventListener("DOMContentLoaded", async (event) => {
 
     let submitEl = document.querySelector('#btnSubmit')
     submitEl.addEventListener('click', (event) => {
+        event.currentTarget.disabled = true;
+        event.currentTarget.setAttribute('disabled', 'disabled');
+        
+        let textSpan = document.getElementById('btnSubmitText');
+        if(textSpan){
+            textSpan.remove();
+        }
+        
+        const spinner = event.currentTarget.querySelector('.spinner-border');
+        const spinnerText = event.currentTarget.querySelector('[role="status"]');
+        if (spinner) {
+            spinner.classList.remove('disabled');
+        }
+        if (spinnerText) {
+            spinnerText.classList.remove('disabled');
+        }
         submit(view)
     })
 });

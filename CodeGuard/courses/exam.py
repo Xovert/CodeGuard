@@ -17,7 +17,7 @@ from CodeGuard.models.enums import CompletionStatus, Severity
 from CodeGuard.utils.decorators import login_required, exams_unlocked
 from CodeGuard.utils.security import verify_token
 from CodeGuard.utils.exam import clear_exam_lock, check_exam
-
+log = app.logger
 
 @courses.route('/exam/<path:course_name>', methods=('GET','POST'))
 @login_required
@@ -118,7 +118,7 @@ def exam(course_name):
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            print(f'An error has occurred: {e}')
+            log.error(f'An error has occurred: {e}')
         
 
         exams_results = [
@@ -139,7 +139,7 @@ def exam(course_name):
             )
         except Exception as e:
             db.session.rollback()
-            print(f'An error has occurred: {e}')
+            log.error(f'An error has occurred: {e}')
         else:
             db.session.commit()
 
@@ -161,7 +161,9 @@ def run_semgrep_scan(target_path: str, semgrep_config: list[str] = []):
     command.extend([target_path, '--json'])
 
     env = os.environ.copy()
-    env['SEMGREP_APP_TOKEN'] = app.config['SEMGREP_APP_TOKEN']
+    semgrep_app_token = app.config['SEMGREP_APP_TOKEN']
+    if semgrep_app_token:
+        env['SEMGREP_APP_TOKEN'] = semgrep_app_token        
     
     result = subprocess.run(command, capture_output=True, text=True, env=env)
     scan_result:dict = json.loads(result.stdout)

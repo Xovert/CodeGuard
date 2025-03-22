@@ -12,6 +12,7 @@ from CodeGuard.utils.user import is_authed, is_admin, login_session, logout_sess
 from CodeGuard.utils.email import generate_token, confirm_token, send_email
 from CodeGuard.utils.decorators import login_required
 from CodeGuard.utils.exam import check_exam
+from CodeGuard.utils.errors import collect_errors
 
 bcrypt = Bcrypt()
 
@@ -92,10 +93,12 @@ def register():
 
             flash(success)
             return redirect(url_for('courses.dashboard'))
+        
+        else:
+            flash(error)
+            return redirect(url_for('auth.register'))
     
-    error = "<br>".join(
-        message for messages in form.errors.values() for message in messages
-    )
+    error = "<br>".join(collect_errors(form.errors))
     flash(error)
     return redirect(url_for('auth.register'))
 
@@ -171,9 +174,7 @@ def forgot_password():
             flash("An email has been sent to your account!")           
 
         else:
-            error = "<br>".join(
-                message for messages in form.errors.values() for message in messages
-            )
+            error = "<br>".join(collect_errors(form.errors))
             flash(error)
         return redirect(url_for('auth.forgot_password'))
     
@@ -208,9 +209,7 @@ def change_password(token):
                 flash("The link is invalid or has expired")
                 return redirect(url_for('auth.forgot_password'))
         
-        error = "<br>".join(
-            message for messages in form.errors.values() for message in messages
-        )
+        error = "<br>".join(collect_errors(form.erorrs))
         flash(error)
         return redirect(url_for('auth.change_password', token=token, _external=True))
 

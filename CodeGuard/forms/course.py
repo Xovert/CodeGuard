@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from flask_uploads import UploadSet, IMAGES, configure_uploads
+from wtforms import Form
 from wtforms.validators import DataRequired, Regexp, Length, ValidationError
-from wtforms.fields import SubmitField, SelectField, TextAreaField, StringField, TimeField, FormField, FieldList, RadioField
+from wtforms.fields import SelectField, TextAreaField, StringField, TimeField, FormField, FieldList, RadioField, HiddenField
 
 photos = UploadSet('photos', IMAGES)
 
@@ -63,7 +64,6 @@ class CourseForm(FlaskForm):
         id='course-logo',
         validators=[
             FileAllowed(photos, 'Only images are allowed!'),
-            # FileRequired(message='You need to upload a file!'),
         ]
     )
     description = TextAreaField(
@@ -93,30 +93,28 @@ class CourseForm(FlaskForm):
         ]
     )
 
-# class TypeForm(FlaskForm):
-#     types = SelectField(
-#         label='Type',
-#         choices=[
-#             ('Learning', 'Learning'),
-#             ('Challenge Code', 'Challenge Code'),
-#             ('Challenge Options', 'Challenge Options')
-#         ],
-#         validate_choice=True,
-#         validators=[
-#             DataRequired(message="You need to specify the type of the type of the page!")
-#         ]
-#     )
 
-class ImageForm(FlaskForm):
+class ChoicesForm(Form):
+    choices = StringField(
+        validators=[
+            DataRequired(message='Please specify the options!')
+        ]
+    )
+
+# choices for ExistingContentForm()
+class ChoicesFormNotRequired(Form):
+    choices = StringField()
+
+class ChallengeLearningForm(Form):
+    order = HiddenField(
+        validators=[DataRequired()]
+    )
     image = FileField(
         label='Picture',
         validators=[
             FileAllowed(photos, 'Only images are allowed!'),
-            FileRequired(message='You need to upload a file!')
         ],
     )
-
-class ContentBodyForm(FlaskForm):
     content_body = TextAreaField(
         label='Content',
         validators=[
@@ -128,7 +126,16 @@ class ContentBodyForm(FlaskForm):
         }
     )
 
-class QuestionCodeForm(FlaskForm):
+class ChallengeOptionsForm(Form):
+    order = HiddenField(
+        validators=[DataRequired()]
+    )
+    image = FileField(
+        label='Picture',
+        validators=[
+            FileAllowed(photos, 'Only images are allowed!'),
+        ],
+    )
     question = TextAreaField(
         label='Question',
         validators=[
@@ -141,58 +148,59 @@ class QuestionCodeForm(FlaskForm):
     )
     code = TextAreaField(
         label='Code',
-        validators=[
-            DataRequired(message='You need to specify the code for the challenge!')
-        ],
         render_kw={
             "placeholder":"Enter challenge code here...",
             "rows":'10',
         }
     )
-
-class OptionsForm(FlaskForm):
     options = RadioField(
         label='Options',
         choices=[
             ('value-1', 'Option 1'),
-            ('value-2', 'Option 2'),
-            ('value-3', 'Option 3')
         ],
         validators=[
             DataRequired(message="You need to specify the options for the challenge!")
-        ]
+        ],
+        validate_choice=False
     )
+    choices = FieldList(FormField(ChoicesForm), min_entries=1)
 
-class TimerForm(FlaskForm):
-    timer = TimeField(
-        label='Timer',
-        format='%H:%M:%S',
+class ChallengeInputForm(Form):
+    order = HiddenField(
+        validators=[DataRequired()]
+    )
+    image = FileField(
+        label='Picture',
         validators=[
-            DataRequired(message='You need to specify the exam completion time!')
+            FileAllowed(photos, 'Only images are allowed!'),
         ],
     )
-    
-
-class ChallengeLearningForm(FlaskForm):
-    image = FormField(ImageForm)
-    content_body = FormField(ContentBodyForm)
-
-
-class ChallengeCodeForm(FlaskForm):
-    question_code = FormField(QuestionCodeForm)
-
-class ChallengeOptionsForm(FlaskForm):
-    question_code = FormField(QuestionCodeForm)
-    options = FormField(OptionsForm)
-
-class ExamCodeForm(FlaskForm):
-    timer = FormField(TimerForm)
-    question_code = FormField(QuestionCodeForm)
-
-class ExamOptionsForm(FlaskForm):
-    timer = FormField(TimerForm)
-    question_code = FormField(QuestionCodeForm)
-    options = FormField(OptionsForm)
+    question = TextAreaField(
+        label='Question',
+        validators=[
+            DataRequired(message='You need to specify the question for the challenge!')
+        ],
+        render_kw={
+            "placeholder":"Enter challenge question here...",
+            "rows":'2',
+        }
+    )
+    code = TextAreaField(
+        label='Code',
+        render_kw={
+            "placeholder":"Enter challenge code here...",
+            "rows":'10',
+        }
+    )
+    answer = StringField(
+        label="Answer",
+        validators=[
+            DataRequired(message='You need to specify the answer for the challenge!')
+        ],
+        render_kw={
+            "placeholder":"Enter the answer here..."
+        }
+    )
 
 class NewModuleForm(FlaskForm):
     module = StringField(
@@ -206,9 +214,69 @@ class NewModuleForm(FlaskForm):
         }
     )
     learning = FieldList(FormField(ChallengeLearningForm), min_entries=1)
-    challenge_code = FieldList(FormField(ChallengeCodeForm), min_entries=1)
-    challenge_options = FieldList(FormField(ChallengeOptionsForm), min_entries=1)
-    exam_code = FieldList(FormField(ExamCodeForm), min_entries=1)
-    exam_options = FieldList(FormField(ExamOptionsForm), min_entries=1)
+    challenge_options = FieldList(FormField(ChallengeOptionsForm), min_entries=0)
+    challenge_input = FieldList(FormField(ChallengeInputForm), min_entries=0)
 
 
+class ExistingContentForm(Form):
+    order = HiddenField()
+    content_type = StringField()
+    content_id = HiddenField()
+    image = FileField(
+        label='Picture',
+        validators=[
+            FileAllowed(photos, 'Only images are allowed!'),
+        ],
+    )
+    new_filename = StringField()
+    original_filename = StringField()
+    content_body = TextAreaField(
+        label='Content',
+        render_kw={
+            "placeholder":"Enter learning content here...",
+            "rows":'4',
+        }
+    )
+    question = TextAreaField(
+        label='Question',
+        render_kw={
+            "placeholder":"Enter challenge question here...",
+            "rows":'2',
+        }
+    )
+    code = TextAreaField(
+        label='Code',
+        render_kw={
+            "placeholder":"Enter challenge code here...",
+            "rows":'10',
+        }
+    )
+    options = RadioField(
+        label='Options',
+        choices=[
+            ('value-1', 'Option 1'),
+        ],
+        validate_choice=False
+    )
+    choices = FieldList(FormField(ChoicesFormNotRequired), min_entries=10)
+    correct = StringField()
+    answer = StringField(
+        label="Answer",
+        render_kw={
+            "placeholder":"Enter the answer here..."
+        }
+    )
+    
+
+class ModuleForm(FlaskForm):
+    module = StringField(
+        label='Module Name',
+        name='module-name',
+        validators=[
+            DataRequired(message='You need to specify the module name!')
+        ],
+        render_kw={
+            "placeholder":"Enter the module name here...",
+        }
+    )
+    content = FieldList(FormField(ExistingContentForm), min_entries=15)

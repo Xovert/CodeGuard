@@ -12,7 +12,6 @@ from flask import (
     flash,
     redirect
 )
-# from werkzeug.urls 
 from urllib.parse import unquote, quote_plus
 
 from CodeGuard.utils.decorators import login_required, exams_unlocked
@@ -35,7 +34,7 @@ from CodeGuard.utils.course import (
     course_complete
 )
 from CodeGuard.utils.security import generate_token
-
+nxt = next
 
 @courses.route('/dashboard', methods=('GET',))
 @login_required
@@ -55,6 +54,9 @@ def dashboard():
 @login_required
 def details(**kwargs):
     course = detail.get_course_fields()
+    if course is None:
+        abort(404)
+    
     modules = detail.get_modules()
     percentage = detail.get_percentage()
     exam = detail.get_exam()
@@ -74,7 +76,7 @@ def details(**kwargs):
         course = course,
         modules = modules,
         percentage = percentage,
-        exam = True if exam else False,
+        exam = bool(exam or g.courseComplete),
         modulesComplete = g.modulesComplete,
         courseComplete = g.courseComplete,
         exam_url = link_url
@@ -100,7 +102,8 @@ def next(course_name, module_name):
     
     if content.check() == CompletionStatus.COMPLETE:
         next_module = detail.get_next_module()
-        detail.unlock_module(next_module)
+        if next_module:
+            detail.unlock_module(next_module)
 
     if not next:
         return redirect(url_for(
@@ -174,19 +177,28 @@ def get_attempts(**kwargs):
     content_id = request.args.get('content')
     row = content.get_user_content(content_id)
     attempts = row.attempts
-    isComplete = row.correct
+    isCorrect = row.correct
     selected = row.option_selected
     answer = row.answer
     
-    if attempts >= 0 or isComplete:
+    if attempts >= 0 or isCorrect:
         data = {
             'attempts': attempts,
-            'isComplete': isComplete,
+            'isComplete': isCorrect,
         }
         if selected:
             data['selected'] = selected
         if answer:
             data['answer'] = answer
+        if attempts == 0 and not isCorrect:
+            question = row.content.question
+            options = question.options
+            correct_option = nxt(option for option in options if option.is_correct)
+            if correct_option and options:
+                if len(options) > 1:
+                    data['correctAnswer'] = correct_option.id
+                else:
+                    data['correctAnswer'] = correct_option.option_text
         return data
     abort(404)
 

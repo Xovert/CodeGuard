@@ -1,4 +1,4 @@
-// ============== CONFETTI STUFFFF ==============
+// ===== confetti =====
 'use strict';
 
 var score = document.getElementById('score').textContent
@@ -223,4 +223,3 @@ if (score > 70){
         poof();
     };
 }
-// ============== CONFETTI STUFFFF ==============
