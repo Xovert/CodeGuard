@@ -25,11 +25,11 @@ cp CodeGuard/config.ini.example CodeGuard/config.ini
 3. In your terminal, enter the following commands<br>
 Run the production config script.
 
-Linux/MacOS:
+> Linux/MacOS:
 ```console
 ./production.sh
 ```
-Windows:
+> Windows:
 ```console
 ./production.bat
 ```
