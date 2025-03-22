@@ -15,10 +15,14 @@ git clone https://github.com/Xovert/CodeGuard.git
 cd CodeGuard
 ```
 
-2. Set up the config.ini file inside the CodeGuard app folder
+2. Set up the config.ini file inside the CodeGuard app folder,<br>
 Copy config.ini.example and rename it into config.ini
 
-3. In your terminal, enter the following commands
+```console
+cp CodeGuard/config.ini.example CodeGuard/config.ini
+```
+
+3. In your terminal, enter the following commands<br>
 Run the production config script.
 
 Linux/MacOS:
@@ -32,7 +36,7 @@ Windows:
 
 ## Notes/Config
 
-##### Config
+### Config
 Several things that you can configure (config must be created at `CodeGuard/config.ini`):
 <details>
 <summary>Server</summary>
@@ -86,7 +90,7 @@ SEMGREP_PATH = semgrep_rules ; Directory of custom semgrep rules. Root directory
 ```
 </details>
 
-##### Guide
+### Guide
 1. By default, there are 6 default users:
 
     |No.| Username | Email | Password | Role |
