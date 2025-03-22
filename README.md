@@ -16,7 +16,7 @@ cd CodeGuard
 ```
 
 2. Set up the config.ini file inside the CodeGuard app folder,<br>
-Copy config.ini.example and rename it into config.ini
+Copy `config.ini.example` and rename it into `config.ini`
 
 ```console
 cp CodeGuard/config.ini.example CodeGuard/config.ini
