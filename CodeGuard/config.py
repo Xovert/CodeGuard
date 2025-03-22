@@ -54,7 +54,7 @@ def empty_str_cast(value, default=None):
 
 def get_secret_key():
     try:
-        with open(".secret_key", "rb") as secret:
+        with open("secrets/.secret_key", "rb") as secret:
             secret_key = secret.read()
     except OSError:
         secret_key = None
@@ -62,7 +62,7 @@ def get_secret_key():
     if not secret_key:
         secret_key = os.urandom(64)
         try:
-            with open(".secret_key", "wb") as secret:
+            with open("secrets/.secret_key", "wb") as secret:
                 secret.write(secret_key)
                 secret.flush()
         except OSError:
@@ -72,7 +72,7 @@ def get_secret_key():
 
 def get_security_password_salt():
     try:
-        with open(".security_salt", "rb") as salt:
+        with open("secrets/.security_salt", "rb") as salt:
             security_salt = salt.read()
     except OSError:
         security_salt = None
@@ -80,7 +80,7 @@ def get_security_password_salt():
     if not security_salt:
         security_salt = os.urandom(64)
         try:
-            with open(".security_salt", "wb") as secret:
+            with open("secrets/.security_salt", "wb") as secret:
                 secret.write(security_salt)
                 secret.flush()
         except OSError:

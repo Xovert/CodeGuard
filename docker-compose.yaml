@@ -14,7 +14,8 @@ services:
       SESSION_COOKIE_HTTPONLY: true
     volumes:
       - ./.data/instance:/opt/CodeGuard/instance
-      - .:/opt/CodeGuard:rw
+      - ./.data/secrets:/opt/CodeGuard/secrets
+      - ./CodeGuard:/opt/CodeGuard/CodeGuard:ro
     depends_on:
       db:
         condition: service_healthy

@@ -19,3 +19,4 @@ node_modules/
 .security_salt
 config.ini
 entrypoint.sh
+secrets/
