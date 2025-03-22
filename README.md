@@ -4,9 +4,10 @@ A platform to learn secure coding.
 
 ## Dependencies
 
-This app requires python>=3.12 to run. If you don't have python, install it first.  
+This app requires python>=3.12 and Docker>=27.5.1+ to run. If you don't have python or docker, install it first.  
 Other dependencies are listed in requirements.txt
-
+> [!IMPORTANT]
+> For Windows users, it is recommended to use Docker Desktop version 4.37.0+.
 ## Quickstart
 
 1. Clone this repository and switch directory to the cloned repo
@@ -24,12 +25,14 @@ cp CodeGuard/config.ini.example CodeGuard/config.ini
 
 3. In your terminal, enter the following commands<br>
 Run the production config script.
+> [!WARNING]
+> If you're using Docker Desktop, make sure you turn on your Docker first.
 
-> Linux/MacOS:
+- Linux/MacOS:
 ```console
 ./production.sh
 ```
-> Windows:
+- Windows:
 ```console
 ./production.bat
 ```
